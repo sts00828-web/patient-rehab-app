@@ -1183,28 +1183,36 @@ function handleImportFromHash() {
       clearHash(); return false;
     }
     // URL転送途中の文字化けに対応する複数の復元方法を順に試行
-    // （LINE等で URL-safe の "-" が "/" に化けたり、" " になったりするケース）
-    const attempts = [
-      compressed,
-      compressed.replace(/\//g, '-'),
-      compressed.replace(/\s/g, '+'),
-      compressed.replace(/\//g, '-').replace(/\s/g, '+'),
-    ];
+    const base = compressed;
+    const variants = new Set([
+      base,
+      base.replace(/\//g, '-'),
+      base.replace(/\s/g, '+'),
+      base.replace(/\//g, '-').replace(/\s/g, '+'),
+      base.replace(/-/g, '/'),
+      // URLデコード版（%2B が残っている場合）
+      (() => { try { return decodeURIComponent(base); } catch(e) { return null; } })(),
+      (() => { try { return decodeURIComponent(base).replace(/\s/g, '+'); } catch(e) { return null; } })(),
+    ]);
     let json = null;
-    for (const candidate of attempts) {
+    for (const candidate of variants) {
+      if (!candidate) continue;
+      // URI-safe デコード
       try {
         const r = LZString.decompressFromEncodedURIComponent(candidate);
         if (r && r.charAt(0) === '{') { json = r; break; }
-      } catch(e) { /* try next */ }
-    }
-    // 最終手段: Base64として読み直し
-    if (!json) {
+      } catch(e) {}
+      // Base64 デコード
       try {
-        const r = LZString.decompressFromBase64(compressed);
-        if (r && r.charAt(0) === '{') json = r;
+        const r = LZString.decompressFromBase64(candidate);
+        if (r && r.charAt(0) === '{') { json = r; break; }
       } catch(e) {}
     }
-    if (!json) { alert('リンクが不正です（転送途中で破損した可能性があります）。'); clearHash(); return false; }
+    if (!json) {
+      const snippet = base.length > 60 ? base.substring(0,60) + '...(' + base.length + '文字)' : base;
+      alert('リンクが不正です（転送途中で破損した可能性があります）。\n\nデータ先頭: ' + snippet);
+      clearHash(); return false;
+    }
     const data = JSON.parse(json);
     if (!data || !Array.isArray(data.menu)) {
       alert('データ形式エラー'); clearHash(); return false;
