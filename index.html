@@ -1102,7 +1102,7 @@ function showShareQR() {
       <div id="qrBox"></div>
       <div class="qr-url" id="qrUrl">${escapeHtml(url)}</div>
       <button class="btn btn-out" style="margin-top:10px" onclick="copyShareUrl()">📋 URLをコピー（LINEで送る等）</button>
-      <div class="hint" style="margin-top:8px">※ 既存データがある場合は患者側で確認ダイアログが出ます<br>※ メニューが多すぎてQRが読み取れない場合はURLコピーをご利用ください</div>
+      <div class="hint" style="margin-top:8px">※ 既存データがある場合は患者側で確認ダイアログが出ます<br>※ メニューが多すぎてQRが読み取れない場合はURLコピーをご利用ください<br>※ LINEで送る場合: 通常メッセージとして送信してください（改行・スペースを入れないこと）</div>
     </div>
   </div>`;
   const wrap = document.createElement('div');
@@ -1143,8 +1143,29 @@ function handleImportFromHash() {
       alert('読み込みライブラリ未読み込み。オンライン環境で再度お試しください。');
       clearHash(); return false;
     }
-    const json = LZString.decompressFromEncodedURIComponent(compressed);
-    if (!json) { alert('リンクが不正です。'); clearHash(); return false; }
+    // URL転送途中の文字化けに対応する複数の復元方法を順に試行
+    // （LINE等で URL-safe の "-" が "/" に化けたり、" " になったりするケース）
+    const attempts = [
+      compressed,
+      compressed.replace(/\//g, '-'),
+      compressed.replace(/\s/g, '+'),
+      compressed.replace(/\//g, '-').replace(/\s/g, '+'),
+    ];
+    let json = null;
+    for (const candidate of attempts) {
+      try {
+        const r = LZString.decompressFromEncodedURIComponent(candidate);
+        if (r && r.charAt(0) === '{') { json = r; break; }
+      } catch(e) { /* try next */ }
+    }
+    // 最終手段: Base64として読み直し
+    if (!json) {
+      try {
+        const r = LZString.decompressFromBase64(compressed);
+        if (r && r.charAt(0) === '{') json = r;
+      } catch(e) {}
+    }
+    if (!json) { alert('リンクが不正です（転送途中で破損した可能性があります）。'); clearHash(); return false; }
     const data = JSON.parse(json);
     if (!data || !Array.isArray(data.menu)) {
       alert('データ形式エラー'); clearHash(); return false;
