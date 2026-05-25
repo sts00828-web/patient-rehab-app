@@ -516,6 +516,15 @@ function renderToday() {
     <textarea class="note-ta" placeholder="気になったこと・できなかった種目の理由など" id="note-ta" onblur="saveNote(this.value)">${escapeHtml(log.note||'')}</textarea>
   </div>`;
 
+  // Safari/ホーム画面追加ヘルプ
+  html += `<div class="card" style="background:#fff8e8;border-color:#f0c87a">
+    <div class="card-ttl" style="color:#b8761c">📱 Safari で使う／ホーム画面に追加</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
+      QR読み取りアプリ内で開いている場合、Safariに移行すると毎日アクセスしやすくなります。
+    </div>
+    <button class="btn btn-out" onclick="showOpenInSafari()">📋 URLを表示してコピー</button>
+  </div>`;
+
   document.getElementById('today-content').innerHTML = html;
 }
 
@@ -1135,6 +1144,45 @@ function showShareQR() {
   }
 }
 function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remove(); }
+
+// 患者向け「Safariで開く」モーダル
+function showOpenInSafari() {
+  if (!S || !S.menu || S.menu.length === 0) return;
+  const url = buildShareUrl();
+  if (!url) return;
+  const html = `<div class="t-overlay on" id="safariModal" onclick="if(event.target===this)closeSafariModal()">
+    <div class="t-modal" style="max-width:420px">
+      <div class="t-hd">
+        <h2>📱 Safariで開く方法</h2>
+        <button class="t-close" onclick="closeSafariModal()">×</button>
+      </div>
+      <p style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:10px">
+        <strong>1.</strong> 下のURLをコピー（ボタンタップ）<br>
+        <strong>2.</strong> Safari を起動してアドレスバーに貼り付け<br>
+        <strong>3.</strong> 表示されたら共有ボタン → <strong>「ホーム画面に追加」</strong>
+      </p>
+      <textarea id="safariUrl" readonly onclick="this.select()" style="width:100%;min-height:80px;font-size:10px;font-family:monospace;padding:8px;border:1.5px solid var(--border);border-radius:6px;background:#fafcfd;color:var(--text);word-break:break-all;resize:none">${escapeHtml(url)}</textarea>
+      <button class="btn btn-pri" style="margin-top:10px" onclick="copySafariUrl()">📋 URLをコピー</button>
+      <div class="hint" style="margin-top:8px;line-height:1.7">
+        ※ 次回からホーム画面のアイコンをタップで起動可能<br>
+        ※ Safariに切り替えた後、自動でデータが入ります（読み込み確認ダイアログが出ます）
+      </div>
+    </div>
+  </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstChild);
+}
+function closeSafariModal() { const m = document.getElementById('safariModal'); if (m) m.remove(); }
+function copySafariUrl() {
+  const el = document.getElementById('safariUrl');
+  const url = el.value || el.textContent || '';
+  navigator.clipboard.writeText(url).then(() => toast('URLをコピーしました')).catch(() => {
+    el.select && el.select();
+    try { document.execCommand('copy'); toast('URLをコピーしました'); }
+    catch(e) { toast('長押しで手動コピーしてください'); }
+  });
+}
 
 // セットアップ画面の「URLから読み込む」
 function manualImport() {
