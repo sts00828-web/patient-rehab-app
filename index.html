@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>リハビリトラッカー</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2e7d8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --teal:#2e7d8a; --teal-d:#1f5963; --teal-l:#e8f4f6;
+  --green:#5bb88d; --orange:#ec8a3c; --red:#d04848;
+  --bg:#f5f8fb; --card:#fff; --text:#1a2530; --text2:#677785;
+  --border:#dbe4ec; --nav:62px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans','Yu Gothic UI',sans-serif;
+  background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;
+  padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom,0px));
+  overflow-x:hidden;
+}
+.header{
+  background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;
+  padding:12px 16px 14px;position:sticky;top:0;z-index:30;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.h-title{font-size:18px;font-weight:700;letter-spacing:.5px;cursor:pointer;user-select:none}
+.h-sub{font-size:12px;opacity:.9;margin-top:2px;display:flex;justify-content:space-between;align-items:center}
+.h-day{background:rgba(255,255,255,.2);padding:2px 8px;border-radius:10px;font-weight:600}
+
+.nav{
+  position:fixed;bottom:0;left:0;right:0;height:var(--nav);
+  background:#fff;display:flex;border-top:1px solid var(--border);z-index:20;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.nbtn{
+  flex:1;background:none;border:none;color:#8a99a8;font-size:11px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+}
+.nbtn .ico{font-size:22px}
+.nbtn.on{color:var(--teal);font-weight:700}
+
+main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block;animation:fadein .2s}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.card-ttl{font-weight:700;font-size:14px;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px}
+.card-ttl .badge{margin-left:auto;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+
+/* exercise items */
+.exitem{
+  display:flex;gap:10px;background:#fafcfd;border:1.5px solid var(--border);
+  border-radius:10px;padding:11px 12px;margin-bottom:8px;cursor:pointer;transition:.15s;
+}
+.exitem:active{transform:scale(.98)}
+.exitem.done{background:#eef9f3;border-color:var(--green)}
+.chk{
+  flex-shrink:0;width:26px;height:26px;border:2.5px solid #b9c5d1;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:transparent;
+  background:#fff;transition:.15s;
+}
+.exitem.done .chk{background:var(--green);border-color:var(--green);color:#fff}
+.ex-body{flex:1;min-width:0}
+.ex-nm{font-weight:700;font-size:15px;line-height:1.35;color:var(--text)}
+.ex-params{font-size:12px;color:var(--teal);font-weight:600;margin-top:2px}
+.ex-note{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5}
+
+/* VAS slider */
+.vas-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.vas-num{
+  font-size:36px;font-weight:800;color:var(--teal);min-width:54px;text-align:center;
+  line-height:1;
+}
+.vas-num.s0{color:var(--green)}
+.vas-num.s1,.vas-num.s2,.vas-num.s3{color:#76b85b}
+.vas-num.s4,.vas-num.s5,.vas-num.s6{color:#e0a020}
+.vas-num.s7,.vas-num.s8{color:var(--orange)}
+.vas-num.s9,.vas-num.s10{color:var(--red)}
+.vas-slider{flex:1;height:8px;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,#5bb88d 0%,#e0a020 50%,#d04848 100%);border-radius:4px;outline:none}
+.vas-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--teal);cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.vas-slider::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--teal);cursor:pointer}
+.vas-scale{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);padding:0 4px}
+
+/* textarea */
+.note-ta{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-family:inherit;font-size:14px;background:#fafcfd;resize:vertical;min-height:60px;
+}
+.note-ta:focus{outline:none;border-color:var(--teal);background:#fff}
+
+/* completion */
+.comp-bar{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.comp-pct{font-size:34px;font-weight:800;color:var(--teal);line-height:1}
+.comp-d{flex:1}
+.comp-lbl{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.bar-bg{background:#e8eef3;border-radius:5px;height:10px;overflow:hidden}
+.bar-fg{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));transition:width .4s}
+
+/* banner (greet) */
+.banner{
+  background:linear-gradient(135deg,#e8f4f6,#f5f0e8);
+  border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  border-left:4px solid var(--teal);
+}
+.banner-d{font-size:24px;font-weight:800;color:var(--teal-d);margin-bottom:2px}
+.banner-msg{font-size:13px;color:var(--text2)}
+
+/* calendar */
+.cal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 4px}
+.cal-mo{font-weight:700;font-size:16px}
+.cal-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-wlbl{text-align:center;font-size:11px;font-weight:700;color:var(--text2);padding:4px 0}
+.cal-day{
+  aspect-ratio:1;background:#fff;border:1.5px solid var(--border);border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;position:relative;
+}
+.cal-day.empty{visibility:hidden}
+.cal-day.today{border-color:var(--teal);font-weight:800}
+.cal-day.done{background:#eef9f3}
+.cal-day.partial{background:#fff8e8}
+.cal-dot{position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%}
+.cal-dot.full{background:var(--green)}
+.cal-dot.part{background:var(--orange)}
+.cal-vas{position:absolute;top:2px;right:3px;font-size:9px;color:var(--text2);font-weight:700}
+
+.cal-detail{margin-top:14px}
+
+/* progress */
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.statitem{background:#fafcfd;border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center}
+.statval{font-size:22px;font-weight:800;color:var(--teal)}
+.statlbl{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* VAS chart */
+.vchart{width:100%;height:160px;background:#fafcfd;border-radius:8px;padding:6px}
+
+/* therapist mode */
+.t-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;
+  display:none;align-items:flex-start;justify-content:center;
+  padding:16px;overflow-y:auto;
+}
+.t-overlay.on{display:flex}
+.t-modal{
+  background:#fff;border-radius:14px;width:100%;max-width:560px;
+  padding:18px 16px 22px;margin-top:8px;
+}
+.t-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--teal-l)}
+.t-hd h2{font-size:17px;color:var(--teal-d);flex:1}
+.t-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2);padding:2px 8px}
+
+.t-sec{margin-bottom:18px}
+.t-sec-ttl{font-size:13px;font-weight:700;color:var(--teal-d);margin-bottom:8px;padding-left:8px;border-left:3px solid var(--teal)}
+
+.fld{margin-bottom:10px}
+.fld-lbl{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;display:block}
+.fld-inp{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#fafcfd}
+.fld-inp:focus{outline:none;border-color:var(--teal)}
+.fld-row{display:flex;gap:8px}
+.fld-row .fld{flex:1}
+
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tpl-card{
+  background:#fafcfd;border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 10px;text-align:center;cursor:pointer;transition:.15s;
+}
+.tpl-card.sel{background:var(--teal-l);border-color:var(--teal)}
+.tpl-ico{font-size:32px;margin-bottom:4px}
+.tpl-nm{font-size:13px;font-weight:700;color:var(--text)}
+.tpl-desc{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
+
+.menu-item{
+  background:#fafcfd;border:1px solid var(--border);border-radius:8px;
+  padding:10px;margin-bottom:6px;
+}
+.menu-item-hd{display:flex;gap:6px;align-items:flex-start;margin-bottom:4px}
+.menu-item-nm{flex:1;font-weight:700;font-size:14px}
+.menu-item-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 6px;color:var(--text2)}
+.menu-item-pm{font-size:11px;color:var(--teal);font-weight:600}
+.menu-item-note{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.4}
+
+.btn{
+  display:block;width:100%;padding:11px;border-radius:8px;font-size:14px;
+  font-weight:700;cursor:pointer;border:none;font-family:inherit;
+}
+.btn-pri{background:var(--teal);color:#fff}
+.btn-out{background:#fff;color:var(--teal);border:2px solid var(--teal)}
+.btn-danger{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn+.btn{margin-top:6px}
+
+/* PIN */
+.pin-inp{font-size:24px;text-align:center;letter-spacing:8px;font-weight:800}
+
+/* toast */
+.toast{
+  position:fixed;bottom:calc(var(--nav) + 14px);left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;padding:10px 18px;border-radius:24px;
+  font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.toast.on{opacity:1}
+
+/* misc */
+.empty{text-align:center;padding:30px 16px;color:var(--text2);font-size:13px}
+.hint{font-size:11px;color:var(--text2);line-height:1.5;margin-top:4px}
+.row-sp{display:flex;justify-content:space-between;align-items:center}
+
+.setup-overlay{
+  position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:90;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.setup-card{background:#fff;border-radius:14px;padding:24px;max-width:420px;width:100%;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.setup-card h2{color:var(--teal-d);margin-bottom:8px}
+.setup-card p{color:var(--text2);font-size:13px;margin-bottom:16px;line-height:1.6}
+
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="h-title" id="hdr-title">🌱 リハビリトラッカー</div>
+  <div class="h-sub">
+    <span id="hdr-name">未設定</span>
+    <span class="h-day" id="hdr-day"></span>
+  </div>
+</header>
+
+<main>
+  <!-- 今日 -->
+  <section class="panel active" id="tab-today">
+    <div id="today-content"></div>
+  </section>
+  <!-- カレンダー -->
+  <section class="panel" id="tab-cal">
+    <div id="cal-content"></div>
+  </section>
+  <!-- 進捗 -->
+  <section class="panel" id="tab-prog">
+    <div id="prog-content"></div>
+  </section>
+</main>
+
+<nav class="nav">
+  <button class="nbtn on" id="nbtn-today" onclick="switchTab('today')"><span class="ico">📋</span>今日</button>
+  <button class="nbtn" id="nbtn-cal" onclick="switchTab('cal')"><span class="ico">📅</span>カレンダー</button>
+  <button class="nbtn" id="nbtn-prog" onclick="switchTab('prog')"><span class="ico">📈</span>進捗</button>
+</nav>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- 初回セットアップ -->
+<div class="setup-overlay" id="setupOverlay" hidden>
+  <div class="setup-card">
+    <h2>🌱 リハビリトラッカー</h2>
+    <p>このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
+      担当セラピストに設定を依頼してください。<br>
+      タイトル「🌱 リハビリトラッカー」を <strong>3秒長押し</strong> でセラピストモードを起動できます。</p>
+    <button class="btn btn-pri" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
+  </div>
+</div>
+
+<!-- PINモーダル -->
+<div class="t-overlay" id="pinModal">
+  <div class="t-modal" style="max-width:340px">
+    <div class="t-hd">
+      <h2>🔐 セラピストモード</h2>
+      <button class="t-close" onclick="closePinModal()">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">PINを入力してください（初回はパスコード未設定）</p>
+    <input class="fld-inp pin-inp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-input" placeholder="••••">
+    <button class="btn btn-pri" style="margin-top:12px" onclick="checkPin()">確認</button>
+    <div class="hint" style="margin-top:10px">パスコード未設定の場合は空欄のまま確認を押してください。</div>
+  </div>
+</div>
+
+<!-- セラピストモーダル -->
+<div class="t-overlay" id="therapistModal">
+  <div class="t-modal">
+    <div class="t-hd">
+      <h2>⚙️ セラピストモード</h2>
+      <button class="t-close" onclick="closeTherapist()">×</button>
+    </div>
+    <div id="therapist-content"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  疾患テンプレート
+// ══════════════════════════════════════════
+const TEMPLATES = {
+  shoulder: {
+    name: '五十肩（肩関節周囲炎）',
+    icon: '💪',
+    desc: '振り子・棒体操・壁登りなど可動域改善',
+    menu: [
+      { name: '温罨法', params: '10〜15分', note: '運動前にホットパックなどで温める。痛みが強いときは冷却に切替' },
+      { name: 'Codman体操（振り子）前後・左右', params: '各10往復', note: '前傾位で腕の重さでリラックスして揺らす' },
+      { name: 'Codman体操 円運動', params: '各方向10回', note: '時計回り・反時計回りそれぞれ' },
+      { name: '棒体操（屈曲）', params: '10回', note: '健側で患側を持ち上げる。痛みのない範囲で' },
+      { name: '棒体操（外転）', params: '10回', note: '肘伸展で側方へ広げる' },
+      { name: '棒体操（外旋）', params: '10回', note: '肘を体側につけたまま棒を外へ' },
+      { name: '壁登り（前方）', params: '10回', note: '指を1段ずつ上げていく。前回より上を目指す' },
+      { name: '壁登り（側方）', params: '10回', note: '横向き立位で側方へ' },
+      { name: 'プーリー（タオル背中）', params: '10回', note: 'タオルを背中で持ち、健側で患側を引き上げる' },
+      { name: '肩甲骨ストレッチ', params: '30秒×3', note: '猫背→胸張りでストレッチ' },
+    ],
+  },
+  lowback: {
+    name: '腰痛症',
+    icon: '🌿',
+    desc: 'ウィリアムズ体操・体幹安定化',
+    menu: [
+      { name: 'ペルビックチルト', params: '10回', note: '仰臥位で骨盤を後傾。腰部を床に押し付ける感覚' },
+      { name: 'ニーチェスト（片膝）', params: '左右各10回', note: '膝を抱え込んで5秒キープ' },
+      { name: 'ニーチェスト（両膝）', params: '10回×5秒', note: '両膝を抱え込んで5秒キープ' },
+      { name: 'パーシャルシットアップ', params: '10回', note: '腹圧を意識して肩甲骨が床から離れる程度' },
+      { name: 'キャットバック', params: '10回', note: '四つ這いで背中を丸める→反らせる' },
+      { name: 'マッケンジー伸展', params: '10回', note: '腹臥位でゆっくり肘伸展。下肢に放散痛が出たら中止' },
+      { name: 'ブリッジ', params: '10回×3秒', note: '仰臥位で膝立て、お尻を浮かせて3秒キープ' },
+      { name: 'ドローイン', params: '10回×5秒', note: 'お腹を凹ませて腹横筋を意識' },
+      { name: 'ハムストリングストレッチ', params: '左右各30秒', note: '仰臥位で膝を伸ばして足を上げる' },
+    ],
+  },
+};
+
+const DOW_LABEL = ['日','月','火','水','木','金','土'];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let S = null;  // settings (patient profile + menu)
+let L = {};    // daily logs
+
+function loadState() {
+  try { S = JSON.parse(localStorage.getItem('rehab_settings') || 'null'); } catch(e){ S = null; }
+  try { L = JSON.parse(localStorage.getItem('rehab_logs') || '{}'); } catch(e){ L = {}; }
+}
+function saveSettings() { localStorage.setItem('rehab_settings', JSON.stringify(S)); }
+function saveLogs() { localStorage.setItem('rehab_logs', JSON.stringify(L)); }
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function dk(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+function todayKey() { return dk(new Date()); }
+function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); }
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function fmtJ(d) { return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${DOW_LABEL[d.getDay()]}）`; }
+
+function getMenu() { return (S && S.menu) ? S.menu : []; }
+function getLog(key) { return L[key] || { done:{}, vas:null, note:'' }; }
+function dayCount() {
+  if (!S || !S.startDate) return 0;
+  const start = parseDate(S.startDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.max(0, Math.floor((today - start) / 86400000) + 1);
+}
+function isExForDow(ex, dow) {
+  if (!ex.dows || ex.dows.length === 0) return true;
+  return ex.dows.includes(dow);
+}
+function todayExercises(dow) {
+  return getMenu().filter(ex => isExForDow(ex, dow));
+}
+function getCompletion(key, dow) {
+  const log = getLog(key);
+  const exs = todayExercises(dow);
+  const total = exs.length;
+  if (!total) return { done:0, total:0, pct:0 };
+  const done = exs.filter(ex => log.done && log.done[ex.id]).length;
+  return { done, total, pct: Math.round(done/total*100) };
+}
+function calcStreak() {
+  let s = 0; let d = new Date(); d.setHours(0,0,0,0);
+  while (true) {
+    const key = dk(d);
+    const dow = d.getDay();
+    const c = getCompletion(key, dow);
+    if (c.pct === 0 && dk(d) !== todayKey()) break;
+    if (c.pct > 0) s++;
+    d = addDays(d, -1);
+    if (s > 365) break;
+  }
+  return s;
+}
+
+// ══════════════════════════════════════════
+//  HEADER
+// ══════════════════════════════════════════
+function renderHeader() {
+  if (!S) {
+    document.getElementById('hdr-name').textContent = '未設定';
+    document.getElementById('hdr-day').textContent = '';
+    return;
+  }
+  document.getElementById('hdr-name').textContent = S.patientName || '患者さん';
+  const day = dayCount();
+  document.getElementById('hdr-day').textContent = `${day} 日目`;
+}
+
+// ══════════════════════════════════════════
+//  TODAY
+// ══════════════════════════════════════════
+function renderToday() {
+  if (!S || !S.menu || S.menu.length === 0) {
+    document.getElementById('today-content').innerHTML = `
+      <div class="card empty">
+        <div style="font-size:42px;margin-bottom:10px">🌱</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">セットアップが必要です</div>
+        <div>セラピストにメニュー設定を依頼してください。<br>タイトルを3秒長押しでセラピストモード起動。</div>
+      </div>`;
+    return;
+  }
+
+  const now = new Date();
+  const dow = now.getDay();
+  const key = todayKey();
+  const log = getLog(key);
+  const exs = todayExercises(dow);
+  const comp = getCompletion(key, dow);
+
+  let html = '';
+
+  // Greeting banner
+  const hour = now.getHours();
+  const greet = hour < 11 ? 'おはようございます' : hour < 17 ? 'こんにちは' : 'こんばんは';
+  const day = dayCount();
+  html += `<div class="banner">
+    <div class="banner-d">${fmtJ(now)}</div>
+    <div class="banner-msg">${greet} ${S.patientName||''}さん／リハビリ開始から <strong>${day}日目</strong></div>
+  </div>`;
+
+  // 達成率
+  html += `<div class="card">
+    <div class="comp-bar">
+      <div class="comp-pct">${comp.pct}%</div>
+      <div class="comp-d">
+        <div class="comp-lbl">本日の実施 ${comp.done} / ${comp.total} 種目</div>
+        <div class="bar-bg"><div class="bar-fg" style="width:${comp.pct}%"></div></div>
+      </div>
+    </div>
+  </div>`;
+
+  // 種目チェックリスト
+  if (exs.length === 0) {
+    html += `<div class="card empty">本日は休養日です（メニュー未設定）</div>`;
+  } else {
+    html += `<div class="card">
+      <div class="card-ttl">🏃 本日のメニュー</div>`;
+    for (const ex of exs) {
+      const done = !!(log.done && log.done[ex.id]);
+      html += `<div class="exitem ${done?'done':''}" onclick="toggleEx('${ex.id}')">
+        <div class="chk">✓</div>
+        <div class="ex-body">
+          <div class="ex-nm">${escapeHtml(ex.name)}</div>
+          ${ex.params ? `<div class="ex-params">${escapeHtml(ex.params)}</div>` : ''}
+          ${ex.note ? `<div class="ex-note">${escapeHtml(ex.note)}</div>` : ''}
+        </div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // VAS
+  const vas = log.vas !== null && log.vas !== undefined ? log.vas : 0;
+  const vasCls = `s${vas}`;
+  html += `<div class="card">
+    <div class="card-ttl">😣 本日の痛み（0=なし／10=最大）</div>
+    <div class="vas-row">
+      <div class="vas-num ${vasCls}" id="vas-num">${vas}</div>
+      <input class="vas-slider" type="range" min="0" max="10" step="1" value="${vas}" id="vas-slider"
+        oninput="onVasInput(this.value)" onchange="saveVas(this.value)">
+    </div>
+    <div class="vas-scale"><span>0 なし</span><span>5</span><span>10 最大</span></div>
+  </div>`;
+
+  // メモ
+  html += `<div class="card">
+    <div class="card-ttl">📝 メモ</div>
+    <textarea class="note-ta" placeholder="気になったこと・できなかった種目の理由など" id="note-ta" onblur="saveNote(this.value)">${escapeHtml(log.note||'')}</textarea>
+  </div>`;
+
+  document.getElementById('today-content').innerHTML = html;
+}
+
+function toggleEx(exid) {
+  const key = todayKey();
+  const log = getLog(key);
+  if (!log.done) log.done = {};
+  log.done[exid] = !log.done[exid];
+  L[key] = log;
+  saveLogs();
+  renderToday();
+}
+function onVasInput(v) {
+  const el = document.getElementById('vas-num');
+  if (el) { el.textContent = v; el.className = 'vas-num s'+v; }
+}
+function saveVas(v) {
+  const key = todayKey();
+  const log = getLog(key);
+  log.vas = parseInt(v, 10);
+  L[key] = log;
+  saveLogs();
+  toast(`痛み ${v} を記録`);
+}
+function saveNote(v) {
+  const key = todayKey();
+  const log = getLog(key);
+  log.note = v;
+  L[key] = log;
+  saveLogs();
+}
+
+// ══════════════════════════════════════════
+//  CALENDAR
+// ══════════════════════════════════════════
+let calDate = new Date();
+let calSelectedKey = null;
+
+function renderCalendar() {
+  const y = calDate.getFullYear();
+  const m = calDate.getMonth();
+  let html = `<div class="card">
+    <div class="cal-hd">
+      <button class="cal-btn" onclick="calNav(-1)">‹</button>
+      <div class="cal-mo">${y}年${m+1}月</div>
+      <button class="cal-btn" onclick="calNav(1)">›</button>
+    </div>
+    <div class="cal-grid">`;
+  for (let i = 0; i < 7; i++) {
+    const col = i === 0 ? '#d04848' : i === 6 ? '#4a85c2' : 'var(--text2)';
+    html += `<div class="cal-wlbl" style="color:${col}">${DOW_LABEL[i]}</div>`;
+  }
+  const first = new Date(y, m, 1);
+  const last = new Date(y, m+1, 0);
+  for (let i = 0; i < first.getDay(); i++) html += `<div class="cal-day empty"></div>`;
+  const todayK = todayKey();
+  for (let d = 1; d <= last.getDate(); d++) {
+    const date = new Date(y, m, d);
+    const key = dk(date);
+    const dow = date.getDay();
+    const c = getCompletion(key, dow);
+    const log = getLog(key);
+    const isToday = key === todayK;
+    const cls = [];
+    cls.push('cal-day');
+    if (isToday) cls.push('today');
+    if (c.pct === 100 && c.total > 0) cls.push('done');
+    else if (c.pct > 0) cls.push('partial');
+    let dotHtml = '';
+    if (c.total > 0) {
+      if (c.pct === 100) dotHtml = `<div class="cal-dot full"></div>`;
+      else if (c.pct > 0) dotHtml = `<div class="cal-dot part"></div>`;
+    }
+    const vasHtml = log.vas !== null && log.vas !== undefined ? `<div class="cal-vas">${log.vas}</div>` : '';
+    html += `<div class="${cls.join(' ')}" onclick="calSelect('${key}')">${vasHtml}<div>${d}</div>${dotHtml}</div>`;
+  }
+  html += `</div></div>`;
+
+  // 詳細
+  if (calSelectedKey) {
+    const date = parseDate(calSelectedKey);
+    const dow = date.getDay();
+    const log = getLog(calSelectedKey);
+    const exs = todayExercises(dow);
+    const c = getCompletion(calSelectedKey, dow);
+    html += `<div class="card">
+      <div class="card-ttl">📅 ${fmtJ(date)}<span class="badge" style="background:${c.pct===100?'#eef9f3':c.pct>0?'#fff8e8':'#f0f3f6'};color:${c.pct===100?'var(--green)':c.pct>0?'var(--orange)':'var(--text2)'}">${c.pct}% (${c.done}/${c.total})</span></div>`;
+    if (log.vas !== null && log.vas !== undefined) {
+      html += `<div style="margin-bottom:8px;font-size:13px">😣 痛み: <strong style="color:var(--teal);font-size:18px">${log.vas}</strong> / 10</div>`;
+    }
+    if (exs.length) {
+      for (const ex of exs) {
+        const done = !!(log.done && log.done[ex.id]);
+        html += `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;${done?'color:var(--green)':'color:var(--text2)'}">${done?'✓':'○'} ${escapeHtml(ex.name)}</div>`;
+      }
+    }
+    if (log.note) {
+      html += `<div style="margin-top:8px;padding:8px;background:#fafcfd;border-radius:6px;font-size:12px;color:var(--text2);font-style:italic">"${escapeHtml(log.note)}"</div>`;
+    }
+    html += `</div>`;
+  }
+
+  document.getElementById('cal-content').innerHTML = html;
+}
+function calNav(n) { calDate.setMonth(calDate.getMonth()+n); calSelectedKey = null; renderCalendar(); }
+function calSelect(key) { calSelectedKey = calSelectedKey === key ? null : key; renderCalendar(); }
+
+// ══════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════
+function renderProgress() {
+  if (!S) { document.getElementById('prog-content').innerHTML = '<div class="card empty">セットアップが必要です</div>'; return; }
+
+  const streak = calcStreak();
+  // weekly stats
+  let weekDone = 0, weekTotal = 0;
+  for (let i = 6; i >= 0; i--) {
+    const d = addDays(new Date(), -i);
+    const c = getCompletion(dk(d), d.getDay());
+    weekDone += c.done; weekTotal += c.total;
+  }
+  const weekPct = weekTotal ? Math.round(weekDone/weekTotal*100) : 0;
+  const day = dayCount();
+
+  let html = '';
+  html += `<div class="card">
+    <div class="card-ttl">📊 サマリー</div>
+    <div class="statgrid">
+      <div class="statitem"><div class="statval">${streak}</div><div class="statlbl">連続日数</div></div>
+      <div class="statitem"><div class="statval">${weekPct}%</div><div class="statlbl">今週達成率</div></div>
+      <div class="statitem"><div class="statval">${day}</div><div class="statlbl">経過日数</div></div>
+    </div>
+  </div>`;
+
+  // VAS 推移（30日）
+  const vasH = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = addDays(new Date(), -i);
+    const log = getLog(dk(d));
+    if (log.vas !== null && log.vas !== undefined) {
+      vasH.push({ d, val: log.vas });
+    }
+  }
+  html += `<div class="card">
+    <div class="card-ttl">😣 痛み推移（過去30日）</div>`;
+  if (vasH.length === 0) {
+    html += `<div class="empty" style="padding:20px 0">記録がまだありません</div>`;
+  } else {
+    html += renderVasSvg(vasH);
+  }
+  html += `</div>`;
+
+  // 次回診察
+  if (S.nextVisit) {
+    const v = parseDate(S.nextVisit);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diff = Math.round((v - today) / 86400000);
+    const msg = diff > 0 ? `あと ${diff} 日` : diff === 0 ? '今日です' : `${Math.abs(diff)}日経過`;
+    html += `<div class="card">
+      <div class="card-ttl">🏥 次回診察</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:15px;font-weight:700">${fmtJ(v)}</div>
+        <div style="font-size:18px;font-weight:800;color:${diff<=0?'var(--orange)':'var(--teal)'}">${msg}</div>
+      </div>
+    </div>`;
+  }
+
+  // 簡易レポート
+  html += `<div class="card">
+    <div class="card-ttl">📋 診察時に見せる用</div>
+    <button class="btn btn-out" onclick="showReport()">直近30日のレポート表示</button>
+  </div>`;
+
+  document.getElementById('prog-content').innerHTML = html;
+}
+
+function renderVasSvg(vasH) {
+  const W = 320, H = 140, padL = 24, padR = 8, padT = 10, padB = 22;
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const n = vasH.length;
+  const xFor = i => padL + (n > 1 ? i/(n-1)*cw : cw/2);
+  const yFor = v => padT + (10 - v)/10 * ch;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" class="vchart">`;
+  // grid
+  for (let v = 0; v <= 10; v += 2) {
+    const y = yFor(v);
+    svg += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#e8eef3" stroke-width="0.5"/>`;
+    svg += `<text x="${padL-4}" y="${y+3}" text-anchor="end" font-size="8" fill="#888">${v}</text>`;
+  }
+  // points
+  const pts = vasH.map((p, i) => ({ x: xFor(i), y: yFor(p.val), val: p.val, d: p.d }));
+  // area
+  const area = `M${pts[0].x},${padT+ch} ${pts.map(p=>`L${p.x},${p.y}`).join(' ')} L${pts[n-1].x},${padT+ch} Z`;
+  svg += `<path d="${area}" fill="#2e7d8a" opacity="0.1"/>`;
+  // line
+  svg += `<path d="${pts.map((p,i)=>(i===0?'M':'L')+p.x+','+p.y).join(' ')}" fill="none" stroke="#2e7d8a" stroke-width="2"/>`;
+  // dots
+  const every = n <= 14 ? 1 : Math.ceil(n/12);
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    svg += `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#2e7d8a" stroke="#fff" stroke-width="1.5"/>`;
+    if (i % every === 0 || i === n-1) {
+      svg += `<text x="${p.x}" y="${H-6}" text-anchor="middle" font-size="8" fill="#888">${p.d.getMonth()+1}/${p.d.getDate()}</text>`;
+    }
+  }
+  svg += `</svg>`;
+  return svg;
+}
+
+function showReport() {
+  const lines = [];
+  lines.push(`■ ${S.patientName||'患者'} さん リハビリ実施レポート`);
+  lines.push(`診断名：${S.diagnosis||''}`);
+  lines.push(`開始日：${S.startDate||''} （${dayCount()}日目）`);
+  lines.push(`担当：${S.therapistName||''}`);
+  lines.push('');
+  lines.push('【過去30日】');
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = addDays(new Date(), -i);
+    const key = dk(d);
+    const dow = d.getDay();
+    const c = getCompletion(key, dow);
+    const log = getLog(key);
+    if (c.total === 0 && (log.vas === null || log.vas === undefined) && !log.note) continue;
+    let line = `${d.getMonth()+1}/${d.getDate()}(${DOW_LABEL[dow]}) ${c.done}/${c.total} (${c.pct}%)`;
+    if (log.vas !== null && log.vas !== undefined) line += ` VAS:${log.vas}`;
+    if (log.note) line += ` ※${log.note.substring(0,30)}${log.note.length>30?'...':''}`;
+    days.push(line);
+  }
+  lines.push(...days);
+  const txt = lines.join('\n');
+  const w = window.open('', '_blank', 'width=400,height=600');
+  if (!w) { alert(txt); return; }
+  w.document.write(`<pre style="font-family:monospace;padding:14px;line-height:1.6">${escapeHtml(txt)}</pre>`);
+}
+
+// ══════════════════════════════════════════
+//  TAB SWITCHER
+// ══════════════════════════════════════════
+function switchTab(t) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('on'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('nbtn-'+t).classList.add('on');
+  if (t === 'today') renderToday();
+  if (t === 'cal') { calDate = new Date(); calSelectedKey = null; renderCalendar(); }
+  if (t === 'prog') renderProgress();
+}
+
+// ══════════════════════════════════════════
+//  THERAPIST MODE
+// ══════════════════════════════════════════
+let pressTimer = null;
+function bindTitleLongPress() {
+  const t = document.getElementById('hdr-title');
+  const start = () => {
+    pressTimer = setTimeout(openPinModal, 3000);
+  };
+  const cancel = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+  t.addEventListener('touchstart', start, { passive:true });
+  t.addEventListener('touchend', cancel);
+  t.addEventListener('touchmove', cancel);
+  t.addEventListener('mousedown', start);
+  t.addEventListener('mouseup', cancel);
+  t.addEventListener('mouseleave', cancel);
+}
+
+function openPinModal() {
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pinModal').classList.add('on');
+  setTimeout(() => document.getElementById('pin-input').focus(), 100);
+}
+function closePinModal() { document.getElementById('pinModal').classList.remove('on'); }
+function checkPin() {
+  const pin = document.getElementById('pin-input').value;
+  const expected = (S && S.passcode) ? S.passcode : '';
+  if (pin === expected) {
+    closePinModal();
+    openTherapist();
+  } else {
+    toast('PINが違います');
+  }
+}
+
+function openTherapist() {
+  if (!S) {
+    S = {
+      patientName: '', age: '', diagnosis: '', startDate: todayKey(),
+      nextVisit: '', therapistName: '', passcode: '',
+      template: null, menu: [],
+    };
+    saveSettings();
+  }
+  renderTherapist();
+  document.getElementById('therapistModal').classList.add('on');
+}
+function closeTherapist() {
+  document.getElementById('therapistModal').classList.remove('on');
+  renderHeader();
+  renderToday();
+}
+
+let __editingExIdx = null;
+function renderTherapist() {
+  let html = '';
+
+  // 患者情報
+  html += `<div class="t-sec">
+    <div class="t-sec-ttl">👤 患者情報</div>
+    <div class="fld-row">
+      <div class="fld">
+        <label class="fld-lbl">氏名</label>
+        <input class="fld-inp" type="text" value="${escapeAttr(S.patientName||'')}" onchange="updS('patientName',this.value)">
+      </div>
+      <div class="fld" style="flex:0 0 90px">
+        <label class="fld-lbl">年齢</label>
+        <input class="fld-inp" type="text" inputmode="numeric" value="${escapeAttr(S.age||'')}" onchange="updS('age',this.value)">
+      </div>
+    </div>
+    <div class="fld">
+      <label class="fld-lbl">診断名</label>
+      <input class="fld-inp" type="text" value="${escapeAttr(S.diagnosis||'')}" onchange="updS('diagnosis',this.value)">
+    </div>
+    <div class="fld-row">
+      <div class="fld">
+        <label class="fld-lbl">開始日</label>
+        <input class="fld-inp" type="date" value="${S.startDate||''}" onchange="updS('startDate',this.value)">
+      </div>
+      <div class="fld">
+        <label class="fld-lbl">次回診察日</label>
+        <input class="fld-inp" type="date" value="${S.nextVisit||''}" onchange="updS('nextVisit',this.value)">
+      </div>
+    </div>
+    <div class="fld">
+      <label class="fld-lbl">担当セラピスト</label>
+      <input class="fld-inp" type="text" value="${escapeAttr(S.therapistName||'')}" onchange="updS('therapistName',this.value)">
+    </div>
+  </div>`;
+
+  // 疾患テンプレート
+  html += `<div class="t-sec">
+    <div class="t-sec-ttl">📚 疾患テンプレートから読み込み</div>
+    <div class="tpl-grid">`;
+  for (const [key, tpl] of Object.entries(TEMPLATES)) {
+    const sel = S.template === key ? 'sel' : '';
+    html += `<div class="tpl-card ${sel}" onclick="applyTemplate('${key}')">
+      <div class="tpl-ico">${tpl.icon}</div>
+      <div class="tpl-nm">${tpl.name}</div>
+      <div class="tpl-desc">${tpl.desc}</div>
+    </div>`;
+  }
+  html += `</div>
+  <div class="hint">テンプレ選択で全メニューが置き換わります（既存ログは保持）</div>
+  </div>`;
+
+  // メニュー編集
+  html += `<div class="t-sec">
+    <div class="t-sec-ttl">📋 メニュー（${(S.menu||[]).length}種目）</div>`;
+  const menu = S.menu || [];
+  if (menu.length === 0) {
+    html += `<div class="empty" style="padding:14px">メニュー未設定。テンプレを選ぶか「＋種目追加」</div>`;
+  } else {
+    for (let i = 0; i < menu.length; i++) {
+      const ex = menu[i];
+      const dows = ex.dows && ex.dows.length ? ex.dows.map(d => DOW_LABEL[d]).join('') : '毎日';
+      html += `<div class="menu-item">
+        <div class="menu-item-hd">
+          <div class="menu-item-nm">${escapeHtml(ex.name)}</div>
+          <button class="menu-item-btn" onclick="editEx(${i})">✏</button>
+          <button class="menu-item-btn" onclick="delEx(${i})">×</button>
+        </div>
+        <div class="menu-item-pm">${escapeHtml(ex.params||'')}　／　${dows}</div>
+        ${ex.note ? `<div class="menu-item-note">${escapeHtml(ex.note)}</div>` : ''}
+      </div>`;
+    }
+  }
+  html += `<button class="btn btn-out" style="margin-top:8px" onclick="editEx(-1)">＋ 種目を追加</button>
+  </div>`;
+
+  // セキュリティ
+  html += `<div class="t-sec">
+    <div class="t-sec-ttl">🔐 セキュリティ</div>
+    <div class="fld">
+      <label class="fld-lbl">PINパスコード（4〜6桁・空欄でPIN無効）</label>
+      <input class="fld-inp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" value="${escapeAttr(S.passcode||'')}" onchange="updS('passcode',this.value)">
+    </div>
+  </div>`;
+
+  // データ管理
+  html += `<div class="t-sec">
+    <div class="t-sec-ttl">💾 データ管理</div>
+    <button class="btn btn-out" onclick="exportData()">📤 バックアップ（JSON出力）</button>
+    <button class="btn btn-out" onclick="document.getElementById('restore-file').click()">📥 復元（JSON読込）</button>
+    <input type="file" id="restore-file" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-danger" style="margin-top:14px" onclick="resetAll()">🗑 全データを初期化</button>
+  </div>`;
+
+  document.getElementById('therapist-content').innerHTML = html;
+}
+
+function updS(field, val) {
+  S[field] = val;
+  saveSettings();
+  if (field === 'patientName' || field === 'startDate') renderHeader();
+}
+function applyTemplate(key) {
+  const tpl = TEMPLATES[key];
+  if (!tpl) return;
+  if (!confirm(`「${tpl.name}」のメニューに置き換えます。よろしいですか？\n（既存のメニュー設定は失われますが、日々の実施記録は残ります）`)) return;
+  S.template = key;
+  S.menu = tpl.menu.map((m, i) => ({
+    id: `ex_${Date.now()}_${i}`,
+    name: m.name,
+    params: m.params,
+    note: m.note || '',
+    dows: [],  // empty = every day
+  }));
+  if (!S.diagnosis) S.diagnosis = tpl.name;
+  saveSettings();
+  renderTherapist();
+  toast('メニューを読み込みました');
+}
+
+function editEx(idx) {
+  __editingExIdx = idx;
+  const ex = idx >= 0 ? S.menu[idx] : { name:'', params:'', note:'', dows:[] };
+  const isNew = idx < 0;
+  const dows = ex.dows || [];
+  let html = `<div class="t-overlay on" id="exEditModal" onclick="if(event.target===this)closeExEdit()">
+    <div class="t-modal" style="max-width:440px">
+      <div class="t-hd">
+        <h2>${isNew?'＋ 種目追加':'✏ 種目編集'}</h2>
+        <button class="t-close" onclick="closeExEdit()">×</button>
+      </div>
+      <div class="fld">
+        <label class="fld-lbl">種目名 *</label>
+        <input class="fld-inp" id="ee-name" type="text" value="${escapeAttr(ex.name)}" placeholder="例: 棒体操（屈曲）">
+      </div>
+      <div class="fld">
+        <label class="fld-lbl">回数・セット</label>
+        <input class="fld-inp" id="ee-params" type="text" value="${escapeAttr(ex.params||'')}" placeholder="例: 10回×3セット">
+      </div>
+      <div class="fld">
+        <label class="fld-lbl">注意・補足</label>
+        <textarea class="fld-inp" id="ee-note" rows="3" placeholder="例: 痛みのない範囲で">${escapeHtml(ex.note||'')}</textarea>
+      </div>
+      <div class="fld">
+        <label class="fld-lbl">実施曜日（無選択＝毎日）</label>
+        <div style="display:flex;gap:4px">`;
+  for (let i = 0; i < 7; i++) {
+    const on = dows.includes(i);
+    const col = i === 0 ? '#d04848' : i === 6 ? '#4a85c2' : 'var(--text)';
+    html += `<button type="button" id="dow-${i}" data-dow="${i}" data-on="${on}"
+      onclick="toggleDow(${i})"
+      style="flex:1;padding:8px 0;border:1.5px solid ${on?'var(--teal)':'var(--border)'};background:${on?'var(--teal-l)':'#fff'};color:${col};border-radius:6px;font-weight:700;cursor:pointer">${DOW_LABEL[i]}</button>`;
+  }
+  html += `</div></div>
+      <button class="btn btn-pri" onclick="saveEx()">保存</button>
+    </div></div>`;
+  // append
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstChild);
+}
+function toggleDow(i) {
+  const btn = document.getElementById('dow-'+i);
+  const cur = btn.dataset.on === 'true';
+  btn.dataset.on = (!cur).toString();
+  const on = !cur;
+  const col = i === 0 ? '#d04848' : i === 6 ? '#4a85c2' : 'var(--text)';
+  btn.style.borderColor = on ? 'var(--teal)' : 'var(--border)';
+  btn.style.background = on ? 'var(--teal-l)' : '#fff';
+}
+function closeExEdit() {
+  const m = document.getElementById('exEditModal');
+  if (m) m.remove();
+}
+function saveEx() {
+  const name = document.getElementById('ee-name').value.trim();
+  if (!name) { toast('種目名を入力'); return; }
+  const params = document.getElementById('ee-params').value.trim();
+  const note = document.getElementById('ee-note').value.trim();
+  const dows = [];
+  for (let i = 0; i < 7; i++) {
+    const b = document.getElementById('dow-'+i);
+    if (b && b.dataset.on === 'true') dows.push(i);
+  }
+  if (!S.menu) S.menu = [];
+  if (__editingExIdx >= 0) {
+    S.menu[__editingExIdx] = { ...S.menu[__editingExIdx], name, params, note, dows };
+  } else {
+    S.menu.push({ id:`ex_${Date.now()}`, name, params, note, dows });
+  }
+  saveSettings();
+  closeExEdit();
+  renderTherapist();
+  toast('保存しました');
+}
+function delEx(idx) {
+  if (!confirm('この種目を削除しますか？')) return;
+  S.menu.splice(idx, 1);
+  saveSettings();
+  renderTherapist();
+}
+
+function exportData() {
+  const data = JSON.stringify({ settings: S, logs: L, exportedAt: new Date().toISOString() }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rehab_${(S.patientName||'patient').replace(/[^\w]/g,'')}_${todayKey()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(e) {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.settings || !data.logs) { alert('形式エラー: settings と logs が必要'); return; }
+      const logCount = Object.keys(data.logs).length;
+      if (!confirm(`復元: ${data.settings.patientName||''}さん／ログ${logCount}日分／現在のデータは上書きされます。よろしいですか？`)) return;
+      S = data.settings;
+      L = data.logs;
+      saveSettings(); saveLogs();
+      renderTherapist(); renderHeader();
+      toast('復元しました');
+    } catch(err) { alert('JSONエラー: '+err.message); }
+  };
+  r.readAsText(f);
+}
+function resetAll() {
+  if (!confirm('全データを初期化します。患者情報・メニュー・実施ログがすべて削除されます。本当によろしいですか？')) return;
+  if (!confirm('もう一度確認します。本当に削除しますか？（戻せません）')) return;
+  localStorage.removeItem('rehab_settings');
+  localStorage.removeItem('rehab_logs');
+  S = null; L = {};
+  closeTherapist();
+  document.getElementById('setupOverlay').hidden = false;
+  renderHeader();
+  renderToday();
+}
+
+// ══════════════════════════════════════════
+//  UTIL
+// ══════════════════════════════════════════
+function escapeHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function escapeAttr(s) { return escapeHtml(s).replace(/`/g,'&#96;'); }
+
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('on'), 1800);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+function init() {
+  loadState();
+  if (!S || !S.patientName) {
+    document.getElementById('setupOverlay').hidden = false;
+  }
+  bindTitleLongPress();
+  renderHeader();
+  renderToday();
+}
+document.addEventListener('DOMContentLoaded', init);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+
+</body>
+</html>
