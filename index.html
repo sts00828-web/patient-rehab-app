@@ -1164,6 +1164,9 @@ function handleImportFromHash() {
     S = data;
     saveSettings();
     clearHash();
+    // 念のためオーバーレイを明示的に閉じる
+    const ov = document.getElementById('setupOverlay');
+    if (ov) ov.hidden = true;
     toast('メニューを読み込みました');
     return true;
   } catch (e) {

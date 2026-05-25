@@ -1,4 +1,4 @@
-const CACHE = 'rehab-v1';
+const CACHE = 'rehab-v2';
 const FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e =>
