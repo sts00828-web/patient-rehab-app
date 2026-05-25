@@ -1,4 +1,7 @@
-const CACHE = 'rehab-v2';
+const CACHE = 'rehab-v3';
+
+// 新しいSWをすぐにアクティブ化
+self.addEventListener('message', e => { if (e.data === 'skipWaiting') self.skipWaiting(); });
 const FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e =>

@@ -275,11 +275,17 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
 <div class="setup-overlay" id="setupOverlay" hidden>
   <div class="setup-card">
     <h2>🌱 リハビリトラッカー</h2>
-    <p>このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
-      担当セラピストに設定を依頼してください。<br>
-      ヘッダー（緑色の上部）を <strong>2秒長押し</strong>（指は動かさない）でセラピストモードを起動できます。<br>
-      <span style="font-size:11px;color:#999">うまく押せない場合は URL末尾に <code>#staff</code> を付けてアクセス</span></p>
-    <button class="btn btn-pri" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
+    <p style="text-align:left">このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
+      <strong>セラピストから受け取ったURL</strong>を下に貼り付けて「読み込む」を押してください。
+    </p>
+    <textarea id="paste-url" placeholder="https://patient-rehab-app.vercel.app/?d=..." style="width:100%;min-height:64px;padding:8px;border:1.5px solid #dbe4ec;border-radius:6px;font-size:11px;font-family:monospace;margin-bottom:8px"></textarea>
+    <button class="btn btn-pri" onclick="manualImport()">📥 URLから読み込む</button>
+    <div style="height:14px"></div>
+    <p style="font-size:11px;color:#888;text-align:left">
+      ※ セラピスト操作用：ヘッダー（緑色の上部）を <strong>2秒長押し</strong>（指は動かさない）でセラピストモード起動<br>
+      ※ うまく押せない場合は URL末尾に <code>#staff</code> を付けてアクセス
+    </p>
+    <button class="btn btn-out" style="margin-top:6px" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
   </div>
 </div>
 
@@ -1076,7 +1082,8 @@ function buildShareUrl() {
   const payload = buildSharePayload();
   const json = JSON.stringify(payload);
   const compressed = LZString.compressToEncodedURIComponent(json);
-  return `${location.origin}${location.pathname}#import=${compressed}`;
+  // クエリパラメータ ?d= を使う（iOS Camera等で hash が取りこぼされる事象を回避）
+  return `${location.origin}${location.pathname}?d=${compressed}`;
 }
 
 function showShareQR() {
@@ -1122,6 +1129,33 @@ function showShareQR() {
   }
 }
 function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remove(); }
+
+// セットアップ画面の「URLから読み込む」
+function manualImport() {
+  const txt = (document.getElementById('paste-url').value || '').trim();
+  if (!txt) { alert('URLを貼り付けてください'); return; }
+  // URLから ?d= または #import= を抽出して location 風に処理
+  let compressed = null;
+  try {
+    const u = new URL(txt);
+    const p = u.searchParams.get('d');
+    if (p) compressed = p;
+    else if (u.hash.startsWith('#import=')) compressed = u.hash.substring('#import='.length);
+  } catch (e) {
+    // URL形式じゃなくても、データ部分だけ貼られた可能性
+    if (txt.includes('d=')) compressed = txt.split('d=')[1].split('&')[0];
+    else if (txt.includes('import=')) compressed = txt.split('import=')[1].split('&')[0];
+    else compressed = txt; // 純粋にdata部分のみ
+  }
+  if (!compressed) { alert('URL内に取込みデータが見つかりません'); return; }
+  // location.search に一時設定して handleImportFromHash を呼ぶ
+  history.replaceState(null, '', location.pathname + '?d=' + compressed);
+  if (handleImportFromHash()) {
+    document.getElementById('setupOverlay').hidden = true;
+    renderHeader();
+    renderToday();
+  }
+}
 function copyShareUrl() {
   const url = document.getElementById('qrUrl').textContent;
   navigator.clipboard.writeText(url).then(() => toast('URLをコピーしました')).catch(() => {
@@ -1131,13 +1165,21 @@ function copyShareUrl() {
   });
 }
 
-// URL hash からの自動取込み
+// URL (クエリ ?d= または hash #import=) からの自動取込み
 function handleImportFromHash() {
-  const hash = location.hash || '';
-  if (!hash.startsWith('#import=')) return false;
-  const compressed = hash.substring('#import='.length);
-  // hashを先にクリア（再読込時の再プロンプト防止 + URLバーをきれいに）
-  const clearHash = () => history.replaceState(null, '', location.pathname + location.search);
+  // 1) クエリパラメータ ?d= を優先（iOSで確実に取得できる）
+  let compressed = null;
+  const params = new URLSearchParams(location.search);
+  if (params.has('d')) {
+    compressed = params.get('d');
+  } else {
+    // 2) ハッシュ #import= (後方互換)
+    const hash = location.hash || '';
+    if (hash.startsWith('#import=')) compressed = hash.substring('#import='.length);
+  }
+  if (!compressed) return false;
+  // クエリ・ハッシュをクリア
+  const clearHash = () => history.replaceState(null, '', location.pathname);
   try {
     if (typeof LZString === 'undefined') {
       alert('読み込みライブラリ未読み込み。オンライン環境で再度お試しください。');
