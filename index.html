@@ -8,6 +8,8 @@
 <meta name="theme-color" content="#2e7d8a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <style>
 :root{
   --teal:#2e7d8a; --teal-d:#1f5963; --teal-l:#e8f4f6;
@@ -228,6 +230,11 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
 .setup-card p{color:var(--text2);font-size:13px;margin-bottom:16px;line-height:1.6}
 
 .hide,[hidden]{display:none!important}
+
+/* QR共有 */
+#qrBox{background:#fff;padding:14px;border-radius:10px;display:inline-block;margin:8px 0 6px;border:1px solid var(--border)}
+#qrBox svg{display:block;width:240px;height:240px;max-width:100%}
+.qr-url{font-size:10px;background:#f0f3f6;padding:8px 10px;border-radius:6px;word-break:break-all;font-family:monospace;color:var(--text2);margin-top:6px;text-align:left;max-height:80px;overflow-y:auto}
 </style>
 </head>
 <body>
@@ -920,9 +927,16 @@ function renderTherapist() {
     </div>
   </div>`;
 
+  // 患者へ送る
+  html += `<div class="t-sec">
+    <div class="t-sec-ttl">📱 患者スマホへ転送</div>
+    <div class="hint" style="margin-bottom:8px">PT端末で設定したメニューを患者のスマホへQRコードで渡せます</div>
+    <button class="btn btn-pri" onclick="showShareQR()">📷 QRコードを表示</button>
+  </div>`;
+
   // データ管理
   html += `<div class="t-sec">
-    <div class="t-sec-ttl">💾 データ管理</div>
+    <div class="t-sec-ttl">💾 データ管理（バックアップ）</div>
     <button class="btn btn-out" onclick="exportData()">📤 バックアップ（JSON出力）</button>
     <button class="btn btn-out" onclick="document.getElementById('restore-file').click()">📥 復元（JSON読込）</button>
     <input type="file" id="restore-file" accept=".json" style="display:none" onchange="importData(event)">
@@ -1037,6 +1051,121 @@ function delEx(idx) {
   renderTherapist();
 }
 
+// ─── 患者スマホへの転送（QR / URL） ──────────────
+function buildSharePayload() {
+  return {
+    patientName: S.patientName || '',
+    age: S.age || '',
+    diagnosis: S.diagnosis || '',
+    startDate: S.startDate || todayKey(),
+    nextVisit: S.nextVisit || '',
+    therapistName: S.therapistName || '',
+    passcode: S.passcode || '',
+    template: S.template || null,
+    menu: (S.menu || []).map(m => ({
+      id: m.id, name: m.name, params: m.params||'', note: m.note||'', dows: m.dows||[]
+    })),
+  };
+}
+
+function buildShareUrl() {
+  if (typeof LZString === 'undefined') {
+    alert('共有ライブラリ未読み込み。オンライン環境で再度お試しください。');
+    return null;
+  }
+  const payload = buildSharePayload();
+  const json = JSON.stringify(payload);
+  const compressed = LZString.compressToEncodedURIComponent(json);
+  return `${location.origin}${location.pathname}#import=${compressed}`;
+}
+
+function showShareQR() {
+  const url = buildShareUrl();
+  if (!url) return;
+  const html = `<div class="t-overlay on" id="qrModal" onclick="if(event.target===this)closeQR()">
+    <div class="t-modal" style="max-width:420px;text-align:center">
+      <div class="t-hd">
+        <h2>📱 患者スマホへ転送</h2>
+        <button class="t-close" onclick="closeQR()">×</button>
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
+        患者さんに <strong>スマホのカメラ</strong>（または QR読み取りアプリ）でこのコードを読み取ってもらってください。<br>
+        アプリが開き、メニューが自動で登録されます。
+      </p>
+      <div id="qrBox"></div>
+      <div class="qr-url" id="qrUrl">${escapeHtml(url)}</div>
+      <button class="btn btn-out" style="margin-top:10px" onclick="copyShareUrl()">📋 URLをコピー（LINEで送る等）</button>
+      <div class="hint" style="margin-top:8px">※ 既存データがある場合は患者側で確認ダイアログが出ます<br>※ メニューが多すぎてQRが読み取れない場合はURLコピーをご利用ください</div>
+    </div>
+  </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstChild);
+
+  // QR生成
+  try {
+    if (typeof qrcode === 'undefined') throw new Error('qrcode未読込');
+    const qr = qrcode(0, 'M'); // type auto, error correction M
+    qr.addData(url);
+    qr.make();
+    document.getElementById('qrBox').innerHTML = qr.createSvgTag({ scalable:true, margin:2 });
+  } catch (e) {
+    document.getElementById('qrBox').innerHTML =
+      `<div style="color:var(--orange);font-size:12px;padding:20px">QR生成失敗：${e.message}<br>URLコピーをお使いください</div>`;
+  }
+}
+function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remove(); }
+function copyShareUrl() {
+  const url = document.getElementById('qrUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => toast('URLをコピーしました')).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove(); toast('URLをコピーしました');
+  });
+}
+
+// URL hash からの自動取込み
+function handleImportFromHash() {
+  const hash = location.hash || '';
+  if (!hash.startsWith('#import=')) return false;
+  const compressed = hash.substring('#import='.length);
+  // hashを先にクリア（再読込時の再プロンプト防止 + URLバーをきれいに）
+  const clearHash = () => history.replaceState(null, '', location.pathname + location.search);
+  try {
+    if (typeof LZString === 'undefined') {
+      alert('読み込みライブラリ未読み込み。オンライン環境で再度お試しください。');
+      clearHash(); return false;
+    }
+    const json = LZString.decompressFromEncodedURIComponent(compressed);
+    if (!json) { alert('リンクが不正です。'); clearHash(); return false; }
+    const data = JSON.parse(json);
+    if (!data || !Array.isArray(data.menu)) {
+      alert('データ形式エラー'); clearHash(); return false;
+    }
+    const existing = (S && S.patientName) ? `\n\n⚠️ 現在の設定（${S.patientName}さん／${(S.menu||[]).length}種目）は上書きされます。` : '';
+    const ok = confirm(
+      `セラピストから設定が届きました。\n\n` +
+      `患者: ${data.patientName||'(未設定)'}\n` +
+      `診断: ${data.diagnosis||'(未設定)'}\n` +
+      `メニュー: ${data.menu.length}種目\n` +
+      `開始日: ${data.startDate||''}` +
+      existing +
+      `\n\n読み込みますか？`
+    );
+    if (!ok) { clearHash(); return false; }
+    // 実施ログ（L）は維持。設定（S）だけ置換
+    S = data;
+    saveSettings();
+    clearHash();
+    toast('メニューを読み込みました');
+    return true;
+  } catch (e) {
+    alert('読み込みエラー: ' + e.message);
+    clearHash();
+    return false;
+  }
+}
+
 function exportData() {
   const data = JSON.stringify({ settings: S, logs: L, exportedAt: new Date().toISOString() }, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
@@ -1101,6 +1230,8 @@ function toast(msg) {
 // ══════════════════════════════════════════
 function init() {
   loadState();
+  // URLハッシュからのインポート（PT端末からのQR読み取り）
+  handleImportFromHash();
   if (!S || !S.patientName) {
     document.getElementById('setupOverlay').hidden = false;
   }
