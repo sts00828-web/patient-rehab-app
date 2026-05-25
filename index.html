@@ -978,7 +978,8 @@ function applyTemplate(key) {
     note: m.note || '',
     dows: [],  // empty = every day
   }));
-  if (!S.diagnosis) S.diagnosis = tpl.name;
+  // 診断名はテンプレ名に更新（手動で変えたい場合は後から編集可）
+  S.diagnosis = tpl.name;
   saveSettings();
   renderTherapist();
   toast('メニューを読み込みました');
