@@ -1104,13 +1104,17 @@ function showShareQR() {
         <button class="t-close" onclick="closeQR()">×</button>
       </div>
       <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
-        患者さんに <strong>スマホのカメラ</strong>（または QR読み取りアプリ）でこのコードを読み取ってもらってください。<br>
-        アプリが開き、メニューが自動で登録されます。
+        患者さんに <strong>スマホのカメラ</strong>でこのQRコードを読み取ってもらうか、下記URLをLINE等で送信してください。
       </p>
       <div id="qrBox"></div>
-      <div class="qr-url" id="qrUrl">${escapeHtml(url)}</div>
-      <button class="btn btn-out" style="margin-top:10px" onclick="copyShareUrl()">📋 URLをコピー（LINEで送る等）</button>
-      <div class="hint" style="margin-top:8px">※ 既存データがある場合は患者側で確認ダイアログが出ます<br>※ メニューが多すぎてQRが読み取れない場合はURLコピーをご利用ください<br>※ LINEで送る場合: 通常メッセージとして送信してください（改行・スペースを入れないこと）</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:10px;text-align:left;font-weight:700">📎 URL（タップで全選択→長押しでコピー）</div>
+      <textarea id="qrUrl" readonly onclick="this.select()" style="width:100%;min-height:60px;font-size:10px;font-family:monospace;padding:8px;border:1.5px solid var(--border);border-radius:6px;margin-top:4px;background:#fafcfd;color:var(--text);word-break:break-all;resize:none">${escapeHtml(url)}</textarea>
+      <button class="btn btn-pri" style="margin-top:8px" onclick="copyShareUrl()">📋 URLをコピー</button>
+      <div class="hint" style="margin-top:8px;text-align:left">
+        ※ 既存データがある場合は患者側で確認ダイアログが出ます<br>
+        ※ <strong>LINEで送る場合は通常メッセージとして1行で送信</strong>（改行・スペースを入れない）<br>
+        ※ 患者側でうまく開けない場合は、URLを長押しコピーしてアプリを直接開き、「📥 URLから読み込む」欄に貼り付け
+      </div>
     </div>
   </div>`;
   const wrap = document.createElement('div');
@@ -1150,11 +1154,14 @@ function manualImport() {
   }
 }
 function copyShareUrl() {
-  const url = document.getElementById('qrUrl').textContent;
+  const el = document.getElementById('qrUrl');
+  // textarea なので value、もし textContent しか無くてもどちらかが取れる
+  const url = (el.value !== undefined ? el.value : el.textContent) || '';
   navigator.clipboard.writeText(url).then(() => toast('URLをコピーしました')).catch(() => {
     // fallback
-    const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy'); ta.remove(); toast('URLをコピーしました');
+    el.select && el.select();
+    try { document.execCommand('copy'); toast('URLをコピーしました'); }
+    catch(e) { toast('コピー失敗 - 長押しで手動コピーしてください'); }
   });
 }
 
