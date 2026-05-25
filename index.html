@@ -278,7 +278,11 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
 <div class="setup-overlay" id="setupOverlay" hidden>
   <div class="setup-card">
     <h2>🌱 リハビリトラッカー</h2>
-    <p style="text-align:left">このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
+    <div id="setup-intro-standalone" style="display:none;background:#e8f4f6;border-left:4px solid #2e7d8a;padding:10px;border-radius:6px;margin-bottom:12px;text-align:left;font-size:13px;color:#1f5963">
+      <strong>📲 ホーム画面のアプリです</strong><br>
+      セラピストから受け取ったQRをカメラで読み直すか、URLを下の欄に貼り付けてください。
+    </div>
+    <p id="setup-intro-browser" style="text-align:left">このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
       <strong>セラピストから受け取ったURL</strong>を下に貼り付けて「読み込む」を押してください。
     </p>
     <textarea id="paste-url" placeholder="https://patient-rehab-app.vercel.app/?d=..." style="width:100%;min-height:64px;padding:8px;border:1.5px solid #dbe4ec;border-radius:6px;font-size:11px;font-family:monospace;margin-bottom:8px"></textarea>
@@ -1372,7 +1376,13 @@ function init() {
   handleImportFromHash();
   // メニュー未設定なら初回説明オーバーレイを表示
   if (!S || !S.menu || S.menu.length === 0) {
-    document.getElementById('setupOverlay').hidden = false;
+    const ov = document.getElementById('setupOverlay');
+    ov.hidden = false;
+    // PWA（standalone）として開いているかで案内文を切り替え
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                       || window.navigator.standalone === true;
+    document.getElementById('setup-intro-standalone').style.display = isStandalone ? 'block' : 'none';
+    document.getElementById('setup-intro-browser').style.display    = isStandalone ? 'none'  : 'block';
   }
   bindTitleLongPress();
   renderHeader();
