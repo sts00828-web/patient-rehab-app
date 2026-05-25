@@ -13,6 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
 :root{
   --teal:#2e7d8a; --teal-d:#1f5963; --teal-l:#e8f4f6;
@@ -285,8 +286,10 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
     <p id="setup-intro-browser" style="text-align:left">このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
       <strong>セラピストから受け取ったURL</strong>を下に貼り付けて「読み込む」を押してください。
     </p>
-    <textarea id="paste-url" placeholder="https://patient-rehab-app.vercel.app/?d=..." style="width:100%;min-height:64px;padding:8px;border:1.5px solid #dbe4ec;border-radius:6px;font-size:11px;font-family:monospace;margin-bottom:8px"></textarea>
-    <button class="btn btn-pri" onclick="manualImport()">📥 URLから読み込む</button>
+    <button class="btn btn-pri" onclick="startQrScan()" style="margin-bottom:10px">📷 カメラでQRを読み取る</button>
+    <div style="text-align:center;color:var(--text2);font-size:11px;margin:4px 0">または</div>
+    <textarea id="paste-url" placeholder="https://patient-rehab-app.vercel.app/?d=..." style="width:100%;min-height:54px;padding:8px;border:1.5px solid #dbe4ec;border-radius:6px;font-size:11px;font-family:monospace;margin-bottom:8px"></textarea>
+    <button class="btn btn-out" onclick="manualImport()">📥 URLから読み込む</button>
     <div style="height:14px"></div>
     <p style="font-size:11px;color:#888;text-align:left">
       ※ セラピスト操作用：ヘッダー（緑色の上部）を <strong>2秒長押し</strong>（指は動かさない）でセラピストモード起動<br>
@@ -1243,8 +1246,9 @@ function copySafariUrl() {
 }
 
 // セットアップ画面の「URLから読み込む」
-function manualImport() {
-  const txt = (document.getElementById('paste-url').value || '').trim();
+// urlOverride 指定時はそのURLを使用（カメラスキャン結果用）
+function manualImport(urlOverride) {
+  const txt = (urlOverride || document.getElementById('paste-url').value || '').trim();
   if (!txt) { alert('URLを貼り付けてください'); return; }
   // URLから #d= / #import= / ?d= / ?import= を生抽出
   let compressed = null;
@@ -1263,6 +1267,63 @@ function manualImport() {
     renderHeader();
     renderToday();
   }
+}
+
+// ─── PWA内カメラQR読み取り ─────────────────────────────────
+let __qrScanner = null;
+function startQrScan() {
+  if (typeof Html5Qrcode === 'undefined') {
+    alert('QR読み取りライブラリ未読込。オンラインで再度お試しください。');
+    return;
+  }
+  const html = `<div class="t-overlay on" id="qrScanModal">
+    <div class="t-modal" style="max-width:380px">
+      <div class="t-hd">
+        <h2>📷 QRコードを読み取り</h2>
+        <button class="t-close" onclick="stopQrScan()">×</button>
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+        セラピストの「設定データQR」をカメラに向けてください。<br>
+        自動的に読み取られます。
+      </p>
+      <div id="qr-reader" style="width:100%;background:#000;border-radius:8px;overflow:hidden;min-height:280px"></div>
+      <div id="qr-reader-status" style="text-align:center;margin-top:8px;font-size:12px;color:var(--text2)">カメラを起動しています...</div>
+      <button class="btn btn-out" style="margin-top:10px" onclick="stopQrScan()">キャンセル</button>
+    </div>
+  </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstChild);
+
+  __qrScanner = new Html5Qrcode('qr-reader');
+  const config = { fps: 10, qrbox: { width: 240, height: 240 } };
+  __qrScanner.start(
+    { facingMode: 'environment' },  // リアカメラ優先
+    config,
+    (decodedText) => {
+      // 読み取り成功
+      stopQrScan();
+      try { manualImport(decodedText); }
+      catch(e) { alert('読み取り後の処理でエラー: ' + e.message); }
+    },
+    () => { /* 各フレームの未検出は無視 */ }
+  ).then(() => {
+    const s = document.getElementById('qr-reader-status');
+    if (s) s.textContent = '🔍 QRコードに向けてください';
+  }).catch(err => {
+    const s = document.getElementById('qr-reader-status');
+    if (s) s.innerHTML = `<span style="color:var(--red)">カメラ起動失敗：${err}<br>カメラ許可を確認するか、URLコピーをお使いください。</span>`;
+  });
+}
+function stopQrScan() {
+  if (__qrScanner) {
+    __qrScanner.stop().then(() => {
+      try { __qrScanner.clear(); } catch(e) {}
+      __qrScanner = null;
+    }).catch(() => { __qrScanner = null; });
+  }
+  const m = document.getElementById('qrScanModal');
+  if (m) m.remove();
 }
 function copyShareUrl() {
   const el = document.getElementById('qrUrl');
