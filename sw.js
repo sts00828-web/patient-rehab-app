@@ -1,4 +1,4 @@
-const CACHE = 'rehab-v8';
+const CACHE = 'rehab-v9';
 
 // 新しいSWをすぐにアクティブ化
 self.addEventListener('message', e => { if (e.data === 'skipWaiting') self.skipWaiting(); });

@@ -1,7 +1,7 @@
 {
-  "name": "リハビリトラッカー",
-  "short_name": "リハビリ",
-  "description": "毎日のリハビリ実施記録と痛みスコア",
+  "name": "小牧いとう整形外科リハビリチェックアプリ",
+  "short_name": "リハビリチェック",
+  "description": "小牧いとう整形外科 患者向けリハビリ実施記録アプリ",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
