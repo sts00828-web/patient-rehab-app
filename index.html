@@ -27,8 +27,15 @@ body{
   background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;
   padding:12px 16px 14px;position:sticky;top:0;z-index:30;
   box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  cursor:pointer;user-select:none;-webkit-user-select:none;
+  position:sticky;overflow:hidden;
 }
-.h-title{font-size:18px;font-weight:700;letter-spacing:.5px;cursor:pointer;user-select:none}
+.header::after{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:0;
+  background:rgba(255,255,255,.22);transition:width .05s linear;pointer-events:none;
+}
+.header.pressing::after{width:100%;transition:width 2s linear}
+.h-title{font-size:18px;font-weight:700;letter-spacing:.5px;user-select:none;position:relative;z-index:1}
 .h-sub{font-size:12px;opacity:.9;margin-top:2px;display:flex;justify-content:space-between;align-items:center}
 .h-day{background:rgba(255,255,255,.2);padding:2px 8px;border-radius:10px;font-weight:600}
 
@@ -263,7 +270,8 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
     <h2>🌱 リハビリトラッカー</h2>
     <p>このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
       担当セラピストに設定を依頼してください。<br>
-      タイトル「🌱 リハビリトラッカー」を <strong>3秒長押し</strong> でセラピストモードを起動できます。</p>
+      ヘッダー（緑色の上部）を <strong>2秒長押し</strong>（指は動かさない）でセラピストモードを起動できます。<br>
+      <span style="font-size:11px;color:#999">うまく押せない場合は URL末尾に <code>#staff</code> を付けてアクセス</span></p>
     <button class="btn btn-pri" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
   </div>
 </div>
@@ -749,18 +757,46 @@ function switchTab(t) {
 //  THERAPIST MODE
 // ══════════════════════════════════════════
 let pressTimer = null;
+let pressStartXY = null;
 function bindTitleLongPress() {
-  const t = document.getElementById('hdr-title');
-  const start = () => {
-    pressTimer = setTimeout(openPinModal, 3000);
+  const t = document.querySelector('.header');
+  const PRESS_MS = 2000;
+  const MOVE_TOLERANCE = 18; // px
+
+  const start = (e) => {
+    cancel();
+    const pt = e.touches ? e.touches[0] : e;
+    pressStartXY = { x: pt.clientX, y: pt.clientY };
+    t.classList.add('pressing');
+    pressTimer = setTimeout(() => {
+      t.classList.remove('pressing');
+      pressTimer = null;
+      openPinModal();
+    }, PRESS_MS);
   };
-  const cancel = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+  const cancel = () => {
+    if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+    t.classList.remove('pressing');
+    pressStartXY = null;
+  };
+  const move = (e) => {
+    if (!pressStartXY) return;
+    const pt = e.touches ? e.touches[0] : e;
+    const dx = pt.clientX - pressStartXY.x;
+    const dy = pt.clientY - pressStartXY.y;
+    if (dx*dx + dy*dy > MOVE_TOLERANCE*MOVE_TOLERANCE) cancel();
+  };
   t.addEventListener('touchstart', start, { passive:true });
   t.addEventListener('touchend', cancel);
-  t.addEventListener('touchmove', cancel);
+  t.addEventListener('touchcancel', cancel);
+  t.addEventListener('touchmove', move, { passive:true });
   t.addEventListener('mousedown', start);
   t.addEventListener('mouseup', cancel);
   t.addEventListener('mouseleave', cancel);
+  t.addEventListener('mousemove', move);
+
+  // フォールバック: URL末尾に #staff を付ければ直接起動
+  if (location.hash === '#staff') openPinModal();
 }
 
 function openPinModal() {
