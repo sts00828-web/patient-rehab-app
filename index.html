@@ -1080,6 +1080,13 @@ function buildShareUrl() {
 }
 
 function showShareQR() {
+  if (!S || !S.menu || S.menu.length === 0) {
+    alert('メニューが未設定です。テンプレを選択するか、種目を追加してから転送してください。');
+    return;
+  }
+  if (!S.patientName) {
+    if (!confirm('患者氏名が未入力です。このまま進めると患者側の表示が「患者さん」になります。\n\n氏名なしで続行しますか？')) return;
+  }
   const url = buildShareUrl();
   if (!url) return;
   const html = `<div class="t-overlay on" id="qrModal" onclick="if(event.target===this)closeQR()">
@@ -1232,7 +1239,8 @@ function init() {
   loadState();
   // URLハッシュからのインポート（PT端末からのQR読み取り）
   handleImportFromHash();
-  if (!S || !S.patientName) {
+  // メニュー未設定なら初回説明オーバーレイを表示
+  if (!S || !S.menu || S.menu.length === 0) {
     document.getElementById('setupOverlay').hidden = false;
   }
   bindTitleLongPress();
