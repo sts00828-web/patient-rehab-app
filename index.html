@@ -1082,8 +1082,9 @@ function buildShareUrl() {
   const payload = buildSharePayload();
   const json = JSON.stringify(payload);
   const compressed = LZString.compressToEncodedURIComponent(json);
-  // クエリパラメータ ?d= を使う（iOS Camera等で hash が取りこぼされる事象を回避）
-  return `${location.origin}${location.pathname}?d=${compressed}`;
+  // クエリは "+" がスペースに化けるためハッシュ #d= を使う
+  // iOS Safari/カメラはハッシュも保持する
+  return `${location.origin}${location.pathname}#d=${compressed}`;
 }
 
 function showShareQR() {
@@ -1134,22 +1135,14 @@ function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remo
 function manualImport() {
   const txt = (document.getElementById('paste-url').value || '').trim();
   if (!txt) { alert('URLを貼り付けてください'); return; }
-  // URLから ?d= または #import= を抽出して location 風に処理
+  // URLから #d= / #import= / ?d= / ?import= を生抽出（+はそのまま保持）
   let compressed = null;
-  try {
-    const u = new URL(txt);
-    const p = u.searchParams.get('d');
-    if (p) compressed = p;
-    else if (u.hash.startsWith('#import=')) compressed = u.hash.substring('#import='.length);
-  } catch (e) {
-    // URL形式じゃなくても、データ部分だけ貼られた可能性
-    if (txt.includes('d=')) compressed = txt.split('d=')[1].split('&')[0];
-    else if (txt.includes('import=')) compressed = txt.split('import=')[1].split('&')[0];
-    else compressed = txt; // 純粋にdata部分のみ
-  }
+  const m = txt.match(/[#?&](?:d|import)=([^&\s]+)/);
+  if (m) compressed = m[1];
+  else compressed = txt; // 純粋にdata部分のみ貼られたケース
   if (!compressed) { alert('URL内に取込みデータが見つかりません'); return; }
-  // location.search に一時設定して handleImportFromHash を呼ぶ
-  history.replaceState(null, '', location.pathname + '?d=' + compressed);
+  // ハッシュ形式で設定してから取込み処理を呼ぶ（+ がスペース化しない形式）
+  history.replaceState(null, '', location.pathname + '#d=' + compressed);
   if (handleImportFromHash()) {
     document.getElementById('setupOverlay').hidden = true;
     renderHeader();
@@ -1165,18 +1158,22 @@ function copyShareUrl() {
   });
 }
 
-// URL (クエリ ?d= または hash #import=) からの自動取込み
+// URL から取込みデータを抽出（"+" がスペース化しないよう正規表現で生抽出）
+function extractImportData() {
+  // 1) ハッシュ #d=... または #import=...（推奨）
+  const hash = location.hash || '';
+  let m = hash.match(/[#&](?:d|import)=([^&]+)/);
+  if (m) return m[1];
+  // 2) クエリ ?d=... （後方互換。+がスペース化する可能性あり）
+  const search = location.search || '';
+  m = search.match(/[?&](?:d|import)=([^&]+)/);
+  if (m) return m[1];
+  return null;
+}
+
+// URL からの自動取込み
 function handleImportFromHash() {
-  // 1) クエリパラメータ ?d= を優先（iOSで確実に取得できる）
-  let compressed = null;
-  const params = new URLSearchParams(location.search);
-  if (params.has('d')) {
-    compressed = params.get('d');
-  } else {
-    // 2) ハッシュ #import= (後方互換)
-    const hash = location.hash || '';
-    if (hash.startsWith('#import=')) compressed = hash.substring('#import='.length);
-  }
+  const compressed = extractImportData();
   if (!compressed) return false;
   // クエリ・ハッシュをクリア
   const clearHash = () => history.replaceState(null, '', location.pathname);
