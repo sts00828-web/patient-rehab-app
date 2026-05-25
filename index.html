@@ -1082,9 +1082,10 @@ function buildShareUrl() {
   const payload = buildSharePayload();
   const json = JSON.stringify(payload);
   const compressed = LZString.compressToEncodedURIComponent(json);
-  // クエリは "+" がスペースに化けるためハッシュ #d= を使う
-  // iOS Safari/カメラはハッシュも保持する
-  return `${location.origin}${location.pathname}#d=${compressed}`;
+  // クエリパラメータ ?d= を使う。"+" は %2B にエンコードすることでスペース化を回避
+  // ハッシュ #d= は iOS の「Safariで開く」ボタンで落とされるため不可
+  const safe = encodeURIComponent(compressed);
+  return `${location.origin}${location.pathname}?d=${safe}`;
 }
 
 function showShareQR() {
@@ -1139,14 +1140,18 @@ function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remo
 function manualImport() {
   const txt = (document.getElementById('paste-url').value || '').trim();
   if (!txt) { alert('URLを貼り付けてください'); return; }
-  // URLから #d= / #import= / ?d= / ?import= を生抽出（+はそのまま保持）
+  // URLから #d= / #import= / ?d= / ?import= を生抽出
   let compressed = null;
   const m = txt.match(/[#?&](?:d|import)=([^&\s]+)/);
-  if (m) compressed = m[1];
-  else compressed = txt; // 純粋にdata部分のみ貼られたケース
+  if (m) {
+    try { compressed = decodeURIComponent(m[1]); } catch(e) { compressed = m[1]; }
+  } else {
+    compressed = txt; // 純粋にdata部分のみ貼られたケース
+  }
   if (!compressed) { alert('URL内に取込みデータが見つかりません'); return; }
-  // ハッシュ形式で設定してから取込み処理を呼ぶ（+ がスペース化しない形式）
-  history.replaceState(null, '', location.pathname + '#d=' + compressed);
+  // クエリ形式に設定（+は%2Bにエンコードしてスペース化を防ぐ）
+  const safe = encodeURIComponent(compressed);
+  history.replaceState(null, '', location.pathname + '?d=' + safe);
   if (handleImportFromHash()) {
     document.getElementById('setupOverlay').hidden = true;
     renderHeader();
@@ -1165,16 +1170,21 @@ function copyShareUrl() {
   });
 }
 
-// URL から取込みデータを抽出（"+" がスペース化しないよう正規表現で生抽出）
+// URL から取込みデータを抽出
 function extractImportData() {
-  // 1) ハッシュ #d=... または #import=...（推奨）
-  const hash = location.hash || '';
-  let m = hash.match(/[#&](?:d|import)=([^&]+)/);
-  if (m) return m[1];
-  // 2) クエリ ?d=... （後方互換。+がスペース化する可能性あり）
+  // 1) クエリ ?d= / ?import= （URL生抽出で +を保持）
   const search = location.search || '';
-  m = search.match(/[?&](?:d|import)=([^&]+)/);
-  if (m) return m[1];
+  let m = search.match(/[?&](?:d|import)=([^&]+)/);
+  if (m) {
+    // %xx をデコード（+ が %2B として送られている場合に + に戻る）
+    try { return decodeURIComponent(m[1]); } catch(e) { return m[1]; }
+  }
+  // 2) ハッシュ #d= / #import= (後方互換)
+  const hash = location.hash || '';
+  m = hash.match(/[#&](?:d|import)=([^&]+)/);
+  if (m) {
+    try { return decodeURIComponent(m[1]); } catch(e) { return m[1]; }
+  }
   return null;
 }
 
