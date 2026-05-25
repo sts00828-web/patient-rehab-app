@@ -943,8 +943,12 @@ function renderTherapist() {
   // 患者へ送る
   html += `<div class="t-sec">
     <div class="t-sec-ttl">📱 患者スマホへ転送</div>
-    <div class="hint" style="margin-bottom:8px">PT端末で設定したメニューを患者のスマホへQRコードで渡せます</div>
-    <button class="btn btn-pri" onclick="showShareQR()">📷 QRコードを表示</button>
+    <div class="hint" style="margin-bottom:8px">
+      <strong>STEP 1:</strong> 患者にアプリをインストール（全患者共通URL・待合室掲示も可）<br>
+      <strong>STEP 2:</strong> 設定メニューを患者のスマホへ転送
+    </div>
+    <button class="btn btn-out" onclick="showInstallQR()" style="margin-bottom:6px">📲 アプリインストール用QR（共通）</button>
+    <button class="btn btn-pri" onclick="showShareQR()">📷 設定データQR（患者ごと）</button>
   </div>`;
 
   // データ管理
@@ -1143,6 +1147,61 @@ function showShareQR() {
   }
 }
 function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remove(); }
+
+// アプリインストール用QR（全患者共通のベースURL）
+function showInstallQR() {
+  const url = `${location.origin}${location.pathname}`;
+  const html = `<div class="t-overlay on" id="installQrModal" onclick="if(event.target===this)closeInstallQR()">
+    <div class="t-modal" style="max-width:420px;text-align:center">
+      <div class="t-hd">
+        <h2>📲 アプリインストール用QR</h2>
+        <button class="t-close" onclick="closeInstallQR()">×</button>
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.7">
+        全患者共通のアプリURL。<strong>待合室に印刷掲示</strong>してもOK。<br>
+        患者がスマホで読み取り→Safariで開く→「ホーム画面に追加」でインストール完了。
+      </p>
+      <div id="installQrBox"></div>
+      <div style="font-size:11px;color:var(--text2);margin-top:10px;text-align:left;font-weight:700">📎 URL</div>
+      <textarea id="installQrUrl" readonly onclick="this.select()" style="width:100%;min-height:36px;font-size:11px;font-family:monospace;padding:8px;border:1.5px solid var(--border);border-radius:6px;margin-top:4px;background:#fafcfd;color:var(--text);word-break:break-all;resize:none">${escapeHtml(url)}</textarea>
+      <button class="btn btn-pri" style="margin-top:8px" onclick="copyInstallUrl()">📋 URLをコピー</button>
+      <div class="hint" style="margin-top:10px;text-align:left;line-height:1.7">
+        <strong>患者の手順：</strong><br>
+        ① スマホのカメラでQR読み取り<br>
+        ② Safariが開く → 共有ボタン → <strong>「ホーム画面に追加」</strong><br>
+        ③ ホーム画面アイコンをタップ → セラピストの「設定データQR」を待つ
+      </div>
+    </div>
+  </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstChild);
+
+  // QR生成
+  try {
+    if (typeof qrcode === 'undefined') throw new Error('qrcode未読込');
+    const qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    document.getElementById('installQrBox').innerHTML = qr.createSvgTag({ scalable:true, margin:2 });
+    // ボックスサイズ調整
+    const svg = document.querySelector('#installQrBox svg');
+    if (svg) { svg.style.width = '240px'; svg.style.height = '240px'; svg.style.display = 'inline-block'; svg.style.background = '#fff'; svg.style.padding = '10px'; svg.style.border = '1px solid var(--border)'; svg.style.borderRadius = '8px'; }
+  } catch (e) {
+    document.getElementById('installQrBox').innerHTML =
+      `<div style="color:var(--orange);font-size:12px;padding:20px">QR生成失敗：${e.message}</div>`;
+  }
+}
+function closeInstallQR() { const m = document.getElementById('installQrModal'); if (m) m.remove(); }
+function copyInstallUrl() {
+  const el = document.getElementById('installQrUrl');
+  const url = el.value || '';
+  navigator.clipboard.writeText(url).then(() => toast('URLをコピーしました')).catch(() => {
+    el.select && el.select();
+    try { document.execCommand('copy'); toast('URLをコピーしました'); }
+    catch(e) { toast('長押しで手動コピーしてください'); }
+  });
+}
 
 // 患者向け「Safariで開く」モーダル
 function showOpenInSafari() {
