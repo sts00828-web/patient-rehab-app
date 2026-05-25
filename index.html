@@ -516,15 +516,6 @@ function renderToday() {
     <textarea class="note-ta" placeholder="気になったこと・できなかった種目の理由など" id="note-ta" onblur="saveNote(this.value)">${escapeHtml(log.note||'')}</textarea>
   </div>`;
 
-  // Safari/ホーム画面追加ヘルプ
-  html += `<div class="card" style="background:#fff8e8;border-color:#f0c87a">
-    <div class="card-ttl" style="color:#b8761c">📱 Safari で使う／ホーム画面に追加</div>
-    <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">
-      QR読み取りアプリ内で開いている場合、Safariに移行すると毎日アクセスしやすくなります。
-    </div>
-    <button class="btn btn-out" onclick="showOpenInSafari()">📋 URLを表示してコピー</button>
-  </div>`;
-
   document.getElementById('today-content').innerHTML = html;
 }
 
