@@ -186,9 +186,13 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
   padding:12px 10px;text-align:center;cursor:pointer;transition:.15s;
 }
 .tpl-card.sel{background:var(--teal-l);border-color:var(--teal)}
+.tpl-card{position:relative}
 .tpl-ico{font-size:32px;margin-bottom:4px}
 .tpl-nm{font-size:13px;font-weight:700;color:var(--text)}
 .tpl-desc{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
+.tpl-del{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;border:none;background:#fff;color:var(--red);font-size:14px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.tpl-del:active{background:#fde}
+.tpl-badge{position:absolute;bottom:2px;left:2px;font-size:8px;background:var(--orange);color:#fff;padding:1px 5px;border-radius:8px;font-weight:700}
 
 .menu-item{
   background:#fafcfd;border:1px solid var(--border);border-radius:8px;
@@ -372,13 +376,17 @@ const DOW_LABEL = ['日','月','火','水','木','金','土'];
 // ══════════════════════════════════════════
 let S = null;  // settings (patient profile + menu)
 let L = {};    // daily logs
+let T = {};    // custom templates (内蔵テンプレ TEMPLATES とは別)
 
 function loadState() {
   try { S = JSON.parse(localStorage.getItem('rehab_settings') || 'null'); } catch(e){ S = null; }
   try { L = JSON.parse(localStorage.getItem('rehab_logs') || '{}'); } catch(e){ L = {}; }
+  try { T = JSON.parse(localStorage.getItem('rehab_templates_custom') || '{}'); } catch(e){ T = {}; }
 }
 function saveSettings() { localStorage.setItem('rehab_settings', JSON.stringify(S)); }
 function saveLogs() { localStorage.setItem('rehab_logs', JSON.stringify(L)); }
+function saveTemplates() { localStorage.setItem('rehab_templates_custom', JSON.stringify(T)); }
+function getAllTemplates() { return Object.assign({}, TEMPLATES, T); }
 
 // ══════════════════════════════════════════
 //  UTILS
@@ -896,19 +904,33 @@ function renderTherapist() {
   </div>`;
 
   // 疾患テンプレート
+  const allTpls = getAllTemplates();
+  const tplCount = Object.keys(allTpls).length;
+  const customCount = Object.keys(T).length;
   html += `<div class="t-sec">
-    <div class="t-sec-ttl">📚 疾患テンプレートから読み込み</div>
+    <div class="t-sec-ttl">📚 疾患テンプレートから読み込み（${tplCount}件）</div>
     <div class="tpl-grid">`;
-  for (const [key, tpl] of Object.entries(TEMPLATES)) {
+  for (const [key, tpl] of Object.entries(allTpls)) {
     const sel = S.template === key ? 'sel' : '';
+    const isCustom = !!T[key];
     html += `<div class="tpl-card ${sel}" onclick="applyTemplate('${key}')">
+      ${isCustom ? `<button class="tpl-del" onclick="event.stopPropagation();deleteCustomTemplate('${key}')" title="削除">×</button>` : ''}
       <div class="tpl-ico">${tpl.icon}</div>
-      <div class="tpl-nm">${tpl.name}</div>
-      <div class="tpl-desc">${tpl.desc}</div>
+      <div class="tpl-nm">${escapeHtml(tpl.name)}</div>
+      <div class="tpl-desc">${escapeHtml(tpl.desc || '')}</div>
+      ${isCustom ? '<div class="tpl-badge">カスタム</div>' : ''}
     </div>`;
   }
   html += `</div>
-  <div class="hint">テンプレ選択で全メニューが置き換わります（既存ログは保持）</div>
+  <div class="hint">テンプレ選択で全メニューが置き換わります（既存ログは保持）${customCount?'。カスタムテンプレは右上×で削除可':''}</div>
+  <div style="display:flex;gap:6px;margin-top:10px">
+    <button class="btn btn-out" style="flex:1;font-size:13px;padding:9px" onclick="saveCurrentAsTemplate()">💾 現在のメニューをテンプレ保存</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-top:6px">
+    <button class="btn btn-out" style="flex:1;font-size:12px;padding:7px" onclick="exportTemplates()">📤 テンプレ書出</button>
+    <button class="btn btn-out" style="flex:1;font-size:12px;padding:7px" onclick="document.getElementById('tpl-import-file').click()">📥 テンプレ取込</button>
+    <input type="file" id="tpl-import-file" accept=".json" style="display:none" onchange="importTemplates(event)">
+  </div>
   </div>`;
 
   // メニュー編集
@@ -973,7 +995,8 @@ function updS(field, val) {
   if (field === 'patientName' || field === 'startDate') renderHeader();
 }
 function applyTemplate(key) {
-  const tpl = TEMPLATES[key];
+  const all = getAllTemplates();
+  const tpl = all[key];
   if (!tpl) return;
   if (!confirm(`「${tpl.name}」のメニューに置き換えます。よろしいですか？\n（既存のメニュー設定は失われますが、日々の実施記録は残ります）`)) return;
   S.template = key;
@@ -989,6 +1012,118 @@ function applyTemplate(key) {
   saveSettings();
   renderTherapist();
   toast('メニューを読み込みました');
+}
+
+// 現在のメニューをカスタムテンプレートとして保存
+function saveCurrentAsTemplate() {
+  if (!S || !Array.isArray(S.menu) || S.menu.length === 0) {
+    alert('メニューが空です。種目を追加してから保存してください。'); return;
+  }
+  showSaveTemplateModal();
+}
+function showSaveTemplateModal() {
+  const defaultName = S.diagnosis || '';
+  const html = `<div class="t-overlay on" id="saveTplModal" onclick="if(event.target===this)closeSaveTplModal()">
+    <div class="t-modal" style="max-width:420px">
+      <div class="t-hd">
+        <h2>💾 テンプレートとして保存</h2>
+        <button class="t-close" onclick="closeSaveTplModal()">×</button>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+        現在のメニュー（${S.menu.length}種目）を疾患テンプレートとして保存します。<br>
+        次回から他の患者にも適用できます。
+      </p>
+      <div class="fld">
+        <label class="fld-lbl">テンプレート名 * （疾患名など）</label>
+        <input class="fld-inp" id="tpl-save-name" type="text" value="${escapeAttr(defaultName)}" placeholder="例: 膝OA">
+      </div>
+      <div class="fld-row">
+        <div class="fld" style="flex:0 0 110px">
+          <label class="fld-lbl">アイコン</label>
+          <input class="fld-inp" id="tpl-save-icon" type="text" value="🩺" maxlength="4" style="text-align:center;font-size:20px">
+        </div>
+        <div class="fld">
+          <label class="fld-lbl">説明（短文）</label>
+          <input class="fld-inp" id="tpl-save-desc" type="text" value="" placeholder="例: 大腿四頭筋強化中心">
+        </div>
+      </div>
+      <div class="hint" style="margin-bottom:10px">
+        アイコン候補: 💪 🌿 🦴 🦵 🦶 ✋ 🤚 🧘 🩺 🌱 🏃 🚶
+      </div>
+      <button class="btn btn-pri" onclick="doSaveTemplate()">💾 保存する</button>
+    </div>
+  </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstChild);
+}
+function closeSaveTplModal() { const m = document.getElementById('saveTplModal'); if (m) m.remove(); }
+function doSaveTemplate() {
+  const name = document.getElementById('tpl-save-name').value.trim();
+  if (!name) { alert('テンプレート名を入力してください'); return; }
+  const icon = document.getElementById('tpl-save-icon').value.trim() || '🩺';
+  const desc = document.getElementById('tpl-save-desc').value.trim();
+  const key = 'custom_' + Date.now();
+  T[key] = {
+    name, icon, desc,
+    menu: S.menu.map(m => ({
+      name: m.name, params: m.params || '', note: m.note || ''
+    })),
+  };
+  saveTemplates();
+  closeSaveTplModal();
+  renderTherapist();
+  toast(`「${name}」を保存しました`);
+}
+function deleteCustomTemplate(key) {
+  const tpl = T[key];
+  if (!tpl) return;
+  if (!confirm(`カスタムテンプレ「${tpl.name}」を削除しますか？\n※既に適用済みの患者メニューには影響しません`)) return;
+  delete T[key];
+  saveTemplates();
+  renderTherapist();
+  toast('削除しました');
+}
+
+// テンプレートのエクスポート/インポート（PT端末間共有用）
+function exportTemplates() {
+  if (Object.keys(T).length === 0) {
+    alert('カスタムテンプレートがありません。'); return;
+  }
+  const data = JSON.stringify({ templates: T, exportedAt: new Date().toISOString() }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rehab_templates_${todayKey()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importTemplates(e) {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const imp = data.templates || data;  // 形式が違っても許容
+      if (typeof imp !== 'object' || imp === null) throw new Error('形式エラー');
+      const incoming = Object.entries(imp);
+      const valid = incoming.filter(([k, v]) => v && v.name && Array.isArray(v.menu));
+      if (valid.length === 0) { alert('読込めるテンプレが見つかりません'); return; }
+      const dupes = valid.filter(([k]) => T[k]).map(([,v]) => v.name);
+      const msg = `${valid.length}件のテンプレートを取り込みます。` +
+        (dupes.length ? `\n\n重複キー${dupes.length}件は上書き: ${dupes.join('、')}` : '') +
+        '\n\nよろしいですか？';
+      if (!confirm(msg)) return;
+      for (const [k, v] of valid) T[k] = v;
+      saveTemplates();
+      renderTherapist();
+      toast(`${valid.length}件取り込みました`);
+    } catch (err) { alert('JSON取込エラー: ' + err.message); }
+  };
+  r.readAsText(f);
 }
 
 function editEx(idx) {
@@ -1430,7 +1565,10 @@ function handleImportFromHash() {
 }
 
 function exportData() {
-  const data = JSON.stringify({ settings: S, logs: L, exportedAt: new Date().toISOString() }, null, 2);
+  const data = JSON.stringify({
+    settings: S, logs: L, templates: T,
+    exportedAt: new Date().toISOString()
+  }, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1449,9 +1587,15 @@ function importData(e) {
       const data = JSON.parse(ev.target.result);
       if (!data.settings || !data.logs) { alert('形式エラー: settings と logs が必要'); return; }
       const logCount = Object.keys(data.logs).length;
-      if (!confirm(`復元: ${data.settings.patientName||''}さん／ログ${logCount}日分／現在のデータは上書きされます。よろしいですか？`)) return;
+      const tplCount = data.templates ? Object.keys(data.templates).length : 0;
+      const tplMsg = tplCount ? `\n・カスタムテンプレ${tplCount}件も取込み` : '';
+      if (!confirm(`復元: ${data.settings.patientName||''}さん／ログ${logCount}日分／現在のデータは上書きされます。${tplMsg}\n\nよろしいですか？`)) return;
       S = data.settings;
       L = data.logs;
+      if (data.templates && typeof data.templates === 'object') {
+        T = Object.assign(T, data.templates);
+        saveTemplates();
+      }
       saveSettings(); saveLogs();
       renderTherapist(); renderHeader();
       toast('復元しました');
