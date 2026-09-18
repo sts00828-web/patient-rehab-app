@@ -1,10 +1,11 @@
 // Cache only this application's public assets, never settings URLs or other apps.
+importScripts('./exercises.js');
 const PREFIX = 'patient-rehab-' + encodeURIComponent(self.registration.scope) + '-';
-const CACHE = PREFIX + 'v14';
+const CACHE = PREFIX + 'v15';
 const FILES = ['./','./index.html','./manifest.json','./core.js','./exercises.js','./ui.js','./app-v2.js','./app-v2.css',
   './icon-180.png','./icon-192.png','./icon-512.png',
   './vendor/lz-string.min.js','./vendor/qrcode.min.js','./vendor/html5-qrcode.min.js',
-  ...['pendulum','supine-flexion','crossover','abdominal-brace','bridge','knee-to-chest','heel-slide','short-arc-quad','sit-to-stand'].map(k=>'./assets/exercises/'+k+'.png')];
+  ...Object.values(EXERCISE_LIBRARY).map(e=>'./assets/exercises/'+e.image)];
 const ALLOWED = new Set(FILES.map(f=>new URL(f,self.registration.scope).href));
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{

@@ -172,7 +172,29 @@ function renderTherapist(){
 let selectedTemplate=null;
 function applyTemplate(key){
   if(!requireStaff())return;const tpl=getAllTemplates()[key];if(!tpl)return;selectedTemplate=key;
-  modal('chooseTemplate',escapeHtml(tpl.name),`<div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p>追加したい種目にチェックし、患者さんへの指示量を入力してください。</p>${tpl.menu.map((m,i)=>{const e=EXERCISE_LIBRARY[m.exerciseKey];return `<div class="template-ex"><label><input type="checkbox" id="pick-${i}"> ${escapeHtml(m.name)}</label>${e?`<img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy">`:''}<p class="hint">${escapeHtml(m.note||'')}</p><label class="fld-lbl" for="dose-${i}">回数・時間・セット</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" placeholder="患者さんに合わせた指示を入力"></div>`;}).join('')}<button class="btn btn-pri" onclick="applySelectedTemplate()">選んだ種目でメニューを更新</button>`);
+  const groups={...EXERCISE_GROUPS,custom:'その他の種目'};
+  const grouped=Object.entries(groups).map(([category,label])=>{
+    const rows=tpl.menu.map((m,i)=>({m,i,e:EXERCISE_LIBRARY[m.exerciseKey]})).filter(({e})=>(e?.category||'custom')===category);
+    if(!rows.length)return '';
+    return `<section class="exercise-group" data-group="${category}"><h3>${escapeHtml(label)}</h3>${rows.map(({m,i,e})=>`<article class="template-ex" data-index="${i}" data-category="${category}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}"><label class="pick-label"><input type="checkbox" id="pick-${i}" onchange="updateTemplateSelection()"> ${escapeHtml(m.name)}</label>${e?`<div class="template-summary"><button type="button" class="image-button" onclick="previewTemplateExercise(${i})" aria-label="${escapeAttr(e.name)}の手順を確認"><img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy" width="1536" height="1024"></button><div><span class="level-badge">${escapeHtml(e.difficulty)}</span><p>${escapeHtml(e.purpose)}</p><p class="hint">用具：${escapeHtml(e.equipment)}</p></div></div><p class="selection-note"><strong>選択時の注意：</strong>${escapeHtml(e.selectionNote)}</p><button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button>`:''}<p class="hint">${escapeHtml(m.note||'')}</p><label class="fld-lbl" for="dose-${i}">回数・時間・セット</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" maxlength="100" placeholder="患者さんに合わせた指示を入力"></article>`).join('')}</section>`;
+  }).join('');
+  modal('chooseTemplate',escapeHtml(tpl.name),`<div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p>${tpl.menu.length}種目の候補から必要なものだけ選び、指示量を入力してください。</p><p class="hint">難易度は動作の目安です。病期・安全性を判定する尺度ではありません。</p><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>(EXERCISE_LIBRARY[m.exerciseKey]?.category||'custom')===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><button class="btn btn-pri" onclick="applySelectedTemplate()">選んだ種目でメニューを更新</button></div>`);
+  filterTemplateExercises();
+}
+function previewTemplateExercise(i){const ex=getAllTemplates()[selectedTemplate]?.menu[i];if(ex)showGuide({...ex,params:$('dose-'+i)?.value.trim()||'回数・時間は患者さんに合わせて設定'});}
+function updateTemplateSelection(){
+  const root=$('chooseTemplate');if(!root)return;
+  const count=root.querySelectorAll('.pick-label input:checked').length;
+  const hidden=root.querySelectorAll('.template-ex[hidden] .pick-label input:checked').length;
+  $('template-selection').textContent=`選択 ${count}種目${hidden?`（絞り込みで非表示 ${hidden}種目を含む）`:''}`;
+}
+function filterTemplateExercises(){
+  const root=$('chooseTemplate');if(!root)return;
+  const category=$('template-purpose').value,level=$('template-level').value,query=$('template-search').value.trim().toLowerCase();let visible=0;
+  root.querySelectorAll('.template-ex').forEach(row=>{row.hidden=!!((category&&row.dataset.category!==category)||(level&&row.dataset.difficulty!==level)||(query&&!row.dataset.search.includes(query)));if(!row.hidden)visible++;});
+  root.querySelectorAll('.exercise-group').forEach(group=>group.hidden=!group.querySelector('.template-ex:not([hidden])'));
+  $('template-results').textContent=visible?`${visible}種目を表示中`:'該当する種目がありません。絞り込みを変更してください。';
+  updateTemplateSelection();
 }
 function commitMenu(next){const from=C.changeMenu(S,L,next,todayKey(),dk(addDays(new Date(),1)));persist();renderTherapist();return from;}
 function applySelectedTemplate(){
@@ -254,4 +276,4 @@ function resetAll(){if(!requireStaff()||!confirm('この患者の情報・メニ
 function refreshDay(){if(activeDay!==todayKey()){activeDay=todayKey();renderHeader();renderToday();if($('tab-cal').classList.contains('active'))renderCalendar();if($('tab-prog').classList.contains('active'))renderProgress();}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshDay();});
 setInterval(refreshDay,30000);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){for(const id of ['guideModal','reportModal','chooseTemplate','exEditModal','archiveModal','tplManage'])$(id)?.remove();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){for(const id of ['guideModal','reportModal','chooseTemplate','exEditModal','archiveModal','tplManage']){const dialog=$(id);if(dialog){dialog.remove();break;}}}});

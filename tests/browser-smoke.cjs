@@ -42,7 +42,16 @@ async function main(){
     finally{Html5Qrcode=Original}
   })()`);
   await evaluate("window.confirm=()=>true;window.prompt=()=> 'テスト患者';window.alert=message=>{window.lastAlert=message};$('pin-input').value='';checkPin();updS('patientName','テスト患者');applyTemplate('shoulder');");
-  await check('three illustrated shoulder choices',"document.querySelectorAll('#chooseTemplate img').length===3");
+  await check('ten shoulder choices with no automatic selection',"document.querySelectorAll('#chooseTemplate img').length===10 && !document.querySelector('#chooseTemplate input:checked')");
+  await check('purpose filter preserves selected exercise and dose',"(()=>{$('pick-0').checked=true;$('dose-0').value='5回';$('template-purpose').value='strength';filterTemplateExercises();return document.querySelectorAll('.template-ex:not([hidden])').length===4&&$('pick-0').checked&&$('dose-0').value==='5回'&&$('template-selection').textContent.includes('非表示 1種目')})()");
+  await check('difficulty and search filters can combine',"(()=>{$('template-level').value='発展';$('template-search').value='ゴム';filterTemplateExercises();return document.querySelectorAll('.template-ex:not([hidden])').length===1&&document.querySelector('.template-ex:not([hidden])').textContent.includes('ゴムバンド')})()");
+  await check('empty filter gives visible feedback',"(()=>{$('template-search').value='存在しない種目';filterTemplateExercises();return !document.querySelector('.exercise-group:not([hidden])')&&$('template-results').textContent.includes('該当する種目がありません')})()");
+  await evaluate("$('template-purpose').value='';$('template-level').value='';$('template-search').value='';filterTemplateExercises();previewTemplateExercise(9);");
+  await check('new exercise preview preserves selection screen',"!!$('chooseTemplate')&&$('guideModal').textContent.includes('ゴムバンド')&&$('guideModal').textContent.includes('固定')");
+  await check('Escape closes preview without losing prescription draft',"(()=>{document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));return !$('guideModal')&&!!$('chooseTemplate')&&$('pick-0').checked&&$('dose-0').value==='5回'})()");
+  await evaluate("$('pick-9').checked=true;window.menuBeforeDoseCheck=JSON.stringify(S.menu);applySelectedTemplate();");
+  await check('selected new exercise needs explicit dosage',"!!$('chooseTemplate')&&JSON.stringify(S.menu)===menuBeforeDoseCheck");
+  await evaluate("$('pick-9').checked=false;updateTemplateSelection();");
   await evaluate("for(let i=0;i<3;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：5回';}applySelectedTemplate();closeTherapist();");
   await check('three illustrated daily exercises',"document.querySelectorAll('.exercise-card').length===3 && S.menu.every(x=>x.exerciseKey)");
   await check('unrecorded pain explicit',"$('pain-value').textContent==='未記録'");
@@ -64,10 +73,13 @@ async function main(){
   await evaluate("S.patientName='<img src=x onerror=alert(1)>';persist();renderToday();");
   await check('patient name escaped',"!document.querySelector('.banner img')");
   await evaluate("calDate=new Date(2026,0,31);calNav(1)");await check('month end navigation',"calDate.getMonth()===1");
-  await check('all nine images load',"(async()=>{const results=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>{const r=await fetch('assets/exercises/'+e.image);return r.ok&&(await r.blob()).size>1000}));return results.length===9&&results.every(Boolean)})()");
+  await check('all thirty images load',"(async()=>{const results=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>{const r=await fetch('assets/exercises/'+e.image);return r.ok&&(await r.blob()).size>1000}));return results.length===30&&results.every(Boolean)})()");
   await evaluate("$('pin-input').value='';checkPin();applyTemplate('lowback');");
-  await check('three low-back illustrations',"document.querySelectorAll('#chooseTemplate img').length===3");
-  await evaluate("$('chooseTemplate').remove();closeTherapist();");
+  await check('ten low-back illustrations and mobile layout',"document.querySelectorAll('#chooseTemplate img').length===10&&document.documentElement.scrollWidth<=390");
+  shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'library-mobile.png'),Buffer.from(shot.data,'base64'));
+  await evaluate("for(let i=0;i<10;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：左右各5回';}applySelectedTemplate();showShareQR();");
+  await check('ten-exercise prescription generates and round-trips QR',"(()=>{const p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(buildShareUrl().split('#d=')[1])));return S.menu.length===10&&p.menu.length===10&&p.menu.some(e=>e.exerciseKey==='walking')&&!!document.querySelector('#qrBox svg')})()");
+  await evaluate("closeQR();closeTherapist();");
   await check('failed writes roll back in-memory changes',"(()=>{const before=S.patientName,original=Storage.prototype.setItem;Storage.prototype.setItem=()=>{throw Error('simulated quota failure')};try{S.patientName='not saved';persist()}catch{}finally{Storage.prototype.setItem=original}return S.patientName===before})()");
   await check('malformed import cannot overwrite state',"(()=>{const before=JSON.stringify(packState());manualImport(location.origin+'/#d='+encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify({menu:[{name:'Bad',dows:[9]}]}))));history.replaceState(null,'',location.pathname);return JSON.stringify(packState())===before})()");
   await evaluate("S.patientName='テスト患者B';persist();navigator.serviceWorker.ready.then(()=>true)");
@@ -77,6 +89,7 @@ async function main(){
   await send('Page.reload');await delay(1200);
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
   await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
+  await check('all new illustrations available offline',"(async()=>{const r=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>(await fetch('assets/exercises/'+e.image)).ok));return r.length===30&&r.every(Boolean)})()");
   await check('legacy migration preserves raw backup and marks unknown history',"(()=>{localStorage.removeItem('rehab_v2');const old={patientName:'Legacy test',startDate:'2026-01-01',menu:[{id:'new',name:'New exercise',dows:[]}]};const logs={'2026-01-02':{done:{removed_exercise:true},vas:4,note:'keep'}};localStorage.setItem('rehab_settings',JSON.stringify(old));localStorage.setItem('rehab_logs',JSON.stringify(logs));S=null;L={};T={};archives=[];committed=null;loadState();return L['2026-01-02'].legacyUnknown&&L['2026-01-02'].vas===4&&JSON.parse(localStorage.getItem('rehab_legacy_backup')).logs===JSON.stringify(logs)})()");
   assert.deepEqual(errors,[],'browser runtime errors');
   await send('Browser.close').catch(()=>{});console.log('Browser smoke complete. Screenshots: .test-artifacts/');
