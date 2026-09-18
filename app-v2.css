@@ -2,3 +2,13 @@ html{scroll-behavior:smooth}main{max-width:640px;padding-top:20px}.h-title{font-
 
 /* Clinician exercise library */
 .template-filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.template-filters label{font-weight:600;font-size:14px}.search-field{grid-column:1/-1}.exercise-group>h3{color:var(--teal);border-bottom:2px solid var(--teal-l);padding:12px 0;margin-top:20px}.template-summary{display:flex;align-items:center;gap:12px;margin:12px 0}.template-summary .image-button{width:120px;flex-shrink:0}.template-summary img{width:100%;height:auto;aspect-ratio:3/2;object-fit:contain}.template-summary p{font-size:14px;margin:6px 0}.pick-label{display:flex;align-items:flex-start;gap:8px;font-weight:700;font-size:17px}.pick-label input{width:22px;height:22px;flex-shrink:0;accent-color:var(--teal)}.level-badge{display:inline-block;background:var(--teal-l);color:var(--teal-d);padding:2px 10px;border-radius:20px;font-size:13px}.selection-note{font-size:14px;background:#f5f8fb;padding:10px;border-radius:8px}.template-actions{position:sticky;bottom:0;background:white;border-top:1px solid var(--border);padding:10px 0 0;z-index:1}.template-actions p{font-size:14px;font-weight:700;color:var(--teal-d);margin:0}.template-actions .btn{margin-top:6px}.template-ex[hidden],.exercise-group[hidden]{display:none!important}#guideModal{z-index:200}@media(max-width:380px){.template-summary .image-button{width:95px}.template-filters{grid-template-columns:1fr}.search-field{grid-column:auto}}
+
+/* Reserve navigation space inside the scrolling content, including iPhone inset. */
+:root{--nav:66px;--bottom-inset:env(safe-area-inset-bottom,0px)}
+body{height:auto;min-height:100%;padding-bottom:0}
+main{padding-bottom:calc(var(--nav) + var(--bottom-inset) + 24px)}
+.nav{height:calc(var(--nav) + var(--bottom-inset));padding-bottom:var(--bottom-inset)}
+.toast{bottom:calc(var(--nav) + var(--bottom-inset) + 14px);pointer-events:none}
+.t-overlay{padding-bottom:calc(24px + var(--bottom-inset));scroll-padding-bottom:calc(24px + var(--bottom-inset))}
+.template-actions{position:static;margin-top:16px;padding-top:12px}
+@media print{main{padding-bottom:0}}

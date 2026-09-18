@@ -59,6 +59,17 @@ async function main(){
   await check('first-day weekly total and zero pain',"weekly().pct===100 && getLog(todayKey()).vas===0");
   await check('notes persisted',"JSON.parse(localStorage.getItem('rehab_v2')).logs[todayKey()].note==='保存の確認'");
   await check('no horizontal overflow at 390px',"document.documentElement.scrollWidth<=390");
+  await check('last daily action scrolls above bottom navigation',"(async()=>{document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,document.documentElement.scrollHeight);await new Promise(r=>requestAnimationFrame(r));const buttons=$('today-content').querySelectorAll('button'),last=buttons[buttons.length-1];return last.getBoundingClientRect().bottom<=document.querySelector('.nav').getBoundingClientRect().top-12})()");
+  await send('Emulation.setDeviceMetricsOverride',{width:360,height:640,deviceScaleFactor:1,mobile:true});
+  await evaluate("document.documentElement.style.setProperty('--bottom-inset','34px')");
+  for(const [tab,id] of [['today','today-content'],['cal','cal-content'],['prog','prog-content']]){
+    await check(tab+' content clears tabs on short screen with home-indicator inset',`(async()=>{switchTab('${tab}');window.scrollTo(0,document.documentElement.scrollHeight);await new Promise(r=>requestAnimationFrame(r));return $('${id}').getBoundingClientRect().bottom<=document.querySelector('.nav').getBoundingClientRect().top-12&&document.documentElement.scrollWidth<=360})()`);
+  }
+  await evaluate("switchTab('today');window.scrollTo(0,document.documentElement.scrollHeight)");
+  const bottomShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'bottom-navigation-mobile.png'),Buffer.from(bottomShot.data,'base64'));
+  await evaluate("document.documentElement.style.removeProperty('--bottom-inset')");
+  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
+  await evaluate("window.scrollTo(0,0)");
   let shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'today-mobile.png'),Buffer.from(shot.data,'base64'));
   await evaluate('showExercise(0)');await delay(150);shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'guide-mobile.png'),Buffer.from(shot.data,'base64'));await evaluate("$('guideModal').remove()");
   await evaluate("$('pin-input').value='';checkPin();applyTemplate('knee');for(let i=0;i<3;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：5回';}applySelectedTemplate();");
@@ -76,6 +87,7 @@ async function main(){
   await check('all thirty images load',"(async()=>{const results=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>{const r=await fetch('assets/exercises/'+e.image);return r.ok&&(await r.blob()).size>1000}));return results.length===30&&results.every(Boolean)})()");
   await evaluate("$('pin-input').value='';checkPin();applyTemplate('lowback');");
   await check('ten low-back illustrations and mobile layout',"document.querySelectorAll('#chooseTemplate img').length===10&&document.documentElement.scrollWidth<=390");
+  await check('prescription action follows last exercise without covering it',"(()=>{const rows=$('chooseTemplate').querySelectorAll('.template-ex'),last=rows[rows.length-1],actions=$('chooseTemplate').querySelector('.template-actions');return getComputedStyle(actions).position==='static'&&last.getBoundingClientRect().bottom<=actions.getBoundingClientRect().top})()");
   shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'library-mobile.png'),Buffer.from(shot.data,'base64'));
   await evaluate("for(let i=0;i<10;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：左右各5回';}applySelectedTemplate();showShareQR();");
   await check('ten-exercise prescription generates and round-trips QR',"(()=>{const p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(buildShareUrl().split('#d=')[1])));return S.menu.length===10&&p.menu.length===10&&p.menu.some(e=>e.exerciseKey==='walking')&&!!document.querySelector('#qrBox svg')})()");
