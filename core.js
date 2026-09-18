@@ -1,0 +1,88 @@
+/* Pure data rules. Browser and Node share these functions. */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.RehabCore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const clone = x => JSON.parse(JSON.stringify(x));
+  const text = (x, n = 500) => typeof x === 'string' ? x.slice(0, n) : '';
+  const validDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s)) && new Date(s + 'T12:00:00Z').toISOString().slice(0, 10) === s;
+  const id = x => typeof x === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(x) && !(x in Object.prototype);
+  const record = x => !!x && typeof x === 'object' && !Array.isArray(x);
+  function menu(input) {
+    if (!Array.isArray(input) || input.length > 60) throw Error('メニューは60種目以内にしてください。');
+    const seen = new Set();
+    return input.map((m, i) => {
+      if (!record(m) || !text(m.name, 120)) throw Error('種目名が不正です。');
+      const mid = id(m.id) ? m.id : 'import_' + i;
+      if (seen.has(mid)) throw Error('種目IDが重複しています。');
+      seen.add(mid);
+      const dows = m.dows === undefined ? [] : m.dows;
+      if (!Array.isArray(dows) || dows.some(x => !Number.isInteger(x) || x < 0 || x > 6)) throw Error('実施曜日が不正です。');
+      return { id: mid, name: text(m.name, 120), params: text(m.params, 100), note: text(m.note), dows: [...new Set(dows)],
+        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl) };
+    });
+  }
+  function videoUrl(s) {
+    if (!s) return '';
+    try { const u = new URL(s); return u.protocol === 'https:' ? u.href : ''; } catch { return ''; }
+  }
+  function settings(raw, fallbackId, today) {
+    if (!record(raw)) throw Error('設定データが不正です。');
+    const result = { patientId: id(raw.patientId) ? raw.patientId : fallbackId,
+      patientName: text(raw.patientName, 80), age: text(raw.age, 3), diagnosis: text(raw.diagnosis, 120),
+      therapistName: text(raw.therapistName, 80), startDate: validDate(raw.startDate) ? raw.startDate : today,
+      nextVisit: validDate(raw.nextVisit) ? raw.nextVisit : '', template: id(raw.template) ? raw.template : null,
+      menu: menu(raw.menu), knownSince: validDate(raw.knownSince) ? raw.knownSince : today, plans: [] };
+    if (Array.isArray(raw.plans)) result.plans = raw.plans.slice(-1000).filter(p => record(p) && validDate(p.from)).map(p => ({from:p.from, menu:menu(p.menu)}));
+    if (!result.plans.length) result.plans = [{from:result.knownSince, menu:clone(result.menu)}];
+    return result;
+  }
+  function scheduled(items, dow) { return items.filter(x => !x.dows.length || x.dows.includes(dow)); }
+  function menuAt(s, logs, key, dow) {
+    if (!s || key < s.startDate) return [];
+    const log = logs[key];
+    if (log && Array.isArray(log.menuSnapshot)) return clone(log.menuSnapshot);
+    if (key < s.knownSince) return [];
+    const plans = (s.plans || []).filter(p => p.from <= key).sort((a,b) => a.from.localeCompare(b.from));
+    if (!plans.length) return [];
+    return clone(scheduled(plans[plans.length - 1].menu, dow));
+  }
+  function completion(s, logs, key, dow) {
+    const log = logs[key] || {};
+    const items = menuAt(s, logs, key, dow);
+    const total = items.length;
+    const done = items.filter(x => log.status?.[x.id] === 'done' || (!log.status?.[x.id] && log.done?.[x.id] === true)).length;
+    return {done,total,pct:total ? Math.round(done/total*100) : 0, unknown:!!log.legacyUnknown};
+  }
+  function logs(raw) {
+    if (!record(raw) || Object.keys(raw).length > 20000) throw Error('記録データが不正です。');
+    const out = {};
+    for (const [key,l] of Object.entries(raw)) {
+      if (!validDate(key) || !record(l)) throw Error('記録の日付または形式が不正です。');
+      const done = {}, status = {};
+      if (record(l.done)) for (const [k,v] of Object.entries(l.done)) if (id(k) && typeof v === 'boolean') done[k] = v;
+      if (record(l.status)) for (const [k,v] of Object.entries(l.status)) if (id(k) && ['done','partial','pain','forgot'].includes(v)) status[k] = v;
+      out[key] = {done,status,vas:Number.isInteger(l.vas) && l.vas >= 0 && l.vas <= 10 ? l.vas : null, note:text(l.note,2000)};
+      if (Array.isArray(l.menuSnapshot)) out[key].menuSnapshot = menu(l.menuSnapshot);
+      if (l.legacyUnknown) out[key].legacyUnknown = true;
+    }
+    return out;
+  }
+  function migrate(rawS, rawL, newId, today) {
+    if (!rawS) return {settings:null,logs:logs(rawL || {})};
+    const s = settings(rawS,newId,today), l = logs(rawL || {});
+    // Legacy logs have no historical prescription. Preserve evidence, never invent it.
+    for (const value of Object.values(l)) if (!value.menuSnapshot) value.legacyUnknown = true;
+    return {settings:s,logs:l};
+  }
+  function changeMenu(s, l, next, today, tomorrow) {
+    const date = l[today]?.menuSnapshot ? tomorrow : today;
+    s.menu = menu(next);
+    s.plans = (s.plans || []).filter(p => p.from !== date);
+    s.plans.push({from:date,menu:clone(s.menu)});
+    return date;
+  }
+  return {clone,text,id,record,validDate,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,videoUrl};
+});
