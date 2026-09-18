@@ -82,7 +82,15 @@ async function main(){
   await evaluate("window.scrollTo(0,0)");
   let shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'today-mobile.png'),Buffer.from(shot.data,'base64'));
   await evaluate('showExercise(0)');await delay(150);shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'guide-mobile.png'),Buffer.from(shot.data,'base64'));await evaluate("$('guideModal').remove()");
-  await evaluate("$('pin-input').value='';checkPin();applyTemplate('knee');for(let i=0;i<3;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：5回';}applySelectedTemplate();");
+  await evaluate("window.beforeImmediate=C.clone(packState());$('pin-input').value='';checkPin();commitMenu([...S.menu,...[4,5,6,7].map(i=>({id:'added_'+i,name:'追加種目'+i,params:'5回',dows:[]}))]);renderToday();");
+  await check('three to seven update explains timing and offers same-day action',"S.menu.length===7&&todayExercises(new Date().getDay()).length===3&&!!$('apply-menu-today')&&$('today-content').textContent.includes('現在の設定は7種目')");
+  await evaluate("$('apply-menu-today').click();closeTherapist();");
+  await check('same-day action displays all seven and retains existing records',"document.querySelectorAll('#today-content .exercise-card').length===7&&getCompletion(todayKey(),new Date().getDay()).done===3&&L[todayKey()].vas===beforeImmediate.logs[todayKey()].vas&&L[todayKey()].note===beforeImmediate.logs[todayKey()].note");
+  await evaluate("loadState();renderToday();calSelectedKey=todayKey();renderCalendar();");
+  await check('seven exercises and previous records survive reload',"document.querySelectorAll('#today-content .exercise-card').length===7&&L[todayKey()].menuRevisions[0].menuSnapshot.length===3&&$('cal-content').textContent.includes('当日の変更前の記録')");
+  await evaluate("$('pin-input').value='';checkPin();commitMenu([...S.menu,{id:'quota_extra',name:'保存失敗用',params:'5回',dows:[]}]);window.beforeFailedImmediate=JSON.stringify(packState());");
+  await check('failed immediate save rolls back current and historical menus',"(()=>{const original=Storage.prototype.setItem;Storage.prototype.setItem=()=>{throw Error('simulated quota failure')};try{applyCurrentMenuToday()}finally{Storage.prototype.setItem=original}return JSON.stringify(packState())===beforeFailedImmediate})()");
+  await evaluate("restoreMemory(beforeImmediate);persist();renderToday();applyTemplate('knee');for(let i=0;i<3;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：5回';}applySelectedTemplate();");
   await check('recorded start date stays disabled in new date control',"$('start-date').disabled&&$('start-date').parentElement.classList.contains('is-disabled')");
   await check('same-day logged prescription unchanged',"getCompletion(todayKey(),new Date().getDay()).pct===100 && todayExercises(new Date().getDay())[0].exerciseKey==='pendulum'");
   await check('next-day prescription updated',"C.menuAt(S,L,dk(addDays(new Date(),1)),addDays(new Date(),1).getDay())[0].exerciseKey==='heel-slide'");

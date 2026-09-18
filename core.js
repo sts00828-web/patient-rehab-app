@@ -66,6 +66,14 @@
       if (record(l.status)) for (const [k,v] of Object.entries(l.status)) if (id(k) && ['done','partial','pain','forgot'].includes(v)) status[k] = v;
       out[key] = {done,status,vas:Number.isInteger(l.vas) && l.vas >= 0 && l.vas <= 10 ? l.vas : null, note:text(l.note,2000)};
       if (Array.isArray(l.menuSnapshot)) out[key].menuSnapshot = menu(l.menuSnapshot);
+      if (l.menuRevisions !== undefined) {
+        if (!Array.isArray(l.menuRevisions) || l.menuRevisions.length > 100) throw Error('当日のメニュー変更履歴が多すぎます。');
+        out[key].menuRevisions = l.menuRevisions.map(r => {
+          if (!record(r) || !Array.isArray(r.menuSnapshot)) throw Error('メニュー変更履歴が不正です。');
+          const saved = logs({[key]:{menuSnapshot:r.menuSnapshot,done:r.done,status:r.status}})[key];
+          return {menuSnapshot:saved.menuSnapshot,done:saved.done,status:saved.status};
+        });
+      }
       if (l.legacyUnknown) out[key].legacyUnknown = true;
     }
     return out;
@@ -84,5 +92,28 @@
     s.plans.push({from:date,menu:clone(s.menu)});
     return date;
   }
-  return {clone,text,id,record,validDate,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,videoUrl};
+  function applyMenuToday(s, l, today, dow) {
+    if (today < s.startDate) throw Error('開始日より前には反映できません。');
+    const next = menu(s.menu), current = l[today], items = scheduled(next,dow);
+    if (current?.menuSnapshot && JSON.stringify(current.menuSnapshot) !== JSON.stringify(items)) {
+      const revisions = current.menuRevisions || [];
+      if (revisions.length >= 100) throw Error('当日のメニュー変更は100回までです。');
+      const previous = menu(current.menuSnapshot), used = new Set(), done = {}, status = {};
+      const signature = ex => JSON.stringify({...ex,id:'',dows:[...ex.dows].sort()});
+      for (const ex of items) {
+        const candidates = previous.filter(old => !used.has(old.id) && signature(old) === signature(ex));
+        const old = candidates.find(old => old.id === ex.id) || (candidates.length === 1 ? candidates[0] : null);
+        if (!old) continue;
+        used.add(old.id);
+        if (Object.hasOwn(current.done || {},old.id)) done[ex.id] = current.done[old.id];
+        if (Object.hasOwn(current.status || {},old.id)) status[ex.id] = current.status[old.id];
+      }
+      current.menuRevisions = [...revisions,clone({menuSnapshot:previous,done:current.done || {},status:current.status || {}})];
+      current.menuSnapshot = clone(items);current.done = done;current.status = status;
+    }
+    s.plans = (s.plans || []).filter(p => p.from < today);
+    s.plans.push({from:today,menu:clone(next)});
+    return today;
+  }
+  return {clone,text,id,record,validDate,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,applyMenuToday,videoUrl};
 });
