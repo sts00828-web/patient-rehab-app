@@ -140,3 +140,4 @@ const tennisElbowExercises = [
 for(const [id,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of tennisElbowExercises){
   EXERCISE_LIBRARY[id]={name,region:'tennisElbow',image:id+'.png',params:'回数・時間・重さはPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:TENNIS_ELBOW_SOURCES[source]};
 }
+EXERCISE_LIBRARY['wrist-flexor-stretch'].image='wrist-flexor-stretch-v2.png';
