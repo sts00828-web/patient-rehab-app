@@ -43,3 +43,24 @@ test('overlong restrictions fail before core could silently truncate them',()=>{
   const ctx=library();ctx.ds.fixture={exerciseKeys:['pendulum'],prescriptionNote:'注'.repeat(501)};
   assert.throws(()=>ctx.getDiseaseExerciseMenu('fixture'),/500/);
 });
+
+for(const disease of ['rotatorCuffTear','cervicalDiscHerniation'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
+  const ctx=library(),day='2026-09-18',tomorrow='2026-09-19';
+  const shared=new Set(['shoulder','lowback','knee','tennisElbow','cervicalSpondylosis','shoulderImpingement'].flatMap(key=>Array.from(ctx.getDiseaseExerciseKeys(key))));
+  const selectedKeys=Array.from(ctx.getDiseaseExerciseKeys(disease)).filter(key=>shared.has(key)).slice(0,3);
+  assert.equal(selectedKeys.length,3,'three reusable exercises are available');assert.ok(ctx.ds[disease].prescriptionNote);
+  const originalExerciseData=JSON.stringify(ctx.ex);
+  const old=C.menu([{...ctx.getDiseaseExerciseMenu('shoulder')[0],id:'old_recorded',params:'旧指示5回'}]);
+  const state=C.settings({patientId:'fake',startDate:day,menu:old},'fake',day);
+  const logs={[day]:{menuSnapshot:C.clone(old),done:{old_recorded:true},status:{old_recorded:'done'},vas:2,note:'変更前の記録'}};
+  const originalLogs=JSON.stringify(logs);
+  const menu=ctx.getDiseaseExerciseMenu(disease).filter(ex=>selectedKeys.includes(ex.exerciseKey)).map((ex,i)=>({...ex,id:'new_'+i,params:'PT指定5回'}));
+  const encoded=LZ.compressToEncodedURIComponent(JSON.stringify({version:2,patientId:'fake',startDate:day,menu:C.menu(menu)}));
+  const received=C.settings(JSON.parse(LZ.decompressFromEncodedURIComponent(encoded)),'fake',day);
+  assert.deepEqual(received.menu.map(ex=>ex.exerciseKey),selectedKeys);
+  assert.ok(received.menu.every(ex=>ex.note.includes(ctx.ds[disease].prescriptionNote)));
+  C.changeMenu(state,logs,received.menu,day,tomorrow);
+  assert.equal(JSON.stringify(logs),originalLogs);assert.deepEqual(C.menuAt(state,logs,day,5),old);
+  assert.equal(C.completion(state,logs,day,5).done,1);assert.equal(C.menuAt(state,logs,tomorrow,6).length,3);
+  assert.equal(JSON.stringify(ctx.ex),originalExerciseData,'shared definitions are not rewritten');
+});

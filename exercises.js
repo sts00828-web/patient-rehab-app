@@ -238,3 +238,29 @@ DISEASE_LIBRARY.shoulderImpingement={
   prescriptionNote:'診察・PT評価後の保存療法中に、指定された範囲と負荷で行います。術後・脱臼後の指示とは別です。運動後から翌日に痛みが明らかに増える場合は負荷を下げ相談してください。けがの後に急に腕が上がらない、脱力が進む、発熱・強い腫れ・赤みがある場合は運動を中止し受診してください。',
   exerciseKeys:['table-slide','wall-slide','stick-external-rotation','scapular-setting','shoulder-isometric-external','shoulder-band-external','band-row','wall-push-up']
 };
+
+// Second batch: reuse reviewed movements only where individually indicated.
+DISEASE_LIBRARY.rotatorCuffTear={
+  name:'腱板断裂（保存療法・PT評価後）',icon:'💪',desc:'断裂の状態・負荷の許可を確認して選ぶ6候補',
+  guidance:'医師が保存療法を選択し、PTが断裂部位・残存筋力・痛みを評価した後の候補です。術後、外傷後に急に腕が上がらない場合、進行する脱力、強い安静時痛・夜間痛はこのメニューを使わず再評価を優先します。運動で切れた腱をつなぐことを目的にしません。机・あお向けの挙上は支持の違う代替です。等尺性外旋とバンド引きは抵抗運動の許可後だけ選びます。無症状・機能障害がなければ画像所見だけで運動を追加しません。',
+  prescriptionNote:'医師・PTが許可した保存療法中の運動です。術後には使いません。支える腕も含め、指定された範囲・負荷で行います。けがの後に急に腕が上がらない、脱力が進む、強い夜間痛が続く場合は中止し早めに受診してください。赤み・熱感・発熱を伴う場合も受診してください。',
+  exerciseKeys:['pendulum','table-slide','supine-flexion','scapular-setting','shoulder-isometric-external','band-row'],
+  sources:[
+    {title:'日本整形外科学会：肩腱板断裂',url:'https://www.joa.or.jp/public/sick/condition/rotator_cuff_tear.html'},
+    {title:'AAOS：Rotator Cuff Tears',url:'https://www.orthoinfo.org/diseases--conditions/rotator-cuff-tears'},
+    {title:'Kingston and Richmond NHS：Shoulder exercises for a rotator cuff tear',url:'https://www.kingstonandrichmond.nhs.uk/patients-and-families/patient-leaflets/shoulder-exercises-rotator-cuff-tear'},
+    {title:'Bexley NHS：Rotator Cuff Tears（動作の参考）',url:'https://msk-bexley.nhs.uk/conditions/shoulder-pain/rotator-cuff-tears'}
+  ]
+};
+DISEASE_LIBRARY.cervicalDiscHerniation={
+  name:'頚椎椎間板ヘルニア（保存療法・PT評価後）',icon:'🌱',desc:'脊髄症を除外し、症状が安定した人の4候補',
+  guidance:'脊髄症を除外し、症状が落ち着いて医師・PTが運動を許可した保存療法中の候補です。脊髄症またはその疑い、進行する筋力低下、外傷直後・術後には使いません。回旋・頭の後退は腕や手へ症状が広がらない方向と範囲だけを選びます。肩甲骨運動・歩行は補助で、歩行やバランスに異常があれば歩行練習より診察を優先します。首の強い伸展、手で引くストレッチ、自己牽引を行いません。運動が不要と判断された場合は処方しません。',
+  prescriptionNote:'医師・PTが許可した保存療法中の運動です。術後には使いません。指定された小さな範囲で行い、首を手で引っ張りません。新しいしびれ、腕・手へ広がる痛み、めまいが出たら中止して相談してください。手の不器用さ、歩行の変化、筋力低下は速やかに受診し、急な歩行不能や排尿・排便の異常は緊急受診してください。',
+  exerciseKeys:['neck-rotation','neck-retraction','scapular-setting','walking'],
+  sources:[
+    {title:'AAOS：Cervical Radiculopathy',url:'https://www.orthoinfo.org/diseases--conditions/cervical-radiculopathy-pinched-nerve/'},
+    {title:'Bexley NHS：Cervical Radiculopathy',url:'https://msk-bexley.nhs.uk/conditions/neck-pain/cervical-radiculopathy'},
+    {title:'Dynamic Health NHS：Cervical myelopathy and radiculopathy',url:'https://dynamichealth.nhs.uk/help-and-advice/neck-pain/cervical-myelopathy-and-radiculopathy/'},
+    {title:'Norfolk NHS：Cervical Radiculopathy',url:'https://www.norfolkandwaveneycommunityhealth.nhs.uk/msk/self-help/neck/cervical-radiculopathy/'}
+  ]
+};

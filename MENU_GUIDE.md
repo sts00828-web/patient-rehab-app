@@ -1,6 +1,6 @@
 # 疾患別メニュー一覧（PT選択用）
 
-6領域・固有46種目の候補です。同じ運動を複数疾患で共有します。各疾患の候補を一律に全部行う処方ではありません。目的・症状・生活での負荷を確認して選びます。基本・標準・発展は編集上の目安で、検証済みの病期分類や安全判定ではありません。
+8領域・固有46種目の候補です。同じ運動を複数疾患で共有します。各疾患の候補を一律に全部行う処方ではありません。目的・症状・生活での負荷を確認して選びます。基本・標準・発展は編集上の目安で、検証済みの病期分類や安全判定ではありません。
 
 「主な運動候補」「補助的な運動候補」「症状・動作能力を確認して選択」は目的を整理する表示です。効果の優劣や自動的な適応を意味しません。指示量は担当PTが個別に設定します。
 
@@ -141,6 +141,42 @@
 
 - ゴムバンドで腕を外へ開く：肘を脇につけた外旋です。肘を肩の高さまで上げる方法とは異なります。固定位置とバンドの強さはPTに確認します。
 - 壁に手をついて軽く腕立て：図は肘を軽く曲げた場面です。手と足の位置を変えず、体を一直線に保って肘を伸ばし、戻します。壁との距離と曲げる深さはPTに確認します。
+
+## 腱板断裂（保存療法・PT評価後）（6候補）
+
+医師が保存療法を選択し、PTが断裂部位・残存筋力・痛みを評価した後の候補です。術後、外傷後に急に腕が上がらない場合、進行する脱力、強い安静時痛・夜間痛はこのメニューを使わず再評価を優先します。運動で切れた腱をつなぐことを目的にしません。机・あお向けの挙上は支持の違う代替です。等尺性外旋とバンド引きは抵抗運動の許可後だけ選びます。無症状・機能障害がなければ画像所見だけで運動を追加しません。
+
+患者へ渡す共通注意：医師・PTが許可した保存療法中の運動です。術後には使いません。支える腕も含め、指定された範囲・負荷で行います。けがの後に急に腕が上がらない、脱力が進む、強い夜間痛が続く場合は中止し早めに受診してください。赤み・熱感・発熱を伴う場合も受診してください。
+
+疾患の適応・選定の参考：[日本整形外科学会：肩腱板断裂](https://www.joa.or.jp/public/sick/condition/rotator_cuff_tear.html)、[AAOS：Rotator Cuff Tears](https://www.orthoinfo.org/diseases--conditions/rotator-cuff-tears)、[Kingston and Richmond NHS：Shoulder exercises for a rotator cuff tear](https://www.kingstonandrichmond.nhs.uk/patients-and-families/patient-leaflets/shoulder-exercises-rotator-cuff-tear)、[Bexley NHS：Rotator Cuff Tears（動作の参考）](https://msk-bexley.nhs.uk/conditions/shoulder-pain/rotator-cuff-tears)。
+
+| 種目 | 目的・位置づけ | 同系統内の違い | 選択時の注意 |
+|---|---|---|---|
+| [振り子体操](https://orthoinfo.aaos.org/globalassets/pdfs/2017-rehab_shoulder.pdf) | 肩の力を抜いて腕を動かす／補助的な運動候補 | 別の目的で選択 | 前傾姿勢が安全にとれることと疼痛反応を確認。 |
+| [机で手を滑らせる](https://www.ouh.nhs.uk/media/xuqnlojh/86594shoulder.pdf) | 腕を支えながら前へ動かす／主な運動候補 | 腕を前へ上げる：座位・机で支持 | 痛みの強い時期は小さな範囲から。机の高さを調整。 |
+| [あお向けで腕を上げる](https://www.orthoinfo.org/diseases--conditions/frozen-shoulder) | 反対の腕で支えて肩を動かす／主な運動候補 | 腕を前へ上げる：あお向け・反対腕の介助 | 腕を上げる範囲を個別に設定。夜間痛・安静時痛が強い場合は負荷を見直す。 |
+| [肩甲骨を軽く寄せる](https://www.cuh.nhs.uk/patient-information/scapular-stabilisation-exercises/) | 肩甲骨を動かす感覚の練習／補助的な運動候補 | 肩甲骨まわりの運動：軽い動きの練習 | 首に力が入りやすい場合は、収縮を弱めて確認。 |
+| [壁を外向きに軽く押す](https://msk-bexley.nhs.uk/conditions/shoulder-pain/rotator-cuff-tears) | 肩を外へ回す筋肉に力を入れる／症状・動作能力を確認して選択 | 肩を外へ回す筋肉への負荷：壁で受け止め、動かさず力を入れる | 動かさない軽い収縮での疼痛反応を確認して選択。 |
+| [ゴムバンドを引く](https://orthoinfo.aaos.org/globalassets/pdfs/2017-rehab_shoulder.pdf) | 肩まわりと背中の筋力練習／症状・動作能力を確認して選択 | 肩甲骨まわりの運動：バンドの抵抗を加える | 疼痛が落ち着き、抵抗運動が可能な場合に。固定具も確認。 |
+
+## 頚椎椎間板ヘルニア（保存療法・PT評価後）（4候補）
+
+脊髄症を除外し、症状が落ち着いて医師・PTが運動を許可した保存療法中の候補です。脊髄症またはその疑い、進行する筋力低下、外傷直後・術後には使いません。回旋・頭の後退は腕や手へ症状が広がらない方向と範囲だけを選びます。肩甲骨運動・歩行は補助で、歩行やバランスに異常があれば歩行練習より診察を優先します。首の強い伸展、手で引くストレッチ、自己牽引を行いません。運動が不要と判断された場合は処方しません。
+
+患者へ渡す共通注意：医師・PTが許可した保存療法中の運動です。術後には使いません。指定された小さな範囲で行い、首を手で引っ張りません。新しいしびれ、腕・手へ広がる痛み、めまいが出たら中止して相談してください。手の不器用さ、歩行の変化、筋力低下は速やかに受診し、急な歩行不能や排尿・排便の異常は緊急受診してください。
+
+疾患の適応・選定の参考：[AAOS：Cervical Radiculopathy](https://www.orthoinfo.org/diseases--conditions/cervical-radiculopathy-pinched-nerve/)、[Bexley NHS：Cervical Radiculopathy](https://msk-bexley.nhs.uk/conditions/neck-pain/cervical-radiculopathy)、[Dynamic Health NHS：Cervical myelopathy and radiculopathy](https://dynamichealth.nhs.uk/help-and-advice/neck-pain/cervical-myelopathy-and-radiculopathy/)、[Norfolk NHS：Cervical Radiculopathy](https://www.norfolkandwaveneycommunityhealth.nhs.uk/msk/self-help/neck/cervical-radiculopathy/)。
+
+| 種目 | 目的・位置づけ | 同系統内の違い | 選択時の注意 |
+|---|---|---|---|
+| [椅子で顔をゆっくり左右へ向ける](https://www.nhs.uk/live-well/exercise/sitting-exercises/) | 首を回す動きの練習／症状・動作能力を確認して選択 | 首の可動性の練習：顔を左右へ向ける | 脊髄症・進行する神経症状を除外し、回旋で腕の痛みやしびれ、めまいが増えない方向と範囲を確認。 |
+| [あごを軽く後ろへ引く](https://msk-bexley.nhs.uk/conditions/neck-pain/cervical-spondylosis) | 首を前へ突き出さず頭の位置を動かす／症状・動作能力を確認して選択 | 首の可動性の練習：目線を水平に保ち頭を後ろへ動かす | 小さい後退運動への症状反応を確認。しびれが増える場合は選ばず、首の変形を矯正する目的では用いない。 |
+| [肩甲骨を軽く寄せる](https://www.cuh.nhs.uk/patient-information/scapular-stabilisation-exercises/) | 肩甲骨を動かす感覚の練習／補助的な運動候補 | 肩甲骨まわりの運動：軽い動きの練習 | 首に力が入りやすい場合は、収縮を弱めて確認。 |
+| [平らな場所を歩く](https://www.nhs.uk/conditions/back-pain/) | 歩く活動を少しずつ続ける／補助的な運動候補 | 別の目的で選択 | 歩行耐容能・転倒リスク・休憩場所を確認し時間を設定。 |
+
+図の場面：
+
+- あごを軽く後ろへ引く：図の矢印は動かす方向を示します。目線を水平に保ち、頭全体をわずかに後ろへ動かします。首を深く曲げたり、手であごを押したりしません。
 
 ## 根拠資料と調整例
 

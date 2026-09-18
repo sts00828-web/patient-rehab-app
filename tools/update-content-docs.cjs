@@ -15,6 +15,7 @@ for(const [key,disease] of Object.entries(diseases)){
   const exercises=keys(key).map(id=>library[id]);
   doc+=`\n## ${disease.name}（${exercises.length}候補）\n\n${disease.guidance}\n`;
   if(disease.prescriptionNote)doc+=`\n患者へ渡す共通注意：${disease.prescriptionNote}\n`;
+  if(disease.sources?.length)doc+='\n疾患の適応・選定の参考：'+disease.sources.map(s=>`[${s.title}](${s.url})`).join('、')+'。\n';
   doc+='\n| 種目 | 目的・位置づけ | 同系統内の違い | 選択時の注意 |\n|---|---|---|---|\n';
   gallery+=`<section><h2>${esc(disease.name)}</h2><p>${exercises.length}種目の候補</p><div class="grid">`;
   for(const e of exercises){
