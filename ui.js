@@ -412,8 +412,8 @@ function init() {
   loadState();
   // URLハッシュからのインポート（PT端末からのQR読み取り）
   handleImportFromHash();
-  // メニュー未設定なら初回説明オーバーレイを表示
-  if (!S || !S.menu || S.menu.length === 0) {
+  // 登録済みの空処方は休養日として表示し、初回案内で覆わない。
+  if (!S) {
     const ov = document.getElementById('setupOverlay');
     ov.hidden = false;
     // PWA（standalone）として開いているかで案内文を切り替え

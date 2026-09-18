@@ -21,7 +21,7 @@
       const dows = m.dows === undefined ? [] : m.dows;
       if (!Array.isArray(dows) || dows.some(x => !Number.isInteger(x) || x < 0 || x > 6)) throw Error('実施曜日が不正です。');
       return { id: mid, name: text(m.name, 120), params: text(m.params, 100), note: text(m.note), dows: [...new Set(dows)],
-        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl) };
+        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}) };
     });
   }
   function videoUrl(s) {
@@ -75,6 +75,13 @@
         });
       }
       if (l.legacyUnknown) out[key].legacyUnknown = true;
+      if (l.legacyOriginal !== undefined) {
+        if (!record(l.legacyOriginal)) throw Error('旧記録の形式が不正です。');
+        const old = l.legacyOriginal;
+        // Preserve one original record only; never recurse through imported history.
+        out[key].legacyOriginal = logs({[key]:{done:old.done,status:old.status,vas:old.vas,note:old.note,
+          menuSnapshot:old.menuSnapshot,legacyUnknown:old.legacyUnknown}})[key];
+      }
     }
     return out;
   }

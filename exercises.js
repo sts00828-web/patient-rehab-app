@@ -72,7 +72,7 @@ const additions = [
   ['walking','lowback','平らな場所を歩く','function','基本','歩く活動を少しずつ続ける','歩きやすい靴','歩行耐容能・転倒リスク・休憩場所を確認し時間を設定。',
     ['段差の少ない、歩き慣れた場所を選びます。','楽な速度と歩幅で歩きます。','担当PTと決めた時間で休み、歩いた後の症状を確認します。'],'脚の痛み・しびれやふらつきが増える場合は、歩き続けません。','walking'],
   ['quad-setting','knee','太ももに力を入れて膝を押す','strength','基本','太ももの前に力を入れる練習','マット・薄いタオル','膝伸展時の痛みと伸展制限を確認。無理に押し切らない。',
-    ['脚を伸ばして座り、膝の下に薄いタオルを置きます。','かかとを床につけたまま、膝を軽くタオルへ押します。','太ももに力を入れた後、ゆっくり緩めます。'],'膝を強く押し込まず、痛みのない力加減で行います。','kneeStrength'],
+    ['脚を伸ばして座り、膝の下に薄いタオルを置きます。','かかとを床につけたまま、太ももの前に軽く力を入れます。','膝裏で薄いタオルを軽く押して保ち、ゆっくり緩めます。'],'かかとを持ち上げる膝伸ばしとは別の運動です。膝を強く押し込みません。','kneeStrength'],
   ['straight-leg-raise','knee','膝を伸ばして脚を上げる','strength','標準','膝を伸ばしたまま脚を支える','マット','膝が曲がらず保持できること、腰痛が出ないことを確認。',
     ['あお向けになり、反対の膝を立てます。','運動する側の膝を伸ばしたまま、脚を少し上げます。','腰を反らさずに、ゆっくり下ろします。'],'膝が曲がってしまう場合は、高さや種目をPTと調整します。','kneeStrength'],
   ['seated-knee-extension','knee','椅子で膝を伸ばす','strength','基本','座って太ももの筋力を使う','椅子','座位が安定することと、伸ばす範囲の痛みを確認。',
@@ -125,13 +125,13 @@ const tennisElbowExercises = [
   ['wrist-extensor-stretch','手首を下げて前腕の外側を伸ばす','mobility','標準','手首を起こす筋肉の柔軟性','椅子','伸張で外側の肘痛が増す場合は選択しない。肘の伸ばし具合を調整。',
     ['手のひらを下に向け、腕を前へ出します。','反対の手を手の甲に添え、手首を軽く下へ曲げます。','前腕が軽く伸びるところで保ち、ゆっくり緩めます。'],'強く押したり、痛みを我慢して伸ばしたりしません。','gentle'],
   ['wrist-flexor-stretch','手のひらを上にして前腕を伸ばす','mobility','標準','前腕の手のひら側の柔軟性','椅子','補助的な柔軟性の候補。手首や肘内側の痛み、しびれに注意。',
-    ['手のひらを上にして、腕を前へ出します。','反対の手で支え、指先を下へ向けるように手首を軽く反らします。','楽な伸びを感じる範囲で保ち、ゆっくり戻します。'],'指だけを強く引かず、しびれが出たら中止します。','aaos'],
+    ['腕を前へ出し、前腕を返して手のひらを上に向けます。','反対の手を指の付け根から手のひら側に添え、指先が下を向くよう手首を軽く反らします。','前腕の手のひら側が楽に伸びる範囲で保ち、ゆっくり戻します。'],'指先だけを強く引かず、しびれが出たら中止します。','aaos'],
   ['wrist-isometric-extension','手の甲で反対の手を軽く押す','strength','基本','手首を動かさずに力を入れる','机・タオル','軽い力での反応を評価。下ろす練習・重りの上げ下げとの負荷重複を調整。',
     ['手のひらを下にして前腕を机で支え、手首をまっすぐ保ちます。','反対の手を手の甲に当て、上へ起こすつもりで軽く押し合います。','手首を動かさずに保ち、ゆっくり力を抜きます。'],'強く押し合わず、呼吸を続けます。','gentle'],
   ['wrist-eccentric-extension','手首の重りをゆっくり下ろす','strength','標準','手首を下ろす動きで負荷をかける','机・タオル・軽い重り','重さ・下ろす速さをPTが設定。等尺性や上げ下げとの段階を選択。',
-    ['手のひらを下にして前腕を机に置き、指定の重りを持ちます。','反対の手で手首を起こしてから、支えを離します。','運動する側だけで重りをゆっくり下ろし、反対の手で持ち上げ直します。'],'重りに引かれて急に落とさず、肘の痛みが増す場合は負荷を下げます。','aaos'],
+    ['手のひらを下にして前腕を机で支え、手首と手を端から出して指定の重りを持ちます。','反対の手で手首を起こしてから、支えを離します。','運動する側だけで重りをゆっくり下ろし、反対の手で持ち上げ直します。'],'重りに引かれて急に落とさず、肘の痛みが増す場合は負荷を下げます。','aaos'],
   ['wrist-resisted-extension','重りで手首を上げ下げする','strength','発展','手首を起こす筋肉の筋力練習','机・タオル・軽い重り','自分で上げ下げする負荷に耐えられる場合に。ほかの手首筋力種目との重複に注意。',
-    ['手のひらを下にして前腕を机で支え、指定の重りを持ちます。','前腕を動かさず、手首を少し上へ起こします。','手首をゆっくり下ろして戻します。'],'自己判断で重くせず、握り込みすぎないようにします。','stages'],
+    ['手のひらを下にして前腕を机で支え、手首と手を端から出して指定の重りを持ちます。','前腕を動かさず、手首を少し上へ起こします。','手首をゆっくり下ろして戻します。'],'自己判断で重くせず、握り込みすぎないようにします。','stages'],
   ['gentle-ball-grip','柔らかいボールを軽く握る','strength','標準','握る力を少しずつ練習する','机・タオル・柔らかいボール','握力課題での症状を確認。仕事・家事で握る量も含めて負荷を調整。',
     ['前腕を机で支え、手首をまっすぐにします。','柔らかいボールを軽く握ります。','指定の時間で力を緩め、手を休めます。'],'全力で握らず、肘の痛みが増す強さでは行いません。','load'],
   ['resisted-forearm-turn','軽い重りで前腕を返す','strength','発展','前腕を回す筋力の練習','机・タオル・軽い重り','重りなしの回旋が可能な場合に。重さと回す範囲を指定。',
@@ -141,3 +141,41 @@ for(const [id,name,category,difficulty,purpose,equipment,selectionNote,steps,cau
   EXERCISE_LIBRARY[id]={name,region:'tennisElbow',image:id+'.png',params:'回数・時間・重さはPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:TENNIS_ELBOW_SOURCES[source]};
 }
 EXERCISE_LIBRARY['wrist-flexor-stretch'].image='wrist-flexor-stretch-v3.png';
+EXERCISE_LIBRARY['kneeling-plank'].image='kneeling-plank-v2.png';
+EXERCISE_LIBRARY['wrist-extensor-stretch'].image='wrist-extensor-stretch-v2.png';
+EXERCISE_LIBRARY['forearm-turn'].image='forearm-turn-v2.png';
+
+// Editorial relationships for clinician selection, not automatic prescriptions or clinical stages.
+const EXERCISE_CHOICE_GROUPS = {
+  'shoulder-elevation':{name:'腕を前へ上げる',note:'姿勢と支え方の違う候補です。痛み・可動域に合う方法を選び、重ねる場合は運動量を調整します。'},
+  'scapular-control':{name:'肩甲骨まわりの運動',note:'軽い動作練習と抵抗運動で目的の一部が重なります。負荷への反応で選びます。'},
+  'trunk-support':{name:'体幹を支える',note:'腹部の収縮練習と支持負荷の大きい練習です。姿勢を保てる範囲で選びます。'},
+  'back-mobility':{name:'背中・骨盤を丸めて戻す',note:'姿勢の違う可動性の候補です。同方向で症状が増えないか確認します。'},
+  'knee-quadriceps':{name:'太もも前の筋力',note:'力を入れて保つ・膝を伸ばす・膝を伸ばしたまま脚を上げる候補です。必要な方法を選び、同じ筋肉への負荷を合算します。'},
+  'knee-supported-function':{name:'立ち座り・浅い屈伸',note:'両脚で体を上げ下げする近い課題です。椅子移乗の目標や支えの必要性で選びます。'},
+  'wrist-extension-load':{name:'手首を起こす筋肉への負荷',note:'重りなし・等尺性・下ろす運動・上げ下げの候補です。全種類を必須にせず、仕事や家事も含め負荷を調整します。'},
+  'forearm-rotation':{name:'前腕を上・下に返す',note:'同じ回旋動作の重りなし・重りありです。回旋への反応と必要な負荷で選びます。'}
+};
+const choiceVariants = {
+  'shoulder-elevation':{'supine-flexion':'あお向け・反対腕の介助','table-slide':'座位・机で支持','wall-slide':'立位・壁で支持'},
+  'scapular-control':{'scapular-setting':'軽い動きの練習','band-row':'バンドの抵抗を加える'},
+  'trunk-support':{'abdominal-brace':'あお向けで腹部の収縮','kneeling-plank':'両肘・両膝で体を支持'},
+  'back-mobility':{'pelvic-tilt':'あお向けで骨盤を動かす','cat-camel':'四つ這いで背中を動かす'},
+  'knee-quadriceps':{'quad-setting':'かかとは床・力を入れて保つ','short-arc-quad':'膝下を支え、かかとだけを上げる','seated-knee-extension':'椅子で膝を伸ばす','straight-leg-raise':'膝を伸ばして脚全体を上げる'},
+  'knee-supported-function':{'sit-to-stand':'椅子からの移乗','mini-squat':'台で支える浅い屈伸'},
+  'wrist-extension-load':{'wrist-active-extension':'重りなしで動かす','wrist-isometric-extension':'動かさず軽く押し合う','wrist-eccentric-extension':'反対手で上げ、患側で下ろす','wrist-resisted-extension':'患側で上げ下げする'},
+  'forearm-rotation':{'forearm-turn':'重りなし','resisted-forearm-turn':'指定の重りを加える'}
+};
+for(const [group,variants] of Object.entries(choiceVariants))for(const [id,variant] of Object.entries(variants))Object.assign(EXERCISE_LIBRARY[id],{choiceGroup:group,choiceVariant:variant});
+for(const e of Object.values(EXERCISE_LIBRARY))e.clinicalRole='主な運動候補';
+for(const id of ['pendulum','scapular-setting','walking','heel-raise','side-lying-hip-abduction','elbow-bend-straighten','forearm-turn','wrist-flexor-stretch'])EXERCISE_LIBRARY[id].clinicalRole='補助的な運動候補';
+for(const id of ['shoulder-isometric-external','shoulder-isometric-internal','band-row','knee-to-chest','prone-on-elbows','bird-dog','kneeling-plank','wrist-active-extension','wrist-extensor-stretch','resisted-forearm-turn'])EXERCISE_LIBRARY[id].clinicalRole='症状・動作能力を確認して選択';
+EXERCISE_LIBRARY['quad-setting'].source='https://www.mskdorset.nhs.uk/knee-pain/knee-pain-osteoarthritis-of-the-knee/';
+EXERCISE_LIBRARY['quad-setting'].selectionNote='静的な太ももの収縮。原資料のあお向けで膝裏を床へ押す方法を、長座位・薄いタオルで調整した例です。かかとは床につけ、膝を無理に押し切りません。';
+EXERCISE_LIBRARY['wrist-active-extension'].source=TENNIS_ELBOW_SOURCES.gentle;
+EXERCISE_LIBRARY['wrist-resisted-extension'].source=TENNIS_ELBOW_SOURCES.load;
+DISEASE_LIBRARY.knee.guidance+=' 太もも前の筋力4種と立ち座り・浅い屈伸2種は同系統の候補です。違いを確認して選び、負荷を合算します。';
+EXERCISE_LIBRARY['wrist-eccentric-extension'].imageCaption='図は重りを下ろす場面です。上げるときは反対の手で補助し、下ろすときは補助を離します。';
+EXERCISE_LIBRARY['resisted-forearm-turn'].imageCaption='図は開始姿勢の例です。肘・前腕を支え、手首をまっすぐ保って手のひらを上・下へ返します。';
+EXERCISE_LIBRARY['shoulder-isometric-internal'].imageCaption='肘を脇につけたまま、運動する側の手首をお腹の方向へ押し、反対の手で受け止めます。腕が動かない程度の軽い力にします。';
+EXERCISE_LIBRARY['wrist-flexor-stretch'].imageCaption='手のひらを上へ向けた姿勢から、指先を下へ向けるよう手首を反らした場面です。反対の手で手のひら側を支え、指先だけを引きません。';

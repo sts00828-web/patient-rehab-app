@@ -90,7 +90,10 @@ async function main(){
   await check('seven exercises and previous records survive reload',"document.querySelectorAll('#today-content .exercise-card').length===7&&L[todayKey()].menuRevisions[0].menuSnapshot.length===3&&$('cal-content').textContent.includes('当日の変更前の記録')");
   await evaluate("$('pin-input').value='';checkPin();commitMenu([...S.menu,{id:'quota_extra',name:'保存失敗用',params:'5回',dows:[]}]);window.beforeFailedImmediate=JSON.stringify(packState());");
   await check('failed immediate save rolls back current and historical menus',"(()=>{const original=Storage.prototype.setItem;Storage.prototype.setItem=()=>{throw Error('simulated quota failure')};try{applyCurrentMenuToday()}finally{Storage.prototype.setItem=original}return JSON.stringify(packState())===beforeFailedImmediate})()");
-  await evaluate("restoreMemory(beforeImmediate);persist();renderToday();applyTemplate('knee');for(let i=0;i<3;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：5回';}applySelectedTemplate();");
+  await evaluate("restoreMemory(beforeImmediate);persist();renderToday();applyTemplate('knee');for(const i of [1,5])$('pick-'+i).checked=true;updateTemplateSelection();$('template-purpose').value='mobility';filterTemplateExercises();");
+  await check('related knee selections warn even when filters hide the selected rows',"$('template-choice-warnings').textContent.includes('同系統の種目')&&$('template-choice-warnings').textContent.includes('椅子で膝を伸ばす')&&$('template-selection').textContent.includes('非表示 2種目')&&S.menu.length===3");
+  await evaluate("$('template-purpose').value='';filterTemplateExercises();for(const i of [0,1,5]){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：5回';}applySelectedTemplate();");
+  await check('saved related prescription retains choices and shows load guidance on mobile',"S.menu.length===3&&$('therapist-content').textContent.includes('同系統の種目を選択しています')&&$('therapistModal').scrollWidth<=390");
   await check('recorded start date stays disabled in new date control',"$('start-date').disabled&&$('start-date').parentElement.classList.contains('is-disabled')");
   await check('same-day logged prescription unchanged',"getCompletion(todayKey(),new Date().getDay()).pct===100 && todayExercises(new Date().getDay())[0].exerciseKey==='pendulum'");
   await check('next-day prescription updated',"C.menuAt(S,L,dk(addDays(new Date(),1)),addDays(new Date(),1).getDay())[0].exerciseKey==='heel-slide'");
@@ -117,7 +120,7 @@ async function main(){
   await evaluate("$('template-purpose').value='strength';filterTemplateExercises();$('template-level').value='基本';filterTemplateExercises();");
   await check('elbow strength filter finds isometric entry',"document.querySelectorAll('.template-ex:not([hidden])').length===1&&document.querySelector('.template-ex:not([hidden])').textContent.includes('手の甲')");
   await evaluate("previewTemplateExercise(6)");
-  await check('eccentric elbow guide explains assisted return and slow lowering',"$('guideModal').textContent.includes('反対の手で持ち上げ直します')&&$('guideModal').querySelector('img').getAttribute('src').includes('wrist-eccentric-extension')");
+  await check('eccentric elbow guide explains illustrated phase and assisted return',"$('guideModal').textContent.includes('反対の手で持ち上げ直します')&&$('guideModal').textContent.includes('図は重りを下ろす場面です')&&$('guideModal').querySelector('img').getAttribute('src').includes('wrist-eccentric-extension')");
   await evaluate("$('guideModal').remove();$('template-purpose').value='';$('template-level').value='';filterTemplateExercises();for(const i of [0,1,5]){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：軽い力で5回';}applySelectedTemplate();showShareQR();");
   await check('selected elbow exercises persist and generate transferable QR',"(()=>{const p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(buildShareUrl().split('#d=')[1])));return S.menu.length===3&&p.menu.length===3&&p.menu[2].exerciseKey==='wrist-isometric-extension'&&JSON.parse(localStorage.getItem('rehab_v2')).settings.menu[2].exerciseKey==='wrist-isometric-extension'&&!!document.querySelector('#qrBox svg')})()");
   await evaluate("closeQR();closeTherapist();manualImport(buildShareUrl());");
@@ -132,7 +135,21 @@ async function main(){
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
   await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
   await check('all new illustrations available offline',"(async()=>{const r=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>(await fetch('assets/exercises/'+e.image)).ok));return r.length===40&&r.every(Boolean)})()");
+  await check('empty URL gives visible feedback',"(()=>{showReceiveSettings();manualImport($('update-url').value);const ok=$('toast').textContent==='URLを入力してください';$('receiveModal').remove();return ok})()");
+  await check('no illustration selection is saved and overrides name fallback',"(()=>{staffUnlocked=true;openTherapist();S.menu=C.menu([{id:'test_none',name:Object.values(EXERCISE_LIBRARY)[0].name,params:'5回',dows:[]}]);editEx(0);$('ee-image').value='';saveEx();const ok=S.menu[0].mediaDisabled&&mediaFor(S.menu[0])===null&&JSON.parse(localStorage.getItem(STORE_KEY)).settings.menu[0].mediaDisabled;closeTherapist();return !!ok})()");
+  await check('empty future prescription still shows today record and note',"(()=>{L[todayKey()]={menuSnapshot:C.clone(S.menu),done:{test_none:true},status:{test_none:'done'},vas:0,note:'keep'};C.changeMenu(S,L,[],todayKey(),dk(addDays(new Date(),1)));persist();renderToday();return document.querySelectorAll('#today-content .exercise-card').length===1&&!!$('note-ta')&&$('pain-value').textContent==='0 / 10'})()");
+  await send('Page.reload');await delay(1200);
+  await check('empty saved prescription reload keeps today record visible without setup overlay',"S.menu.length===0&&$('setupOverlay').hidden&&document.querySelectorAll('#today-content .exercise-card').length===1&&!!$('note-ta')");
   await check('legacy migration preserves raw backup and marks unknown history',"(()=>{localStorage.removeItem('rehab_v2');const old={patientName:'Legacy test',startDate:'2026-01-01',menu:[{id:'new',name:'New exercise',dows:[]}]};const logs={'2026-01-02':{done:{removed_exercise:true},vas:4,note:'keep'}};localStorage.setItem('rehab_settings',JSON.stringify(old));localStorage.setItem('rehab_logs',JSON.stringify(logs));S=null;L={};T={};archives=[];committed=null;loadState();return L['2026-01-02'].legacyUnknown&&L['2026-01-02'].vas===4&&JSON.parse(localStorage.getItem('rehab_legacy_backup')).logs===JSON.stringify(logs)})()");
+  await check('another window storage event stops stale patient writes',`(async()=>{
+    const originalId=S.patientId,frame=document.createElement('iframe');frame.hidden=true;document.body.appendChild(frame);
+    const next=C.clone(packState());next.settings.patientId='external_fake_patient';next.logs={};
+    frame.contentWindow.localStorage.setItem(STORE_KEY,JSON.stringify(next));
+    await new Promise(r=>setTimeout(r,100));
+    const notified=storageBlocked&&storageConflict&&!!$('storageConflictModal');
+    try{S.patientName='stale draft';persist()}catch{}
+    const safe=JSON.parse(localStorage.getItem(STORE_KEY)).settings.patientId==='external_fake_patient'&&S.patientId===originalId&&S.patientName==='Legacy test';frame.remove();return notified&&safe;
+  })()`);
   assert.deepEqual(errors,[],'browser runtime errors');
   await send('Browser.close').catch(()=>{});console.log('Browser smoke complete. Screenshots: .test-artifacts/');
 }

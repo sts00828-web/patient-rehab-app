@@ -2,6 +2,7 @@
 const C = RehabCore;
 const STORE_KEY = 'rehab_v2';
 let archives = [], localPin = '', committed = null, storageBlocked = false, staffUnlocked = false;
+let storedBaseline = null, storageConflict = false;
 let activeDay = todayKey();
 const $ = id => document.getElementById(id);
 const uid = () => crypto.randomUUID().replace(/-/g, '');
@@ -21,14 +22,28 @@ function cleanTemplates(raw) {
 }
 function packState() { return {version:2,settings:S,logs:L,templates:T,archives,localPin}; }
 function restoreMemory(data) { S=data.settings;L=data.logs;T=data.templates;archives=data.archives||[];localPin=data.localPin||''; }
+function blockConflictingStorage() {
+  if(committed) restoreMemory(C.clone(committed));
+  storageBlocked=true;storageConflict=true;staffUnlocked=false;
+  modal('storageConflictModal','別の画面でデータが更新されました',
+    '<p>この画面の古い内容で上書きしないよう、保存を停止しました。他の画面で保存した内容を読み直してください。保存前の入力は反映されません。</p><button class="btn btn-pri" onclick="location.reload()">最新の保存内容を読み直す</button>');
+}
+window.addEventListener('storage',event=>{
+  if((event.key===STORE_KEY||event.key===null)&&event.storageArea===localStorage&&localStorage.getItem(STORE_KEY)!==storedBaseline)blockConflictingStorage();
+});
 function persist() {
-  if (storageBlocked) throw Error('保存できないため操作を停止しています。再読み込みしてください。');
-  try { const raw=JSON.stringify(packState());localStorage.setItem(STORE_KEY,raw);committed=JSON.parse(raw); }
-  catch(e) { if(committed) restoreMemory(C.clone(committed));alert('保存できませんでした。変更は取り消しました。空き容量・ブラウザ設定を確認し、バックアップを保存してください。');throw e; }
+  if (storageBlocked) {if(committed)restoreMemory(C.clone(committed));throw Error('保存できないため操作を停止しています。再読み込みしてください。');}
+  // Check the raw persisted value, including fields from older releases, before writing.
+  // Never merge patients or silently replace another tab's data.
+  try {
+    if(localStorage.getItem(STORE_KEY)!==storedBaseline){blockConflictingStorage();throw Error('別の画面で更新されています。最新の保存内容を読み直してください。');}
+    const raw=JSON.stringify(packState());localStorage.setItem(STORE_KEY,raw);storedBaseline=raw;committed=JSON.parse(raw);
+  } catch(e) { if(committed) restoreMemory(C.clone(committed));if(!storageConflict)alert('保存できませんでした。変更は取り消しました。空き容量・ブラウザ設定を確認し、バックアップを保存してください。');throw e; }
 }
 function loadState() {
   try {
     const raw=localStorage.getItem(STORE_KEY);
+    storedBaseline=raw;
     if(raw) {
       const data=JSON.parse(raw);
       if(data.version!==2) throw Error('未対応のデータ形式です。');
@@ -61,7 +76,7 @@ function writableLog() {
   const key=todayKey();
   if(!S || key<S.startDate) throw Error('開始日より前には記録できません。');
   const log=getLog(key);
-  if(!log.menuSnapshot) {log.menuSnapshot=C.menuAt(S,L,key,new Date().getDay());if(log.legacyUnknown) log.legacyOriginal=C.clone(L[key]);delete log.legacyUnknown;}
+  if(!log.menuSnapshot) {if(log.legacyUnknown) log.legacyOriginal=C.clone(log);log.menuSnapshot=C.menuAt(S,L,key,new Date().getDay());delete log.legacyUnknown;}
   log.status=log.status||{};log.done=log.done||{};L[key]=log;return log;
 }
 function calcStreak(){
@@ -74,12 +89,13 @@ function calcStreak(){
 }
 function percentText(c){return c.unknown?'旧記録':!c.total?'—':c.pct+'%';}
 function mediaFor(ex){
+  if(ex.mediaDisabled)return null;
   if(EXERCISE_LIBRARY[ex.exerciseKey])return EXERCISE_LIBRARY[ex.exerciseKey];
   const match=Object.values(EXERCISE_LIBRARY).find(e=>e.name===ex.name);return match||null;
 }
 function renderToday(){
-  if(storageBlocked){$('today-content').innerHTML='<div class="card">保存データの確認が必要です。元データは保持されています。</div>';return;}
-  if(!S||!S.menu.length){$('today-content').innerHTML='<div class="card empty"><div class="welcome-icon">🌱</div><h2>毎日のリハビリを、少しずつ。</h2><p>担当PTからメニューを受け取りましょう。</p><button class="btn btn-pri" onclick="startQrScan()">設定QRを読み取る</button><button class="btn btn-out" onclick="openPinModal()">スタッフ：メニューを設定</button></div>';return;}
+  if(storageBlocked){$('today-content').innerHTML=storageConflict?'<div class="card">別の画面で更新されています。<button class="btn btn-pri" onclick="location.reload()">最新の保存内容を読み直す</button></div>':'<div class="card">保存データの確認が必要です。元データは保持されています。</div>';return;}
+  if(!S){$('today-content').innerHTML='<div class="card empty"><div class="welcome-icon">🌱</div><h2>毎日のリハビリを、少しずつ。</h2><p>担当PTからメニューを受け取りましょう。</p><button class="btn btn-pri" onclick="startQrScan()">設定QRを読み取る</button><button class="btn btn-out" onclick="openPinModal()">スタッフ：メニューを設定</button></div>';return;}
   const key=todayKey(),dow=new Date().getDay(),log=getLog(key),items=todayExercises(dow),c=getCompletion(key,dow),before=key<S.startDate;
   let h=`<div class="banner"><div class="banner-d">${fmtJ(new Date())}</div><div class="banner-msg">${escapeHtml(S.patientName||'患者')}さんのペースで、続けましょう。</div></div>`;
   if(S.plans.some(p=>p.from>key))h+=`<div class="notice">現在の設定は${S.menu.length}種目です。本日は記録済みの${items.length}種目を表示し、更新は明日から反映します。今日から変更する場合は、セラピストモードの「今日から反映」を選んでください。</div>`;
@@ -110,7 +126,7 @@ function showExercise(i){
 }
 function showGuide(ex){
   const media=mediaFor(ex),url=C.videoUrl(ex.videoUrl);
-  modal('guideModal',escapeHtml(ex.name),`${media?`<img class="guide-image" src="assets/exercises/${media.image}" alt="${escapeAttr(media.name)}の姿勢">`:''}<div class="dose">${escapeHtml(ex.params||'担当PTと回数を確認してください')}</div>${media?`<ol class="steps">${media.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ol><div class="notice">${escapeHtml(media.caution)}</div>`:''}${ex.note?`<h3>担当PTから</h3><p>${escapeHtml(ex.note)}</p>`:''}${url?`<a class="btn btn-out" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">担当PTが登録した動画を見る ↗</a>`:''}${media?`<details class="source-note"><summary>説明の参考資料</summary><a href="${escapeAttr(media.source)}" target="_blank" rel="noopener noreferrer">医療機関の運動解説（英語）↗</a><p>イラストは説明用です。可動域や負荷は個別の指示を優先してください。</p></details>`:''}`);
+  modal('guideModal',escapeHtml(ex.name),`${media?`<img class="guide-image" src="assets/exercises/${media.image}" alt="${escapeAttr(media.name)}の姿勢">${media.imageCaption?`<p class="hint">${escapeHtml(media.imageCaption)}</p>`:''}`:''}<div class="dose">${escapeHtml(ex.params||'担当PTと回数を確認してください')}</div>${media?`<ol class="steps">${media.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ol><div class="notice">${escapeHtml(media.caution)}</div>`:''}${ex.note?`<h3>担当PTから</h3><p>${escapeHtml(ex.note)}</p>`:''}${url?`<a class="btn btn-out" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">担当PTが登録した動画を見る ↗</a>`:''}${media?`<details class="source-note"><summary>説明の参考資料</summary><a href="${escapeAttr(media.source)}" target="_blank" rel="noopener noreferrer">医療機関の運動解説（英語）↗</a><p>イラストは説明用です。可動域や負荷は個別の指示を優先してください。</p></details>`:''}`);
 }
 function modal(id,title,body){
   $(id)?.remove();const wrap=document.createElement('div');wrap.id=id;wrap.className='t-overlay on';wrap.setAttribute('role','dialog');wrap.setAttribute('aria-modal','true');
@@ -129,6 +145,7 @@ function renderCalendar(){
     const k=calSelectedKey,log=getLog(k),items=C.menuAt(S,L,k,parseDate(k).getDay()),c=getCompletion(k,parseDate(k).getDay());
     h+=`<div class="card"><h2>${fmtJ(parseDate(k))}</h2><p>${k>todayKey()?'予定':percentText(c)}</p>`;
     if(log.legacyUnknown)h+='<div class="notice">旧版の記録です。当時のメニューが保存されていないため、達成率は計算しません。痛み・メモ・元のチェック記録は保持しています。</div>';
+    if(log.legacyOriginal){const old=log.legacyOriginal;h+=`<details class="source-note"><summary>旧版から引き継いだ変更前の記録</summary><p>痛み：${old.vas===null?'未記録':old.vas+' / 10'}</p><p class="history-note">${escapeHtml(old.note)}</p>${[...new Set([...Object.keys(old.done||{}),...Object.keys(old.status||{})])].map(id=>`<p>${escapeHtml(id)}：${statusLabels[old.status?.[id]]||(old.done?.[id]?'できた':'未記録')}</p>`).join('')}<p>当時の種目名と対応が確認できない記録は元の種目IDで表示しています。</p></details>`;}
     for(const ex of items){const status=log.status?.[ex.id]||(log.done?.[ex.id]?'done':'');h+=`<p class="history-row">${escapeHtml(ex.name)}<strong>${statusLabels[status]||'未記録'}</strong></p>`;}
     for(const [i,revision] of (log.menuRevisions||[]).entries())h+=`<details class="source-note"><summary>当日の変更前の記録 ${i+1}</summary>${revision.menuSnapshot.map(ex=>`<p>${escapeHtml(ex.name)} ／ ${escapeHtml(ex.params)}：${statusLabels[revision.status[ex.id]]||(revision.done[ex.id]?'できた':'未記録')}</p>`).join('')}</details>`;
     h+=`<p>痛み：${log.vas===null?'未記録':log.vas+' / 10'}</p><p class="history-note">${escapeHtml(log.note)}</p></div>`;
@@ -190,7 +207,7 @@ function applyCurrentMenuToday(){
 }
 function renderTherapist(){
   if(!S)return;const all=getAllTemplates();
-  $('therapist-content').innerHTML=`<div class="notice">患者さんの状態に合わせて種目・回数を選び、院内で動作を確認してからお渡しください。</div><div class="t-sec"><div class="t-sec-ttl">患者情報（この端末内）</div><div class="fld"><label for="patient-name" class="fld-lbl">表示名・呼び名</label><input id="patient-name" class="fld-inp" value="${escapeAttr(S.patientName)}" maxlength="80" onchange="updS('patientName',this.value)"></div><div class="fld"><label for="diagnosis" class="fld-lbl">診断名</label><input id="diagnosis" class="fld-inp" value="${escapeAttr(S.diagnosis)}" onchange="updS('diagnosis',this.value)"></div><div class="fld-row">${dateField('start-date','startDate','開始日',S.startDate,Object.keys(L).length>0)}${dateField('next-visit','nextVisit','次回来院日',S.nextVisit)}</div><div class="fld"><label class="fld-lbl" for="therapist-name">担当PT</label><input id="therapist-name" class="fld-inp" value="${escapeAttr(S.therapistName)}" onchange="updS('therapistName',this.value)"></div><div class="hint">患者識別ID：${escapeHtml(S.patientId)}</div><button class="btn btn-out" onclick="newPatient()">別の患者のメニューを新規作成</button></div><div class="t-sec"><div class="t-sec-ttl">疾患別メニューから選ぶ</div><div class="tpl-grid">${Object.entries(all).map(([k,t])=>`<button class="tpl-card" onclick="applyTemplate('${k}')"><div class="tpl-ico">${escapeHtml(t.icon)}</div><div class="tpl-nm">${escapeHtml(t.name)}</div><div class="tpl-desc">${escapeHtml(t.desc)}</div></button>`).join('')}</div></div><div class="t-sec"><div class="t-sec-ttl">処方メニュー ${S.menu.length}種目</div>${menuTimingNotice()}${S.menu.map((ex,i)=>`<div class="menu-item"><div class="menu-item-hd"><div class="menu-item-nm">${escapeHtml(ex.name)}</div><button class="menu-item-btn" aria-label="編集" onclick="editEx(${i})">✏</button><button class="menu-item-btn" aria-label="削除" onclick="delEx(${i})">×</button></div><div class="menu-item-pm">${escapeHtml(ex.params)} ／ ${ex.dows.length?ex.dows.map(d=>DOW_LABEL[d]).join('・'):'毎日'}</div></div>`).join('')}<button class="btn btn-out" onclick="editEx(-1)">＋ 種目を追加</button><button class="btn btn-out" onclick="saveCurrentAsTemplate()">現在のメニューをテンプレート保存</button><button class="btn btn-out" onclick="showTemplateManagement()">テンプレートの共有・削除</button></div><div class="t-sec"><div class="t-sec-ttl">患者スマホへ</div><p class="hint">新しいQRに氏名・年齢・診断名・PINは含めません。設定した運動・注意文は含まれるため、本人へ直接お渡しください。</p><button class="btn btn-pri" onclick="showShareQR()">設定データQRを表示</button><button class="btn btn-out" onclick="showInstallQR()">アプリ追加用QR（共通）</button></div><div class="t-sec"><div class="t-sec-ttl">端末の誤操作防止PIN</div><input aria-label="端末のPIN" class="fld-inp" type="password" inputmode="numeric" maxlength="6" value="${escapeAttr(localPin)}" onchange="updS('passcode',this.value)"><p class="hint">4〜6桁。空欄で無効。この端末だけの簡易ロックで、本人認証ではありません。</p></div><div class="t-sec"><div class="t-sec-ttl">保存・復元</div><button class="btn btn-out" onclick="exportData()">端末全体をバックアップ</button><button class="btn btn-out" onclick="document.getElementById('restore-file').click()">バックアップを復元</button><input id="restore-file" type="file" accept=".json" hidden onchange="importData(event)"><button class="btn btn-out" onclick="showArchives()">退避した患者記録（${archives.length}件）</button><button class="btn btn-danger" onclick="resetAll()">この患者のデータを削除</button></div>`;
+  $('therapist-content').innerHTML=`<div class="notice">患者さんの状態に合わせて種目・回数を選び、院内で動作を確認してからお渡しください。</div><div class="t-sec"><div class="t-sec-ttl">患者情報（この端末内）</div><div class="fld"><label for="patient-name" class="fld-lbl">表示名・呼び名</label><input id="patient-name" class="fld-inp" value="${escapeAttr(S.patientName)}" maxlength="80" onchange="updS('patientName',this.value)"></div><div class="fld"><label for="diagnosis" class="fld-lbl">診断名</label><input id="diagnosis" class="fld-inp" value="${escapeAttr(S.diagnosis)}" onchange="updS('diagnosis',this.value)"></div><div class="fld-row">${dateField('start-date','startDate','開始日',S.startDate,Object.keys(L).length>0)}${dateField('next-visit','nextVisit','次回来院日',S.nextVisit)}</div><div class="fld"><label class="fld-lbl" for="therapist-name">担当PT</label><input id="therapist-name" class="fld-inp" value="${escapeAttr(S.therapistName)}" onchange="updS('therapistName',this.value)"></div><div class="hint">患者識別ID：${escapeHtml(S.patientId)}</div><button class="btn btn-out" onclick="newPatient()">別の患者のメニューを新規作成</button></div><div class="t-sec"><div class="t-sec-ttl">疾患別メニューから選ぶ</div><div class="tpl-grid">${Object.entries(all).map(([k,t])=>`<button class="tpl-card" onclick="applyTemplate('${k}')"><div class="tpl-ico">${escapeHtml(t.icon)}</div><div class="tpl-nm">${escapeHtml(t.name)}</div><div class="tpl-desc">${escapeHtml(t.desc)}</div></button>`).join('')}</div></div><div class="t-sec"><div class="t-sec-ttl">処方メニュー ${S.menu.length}種目</div>${menuTimingNotice()}${typeof ExerciseSelection!=='undefined'?ExerciseSelection.warnings(S.menu.map(ex=>ex.exerciseKey).filter(Boolean)):''}${S.menu.map((ex,i)=>`<div class="menu-item"><div class="menu-item-hd"><div class="menu-item-nm">${escapeHtml(ex.name)}</div><button class="menu-item-btn" aria-label="編集" onclick="editEx(${i})">✏</button><button class="menu-item-btn" aria-label="削除" onclick="delEx(${i})">×</button></div><div class="menu-item-pm">${escapeHtml(ex.params)} ／ ${ex.dows.length?ex.dows.map(d=>DOW_LABEL[d]).join('・'):'毎日'}</div></div>`).join('')}<button class="btn btn-out" onclick="editEx(-1)">＋ 種目を追加</button><button class="btn btn-out" onclick="saveCurrentAsTemplate()">現在のメニューをテンプレート保存</button><button class="btn btn-out" onclick="showTemplateManagement()">テンプレートの共有・削除</button></div><div class="t-sec"><div class="t-sec-ttl">患者スマホへ</div><p class="hint">新しいQRに氏名・年齢・診断名・PINは含めません。設定した運動・注意文は含まれるため、本人へ直接お渡しください。</p><button class="btn btn-pri" onclick="showShareQR()">設定データQRを表示</button><button class="btn btn-out" onclick="showInstallQR()">アプリ追加用QR（共通）</button></div><div class="t-sec"><div class="t-sec-ttl">端末の誤操作防止PIN</div><input aria-label="端末のPIN" class="fld-inp" type="password" inputmode="numeric" maxlength="6" value="${escapeAttr(localPin)}" onchange="updS('passcode',this.value)"><p class="hint">4〜6桁。空欄で無効。この端末だけの簡易ロックで、本人認証ではありません。</p></div><div class="t-sec"><div class="t-sec-ttl">保存・復元</div><button class="btn btn-out" onclick="exportData()">端末全体をバックアップ</button><button class="btn btn-out" onclick="document.getElementById('restore-file').click()">バックアップを復元</button><input id="restore-file" type="file" accept=".json" hidden onchange="importData(event)"><button class="btn btn-out" onclick="showArchives()">退避した患者記録（${archives.length}件）</button><button class="btn btn-danger" onclick="resetAll()">この患者のデータを削除</button></div>`;
 }
 let selectedTemplate=null;
 function applyTemplate(key){
@@ -199,9 +216,9 @@ function applyTemplate(key){
   const grouped=Object.entries(groups).map(([category,label])=>{
     const rows=tpl.menu.map((m,i)=>({m,i,e:EXERCISE_LIBRARY[m.exerciseKey]})).filter(({e})=>(e?.category||'custom')===category);
     if(!rows.length)return '';
-    return `<section class="exercise-group" data-group="${category}"><h3>${escapeHtml(label)}</h3>${rows.map(({m,i,e})=>`<article class="template-ex" data-index="${i}" data-category="${category}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}"><label class="pick-label"><input type="checkbox" id="pick-${i}" onchange="updateTemplateSelection()"> ${escapeHtml(m.name)}</label>${e?`<div class="template-summary"><button type="button" class="image-button" onclick="previewTemplateExercise(${i})" aria-label="${escapeAttr(e.name)}の手順を確認"><img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy" width="1536" height="1024"></button><div><span class="level-badge">${escapeHtml(e.difficulty)}</span><p>${escapeHtml(e.purpose)}</p><p class="hint">用具：${escapeHtml(e.equipment)}</p></div></div><p class="selection-note"><strong>選択時の注意：</strong>${escapeHtml(e.selectionNote)}</p><button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button>`:''}<p class="hint">${escapeHtml(m.note||'')}</p><label class="fld-lbl" for="dose-${i}">回数・時間・セット</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" maxlength="100" placeholder="患者さんに合わせた指示を入力"></article>`).join('')}</section>`;
+    return `<section class="exercise-group" data-group="${category}"><h3>${escapeHtml(label)}</h3>${rows.map(({m,i,e})=>`<article class="template-ex" data-index="${i}" data-category="${category}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}"><label class="pick-label"><input type="checkbox" id="pick-${i}" onchange="updateTemplateSelection()"> ${escapeHtml(m.name)}</label>${e?`<div class="template-summary"><button type="button" class="image-button" onclick="previewTemplateExercise(${i})" aria-label="${escapeAttr(e.name)}の手順を確認"><img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy" width="1536" height="1024"></button><div><span class="level-badge">${escapeHtml(e.difficulty)}</span><p>${escapeHtml(e.purpose)}</p><p class="hint">用具：${escapeHtml(e.equipment)}</p></div></div><p class="selection-note"><strong>選択時の注意：</strong>${escapeHtml(e.selectionNote)}</p>${typeof ExerciseSelection!=='undefined'?ExerciseSelection.summary(e):''}<button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button>`:''}<p class="hint">${escapeHtml(m.note||'')}</p><label class="fld-lbl" for="dose-${i}">回数・時間・セット</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" maxlength="100" placeholder="患者さんに合わせた指示を入力"></article>`).join('')}</section>`;
   }).join('');
-  modal('chooseTemplate',escapeHtml(tpl.name),`<div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p>${tpl.menu.length}種目の候補から必要なものだけ選び、指示量を入力してください。</p><p class="hint">難易度は動作の目安です。病期・安全性を判定する尺度ではありません。</p><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>(EXERCISE_LIBRARY[m.exerciseKey]?.category||'custom')===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><button class="btn btn-pri" onclick="applySelectedTemplate()">選んだ種目でメニューを更新</button></div>`);
+  modal('chooseTemplate',escapeHtml(tpl.name),`<div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p>${tpl.menu.length}種目の候補から必要なものだけ選び、指示量を入力してください。</p><p class="hint">難易度は動作の目安です。病期・安全性を判定する尺度ではありません。</p><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>(EXERCISE_LIBRARY[m.exerciseKey]?.category||'custom')===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><div id="template-choice-warnings" aria-live="polite"></div><button class="btn btn-pri" onclick="applySelectedTemplate()">選んだ種目でメニューを更新</button></div>`);
   filterTemplateExercises();
 }
 function previewTemplateExercise(i){const ex=getAllTemplates()[selectedTemplate]?.menu[i];if(ex)showGuide({...ex,params:$('dose-'+i)?.value.trim()||'回数・時間は患者さんに合わせて設定'});}
@@ -210,6 +227,8 @@ function updateTemplateSelection(){
   const count=root.querySelectorAll('.pick-label input:checked').length;
   const hidden=root.querySelectorAll('.template-ex[hidden] .pick-label input:checked').length;
   $('template-selection').textContent=`選択 ${count}種目${hidden?`（絞り込みで非表示 ${hidden}種目を含む）`:''}`;
+  const warnings=$('template-choice-warnings');
+  if(warnings&&typeof ExerciseSelection!=='undefined')warnings.innerHTML=ExerciseSelection.warnings([...root.querySelectorAll('.pick-label input:checked')].map(input=>getAllTemplates()[selectedTemplate]?.menu[Number(input.id.slice(5))]?.exerciseKey).filter(Boolean));
 }
 function filterTemplateExercises(){
   const root=$('chooseTemplate');if(!root)return;
@@ -229,13 +248,13 @@ function applySelectedTemplate(){
 }
 function editEx(idx){
   if(!requireStaff())return;__editingExIdx=idx;const ex=idx>=0?S.menu[idx]:{name:'',params:'',note:'',dows:[],exerciseKey:'',videoUrl:''};
-  modal('exEditModal',idx>=0?'種目を編集':'種目を追加',`<label class="fld-lbl" for="ee-name">種目名</label><input id="ee-name" class="fld-inp" value="${escapeAttr(ex.name)}" maxlength="120"><label class="fld-lbl" for="ee-params">回数・時間・セット</label><input id="ee-params" class="fld-inp" value="${escapeAttr(ex.params)}" maxlength="100"><label class="fld-lbl" for="ee-note">個別の注意点</label><textarea id="ee-note" class="fld-inp" maxlength="500">${escapeHtml(ex.note)}</textarea><label class="fld-lbl" for="ee-image">イラストと手順</label><select id="ee-image" class="fld-inp"><option value="">なし</option>${Object.entries(EXERCISE_LIBRARY).map(([k,e])=>`<option value="${k}" ${ex.exerciseKey===k?'selected':''}>${escapeHtml(e.name)}</option>`).join('')}</select><label class="fld-lbl" for="ee-video">動画URL（任意・HTTPS）</label><input id="ee-video" class="fld-inp" type="url" value="${escapeAttr(ex.videoUrl||'')}" placeholder="https://..."><p class="hint">担当PTが確認した動画を登録してください。外部サイトで開きます。</p><p>実施曜日（無選択＝毎日）</p><div class="day-options">${DOW_LABEL.map((v,i)=>`<label><input id="ee-day-${i}" type="checkbox" ${ex.dows.includes(i)?'checked':''}>${v}</label>`).join('')}</div><button class="btn btn-pri" onclick="saveEx()">保存</button>`);
+  modal('exEditModal',idx>=0?'種目を編集':'種目を追加',`<label class="fld-lbl" for="ee-name">種目名</label><input id="ee-name" class="fld-inp" value="${escapeAttr(ex.name)}" maxlength="120"><label class="fld-lbl" for="ee-params">回数・時間・セット</label><input id="ee-params" class="fld-inp" value="${escapeAttr(ex.params)}" maxlength="100"><label class="fld-lbl" for="ee-note">個別の注意点</label><textarea id="ee-note" class="fld-inp" maxlength="500">${escapeHtml(ex.note)}</textarea><label class="fld-lbl" for="ee-image">イラストと手順</label><select id="ee-image" class="fld-inp"><option value="">なし</option>${Object.entries(EXERCISE_LIBRARY).map(([k,e])=>`<option value="${k}" ${!ex.mediaDisabled&&(ex.exerciseKey===k||(!ex.exerciseKey&&EXERCISE_LIBRARY[k]===mediaFor(ex)))?'selected':''}>${escapeHtml(e.name)}</option>`).join('')}</select><label class="fld-lbl" for="ee-video">動画URL（任意・HTTPS）</label><input id="ee-video" class="fld-inp" type="url" value="${escapeAttr(ex.videoUrl||'')}" placeholder="https://..."><p class="hint">担当PTが確認した動画を登録してください。外部サイトで開きます。</p><p>実施曜日（無選択＝毎日）</p><div class="day-options">${DOW_LABEL.map((v,i)=>`<label><input id="ee-day-${i}" type="checkbox" ${ex.dows.includes(i)?'checked':''}>${v}</label>`).join('')}</div><button class="btn btn-pri" onclick="saveEx()">保存</button>`);
 }
 function saveEx(){
   if(!requireStaff())return;const name=$('ee-name').value.trim(),params=$('ee-params').value.trim(),video=$('ee-video').value.trim();
   if(!name||!params){toast('種目名と回数・時間を入力してください');return;}if(video&&!C.videoUrl(video)){toast('動画URLはhttps://で入力してください');return;}
   const next=C.clone(S.menu),old=__editingExIdx>=0?next[__editingExIdx]:{id:'ex_'+uid()};
-  const ex={...old,name,params,note:$('ee-note').value,exerciseKey:$('ee-image').value,videoUrl:video,dows:Array.from({length:7},(_,i)=>i).filter(i=>$('ee-day-'+i).checked)};
+  const ex={...old,name,params,note:$('ee-note').value,exerciseKey:$('ee-image').value,mediaDisabled:!$('ee-image').value,videoUrl:video,dows:Array.from({length:7},(_,i)=>i).filter(i=>$('ee-day-'+i).checked)};
   if(__editingExIdx>=0)next[__editingExIdx]=ex;else next.push(ex);const from=commitMenu(next);$('exEditModal').remove();toast(from===todayKey()?'保存しました':'本日分は保持し、明日から変更します');
 }
 function delEx(i){if(requireStaff()&&confirm('種目を削除しますか？ 過去の記録は保持されます。')){const next=C.clone(S.menu);next.splice(i,1);commitMenu(next);}}
@@ -277,7 +296,7 @@ function handleImportFromHash(){
   }catch(e){alert('読み込みできませんでした。\n'+e.message);return false;}
 }
 function manualImport(urlOverride){
-  const txt=(urlOverride||$('paste-url').value||'').trim();if(!txt){toast('URLを入力してください');return;}
+  const txt=String(urlOverride??$('update-url')?.value??$('paste-url')?.value??'').trim();if(!txt){toast('URLを入力してください');return;}
   const m=txt.match(/[#?&](?:d|import)=([^&\s]+)/);let value=m?m[1]:txt;try{value=decodeURIComponent(value);}catch{}
   history.replaceState(null,'',location.pathname+'#d='+encodeURIComponent(value));if(handleImportFromHash()){$('receiveModal')?.remove();renderHeader();renderToday();}
 }
