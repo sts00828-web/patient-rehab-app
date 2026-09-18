@@ -1,7 +1,7 @@
 {
   "mode": "built-in image_gen",
   "date": "2026-09-18",
-  "revision": "young-unified-character-30",
+  "revision": "young-unified-character-40",
   "character": "Same young Japanese adult man, 21–23, slim build, short black hair, youthful smooth face, teal T-shirt, navy full-length joggers, white/light-gray sneakers.",
   "masterReference": "pendulum.png",
   "prompts": [
@@ -194,6 +194,74 @@
       "operation": "generate",
       "characterReference": "pendulum.png",
       "prompt": "Use case: scientific-educational. Generate one NEW original rehabilitation exercise illustration. Input image is CHARACTER AND STYLE REFERENCE ONLY, not the target pose. Use the exact same young Japanese man aged 21–23, same smooth youthful face, short black side-part hair, slim build, plain teal short-sleeved crewneck T-shirt, navy full-length joggers, white/light-gray sneakers. Match the softly shaded clean medical drawing style of reference. White background, subtle shadow, landscape 1536x1024, one full body with all joints and necessary equipment visible and generous margins. No text, numbers, labels, watermark, logos, pain symbols, duplicate ghost limbs, panels, or other people. Anatomically accurate limbs and plausible balance. Exercise to show: Side lying hip abduction. Front three-quarter view on gray mat. Lying on LEFT side head on cushion, LEFT lower leg bent for stability, RIGHT upper leg straight lifted modestly 20 degrees directly sideways, toes facing forward and not turned toward ceiling. Pelvis stacked not rolling backward, right hand on mat in front for balance. Small upward arrow near upper ankle."
+    },
+    {
+      "id": "elbow-bend-straighten",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated upright on chair, right upper arm kept beside ribs, right elbow partially bent at about 60 degrees, right palm facing inward, hand open relaxed. Left hand on left thigh. Small curved teal double arrow near right elbow indicates gentle bending and straightening. No weights."
+    },
+    {
+      "id": "forearm-turn",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table, right elbow bent 90 degrees resting on towel, right forearm extends forward with hand free beyond edge and palm partly upward. Right upper arm remains tucked near side. Left hand relaxed on thigh. Small curved teal double arrow around forearm long axis indicates rotating palm up and down. Wrist stays straight. No weight."
+    },
+    {
+      "id": "wrist-active-extension",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table, right forearm pronated fully supported on folded towel with palm facing DOWN, hand free beyond table edge, wrist gently extended upward 20 degrees, fingers relaxed extended. Left hand resting on thigh. Small upward curved arrow at wrist. Clearly empty right hand: NO dumbbell.",
+      "refinementPrompt": "Correct the exercise mechanics. Keep same young man, clothing and style. Move the TABLE END so it ends at the right wrist: towel and entire forearm remain on table but hand is OUTSIDE the tabletop over empty white space. Palm faces DOWN, bend wrist slightly UPWARD 20 degrees, fingers relaxed and extending outward/up. No weight. Show one small upward curved arrow. Other hand on thigh."
+    },
+    {
+      "id": "wrist-extensor-stretch",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated upright. Right arm reaches forward with elbow almost straight, palm facing DOWN, right wrist gently bent down so fingers point toward floor. LEFT hand gently holds back of right hand and assists downward flexion, not individual fingers. A gentle forearm stretch. Show both arms clearly without overlap ambiguity. No force arrow."
+    },
+    {
+      "id": "wrist-flexor-stretch",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated upright. Right arm reaches forward with elbow almost straight, palm facing UP, right wrist gently extended so fingers point down toward floor. LEFT hand gently supports right palm/fingers from beneath. Anatomically correct palm UP forearm, wrist extension. Show backs and palms correctly, both hands distinct. No arrows.",
+      "refinementPrompt": "Correct pose into a wrist FLEXOR stretch: remove the table entirely. The exercising arm extends FORWARD with elbow almost straight, FOREARM SUPINATED with PALM facing UP, wrist gently extended so fingers curve downward toward floor. Opposite hand supports the PALMAR surface of that hand, assisting very gentle wrist extension. Show the exercising forearm's inner surface and open palm, rather than back of hand. Keep two hands clearly distinct and anatomically correct, same youthful man and outfit, white background. Only one pose, no text."
+    },
+    {
+      "id": "wrist-isometric-extension",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table. RIGHT forearm supported on folded towel, palm DOWN, right wrist STRAIGHT, hand beyond edge. LEFT palm rests on BACK of right hand to oppose right wrist trying to lift. Both hands stay still, no motion arrows, no weights. Clearly show right forearm resting on table and left arm coming from left shoulder. Neutral wrist, not flexed.",
+      "refinementPrompt": "Correct the isometric wrist extension pose. Same character and clothes. The RIGHT exercising forearm is the one resting on the towel with palm DOWN; wrist straight and hand extends beyond the TABLE END into empty white space. LEFT hand comes from opposite shoulder and rests lightly ON TOP of the BACK of the RIGHT hand, resisting attempted upward movement. Move table end directly under right wrist. Right forearm and hand should form a STRAIGHT line, no dropped wrist. No arrows or weight. Exactly two complete anatomically correct arms.",
+      "finalRefinement": {
+        "prompt": "Edit this exercise image into ISOMETRIC wrist extension, preserving the character identity, clothing, table and supported arm. Remove the dumbbell and arrow. The exercising arm at the RIGHT SIDE OF THE IMAGE stays supported along its forearm on the towel at the table edge. Straighten its wrist to NEUTRAL, open hand relaxed palm DOWN beyond edge. Move the other hand from the left side of the image to rest its PALM atop the BACK of the exercising hand, providing gentle opposing force. Thus the forearm attached to the LOWER of the two stacked hands is visibly on the towel; the forearm of the UPPER hand comes diagonally from the opposite shoulder through air, NOT on the towel. Exactly two distinct arms. This is static, no arrows. White background.",
+        "reference": "wrist-eccentric-extension.png"
+      }
+    },
+    {
+      "id": "wrist-eccentric-extension",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table. Right forearm palm DOWN supported on folded towel, right hand beyond table edge holding a SMALL light gray dumbbell, wrist just below neutral in slight flexion. One teal curved DOWNWARD arrow beside right hand indicates slowly lowering weight. Left hand nearby but visibly NOT touching the weight or right hand, ready to assist lifting only. No duplicate poses."
+    },
+    {
+      "id": "wrist-resisted-extension",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table. Right forearm palm DOWN resting on folded towel, wrist beyond edge holding SMALL light gray dumbbell, wrist extended UP about 20 degrees, fingers gripping naturally. One teal double curved arrow beside wrist indicates raising and lowering. Left hand relaxed on thigh. Forearm remains planted."
+    },
+    {
+      "id": "gentle-ball-grip",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table. Right forearm fully supported on folded towel, right wrist straight with thumb facing upward, right hand gently squeezing a small soft pale orange foam ball. All fingers wrap naturally around ball, no overexertion. Left hand resting on thigh. Ball prominently visible. No wrist bending or weights."
+    },
+    {
+      "id": "resisted-forearm-turn",
+      "operation": "generate-with-character-reference",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table. Right elbow bent 90 degrees supported on folded towel, right wrist straight just beyond table edge. Right hand holds a SMALL SHORT balanced light gray dumbbell, with thumb facing upward and forearm mid-rotation. Small teal curved double arrow around forearm axis indicates gently turning palm up/down while elbow stays planted. Left hand on thigh. Not a wrist curl; neutral wrist.",
+      "refinementPrompt": "Edit only the table and movement cue. Preserve this exact young man, hands, posture and neutral wrist gripping the small vertical dumbbell. Remove the teal arrow entirely. The table must END at the wrist, with the dumbbell and hand over EMPTY WHITE space beyond the LEFT edge of the table. Keep towel supporting the forearm and elbow. This allows forearm rotation without the dumbbell hitting a tabletop. No words or other changes."
     }
   ]
 }

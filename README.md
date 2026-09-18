@@ -10,8 +10,9 @@
 
 - スマホ下部のタブに末尾の内容が隠れる問題を修正。本文にタブとホームバーの分の余白を確保し、種目選択の更新ボタンも重ならない配置に変更。
 
-- 五十肩・腰痛・膝OAの3領域、各10種目・計30種目の選択式メニュー。
-- オリジナルAIイラスト30点、拡大表示、日本語の手順、注意点。
+- 五十肩・腰痛・膝OA・上腕骨外側上顆炎（テニス肘）の4領域、各10種目・計40種目の選択式メニュー。
+- テニス肘は肘・前腕の軽い運動、ストレッチ、等尺性運動、重りを使う運動、軽い握力練習から選択。手首の筋力種目は段階違いの候補で、重複する負荷をPTが調整します。
+- オリジナルAIイラスト40点、拡大表示、日本語の手順、注意点。
 - PT画面は目的別に分類し、難易度・種目名・用具で絞り込み可能。非表示になった選択種目も保持し、選択件数に表示します。
 - 各種目の目的・用具・選択時の注意を追加。難易度は動作の目安であり、臨床評価尺度ではありません。[種目別の一覧と参考資料](MENU_GUIDE.md)。
 - PTが選んだ種目に回数・時間を入力して処方。自動で全種目を患者に処方しません。
@@ -63,11 +64,13 @@ PINは認証基盤や暗号化ではありません。QRには運動内容と個
 - [AAOS：Frozen Shoulder](https://www.orthoinfo.org/diseases--conditions/frozen-shoulder)
 - [AAOS：Spine Conditioning Program](https://www.orthoinfo.org/recovery/spine-conditioning-program/)
 - [Royal Orthopaedic Hospital：Knee OA exercises](https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee)
+- [AAOS：Epicondylitis exercise program](https://orthoinfo.aaos.org/globalassets/pdfs/2022-therapeutic-exercise-program-for-epicondylitis.pdf)
+- [NHS Bexley：Tennis elbow](https://msk-bexley.nhs.uk/conditions/elbow-pain/tennis-elbow)
 
-画像：`assets/exercises/*.png`（30点、約48MB）
+画像：`assets/exercises/*.png`（40点、約64MB）
 生成方法：組み込み `image_gen`。プロンプト：`assets/exercises/PROMPTS.json`。
 
-30点とも同じ20代前半の若い男性モデルに統一しました。振り子体操の画像を人物の基準として、顔・髪型・体格・青緑のTシャツ・紺の長ズボン・白〜グレーの靴を合わせています。`illustration-preview.html` で全画像を一覧できます。追加21点も組み込み `image_gen` で制作し、プロンプトを保存しています。
+40点とも同じ20代前半の若い男性モデルに統一しました。振り子体操の画像を人物の基準として、顔・髪型・体格・青緑のTシャツ・紺の長ズボン・白〜グレーの靴を合わせています。`illustration-preview.html` で全画像を一覧できます。テニス肘の10点も組み込み `image_gen` で制作し、手首や手が見やすい構図にしています。プロンプトと修正指示を保存しています。
 
 追加種目はOxford University Hospitals、Cambridge University Hospitals、NHSの腰痛・膝OA資料なども参考にしています。各種目の出典は `MENU_GUIDE.md` とアプリ内の手順から開けます。姿勢・支持物などを調整した説明を含みます。既存患者の処方に種目を自動追加することはありません。
 
@@ -88,6 +91,6 @@ node tests/browser-smoke.cjs
 
 ブラウザテストはWindowsのChromeを非表示の専用プロファイルで起動し、架空データだけを使用します。スクリーンショットは `.test-artifacts/` に保存されます。テスト用プロファイルを通常の患者運用に使用しないでください。
 
-確認済み：データ処理8項目、種目データ・画像・キャッシュ対象3項目、Chromeでの画面・QR・保存・オフライン動作44項目。QRカメラの起動待ちでキャンセルした場合と、権限拒否後の終了処理も模擬カメラで確認しています。スマホ実機のカメラ権限・iPhoneのホーム画面追加・実際の運動指導は、この自動確認の範囲外です。
+確認済み：データ処理8項目、種目データ・画像・キャッシュ対象3項目、Chromeでの画面・QR・保存・オフライン動作49項目。QRカメラの起動待ちでキャンセルした場合と、権限拒否後の終了処理も模擬カメラで確認しています。スマホ実機のカメラ権限・iPhoneのホーム画面追加・実際の運動指導は、この自動確認の範囲外です。
 
-公開先は https://patient-rehab-app.vercel.app/ です。GitHubの `sts00828-web/patient-rehab-app` の `main` への更新をVercelが自動配信します。公開時は実行用ファイルとassets・vendorを一緒に配置し、更新ごとに `sw.js` のキャッシュバージョンを上げてください。今回のバージョンは `v18` です。更新が表示されないときは、オンラインでアプリを開いた後、一度閉じて開き直してください。端末の記録を残すため、サイトデータの削除は不要です。
+公開先は https://patient-rehab-app.vercel.app/ です。GitHubの `sts00828-web/patient-rehab-app` の `main` への更新をVercelが自動配信します。公開時は実行用ファイルとassets・vendorを一緒に配置し、更新ごとに `sw.js` のキャッシュバージョンを上げてください。今回のバージョンは `v19` です。更新が表示されないときは、オンラインでアプリを開いた後、一度閉じて開き直してください。端末の記録を残すため、サイトデータの削除は不要です。

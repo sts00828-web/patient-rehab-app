@@ -1,6 +1,6 @@
 # 疾患別メニュー一覧（PT選択用）
 
-各10種目・計30種目の候補です。患者の評価後に必要な種目と指示量を選びます。基本・標準・発展はアプリ編集上の動作目安で、検証済みの臨床尺度や病期分類ではありません。
+各10種目・計40種目の候補です。患者の評価後に必要な種目と指示量を選びます。基本・標準・発展はアプリ編集上の動作目安で、検証済みの臨床尺度や病期分類ではありません。
 
 資料の図は転載せず、説明は独自に作成しています。資料を参考に支持物・姿勢・可動範囲を調整した種目を含み、原資料の治療プログラム全体を再現するものではありません。回数・保持時間・負荷は担当PTが設定します。
 
@@ -54,5 +54,22 @@
 | [支えにつかまって浅くしゃがむ](https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee) | 立位で脚に体重をかける練習 | 標準 | 荷重時痛・膝折れ・膝の向きを確認して深さを設定。 |
 | [手すりで支えて低い段を上がる](https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee) | 段差を上がる動作の練習 | 発展 | 段の高さと昇降順序をPTが設定。膝折れや転倒リスクを確認。 |
 | [横向きで上の脚を上げる](https://msk-bexley.nhs.uk/conditions/knee-pain/knee-osteoarthritis) | 骨盤を支えるお尻の筋力練習 | 標準 | 横向き姿勢と骨盤を保てることを確認。股関節術後の制限に注意。 |
+
+## 上腕骨外側上顆炎（テニス肘）
+
+握る・持ち上げる作業量と運動後の症状を確認し、回数・重さ・頻度を個別に設定します。手首の筋力運動は段階違いの候補で、全種目を重ねて処方しません。赤み・熱感・腫れ、外傷後やしびれを伴う場合は診察・再評価を優先します。
+
+| 種目 | 目的 | 難易度の目安 | 選択時の注意 |
+|---|---|---|---|
+| [肘をゆっくり曲げ伸ばし](https://www.newcastle-hospitals.nhs.uk/services/newcastle-occupational-health-service/information-for-staff/physiotherapy/self-help-leaflets/tennis-elbow/) | 肘の動きを保つ | 基本 | 動きの制限や外傷の有無を確認。痛い端まで伸ばし切らない。 |
+| [手のひらを上・下に返す](https://www.newcastle-hospitals.nhs.uk/services/newcastle-occupational-health-service/information-for-staff/physiotherapy/self-help-leaflets/tennis-elbow/) | 前腕を回す動きの練習 | 基本 | まず重りなしで回旋への反応を確認。手首だけをひねらない。 |
+| [重りなしで手首を起こす](https://www.leicspart.nhs.uk/wp-content/uploads/2022/07/514-Tennis-Elbow.pdf) | 手首を自分で動かす練習 | 基本 | 手首を起こすだけで強く痛む場合は範囲や方法を見直す。 |
+| [手首を下げて前腕の外側を伸ばす](https://www.rjah.nhs.uk/our-services/therapy/supported-self-care/tennis-elbow/) | 手首を起こす筋肉の柔軟性 | 標準 | 伸張で外側の肘痛が増す場合は選択しない。肘の伸ばし具合を調整。 |
+| [手のひらを上にして前腕を伸ばす](https://orthoinfo.aaos.org/globalassets/pdfs/2022-therapeutic-exercise-program-for-epicondylitis.pdf) | 前腕の手のひら側の柔軟性 | 標準 | 補助的な柔軟性の候補。手首や肘内側の痛み、しびれに注意。 |
+| [手の甲で反対の手を軽く押す](https://www.rjah.nhs.uk/our-services/therapy/supported-self-care/tennis-elbow/) | 手首を動かさずに力を入れる | 基本 | 軽い力での反応を評価。下ろす練習・重りの上げ下げとの負荷重複を調整。 |
+| [手首の重りをゆっくり下ろす](https://orthoinfo.aaos.org/globalassets/pdfs/2022-therapeutic-exercise-program-for-epicondylitis.pdf) | 手首を下ろす動きで負荷をかける | 標準 | 重さ・下ろす速さをPTが設定。等尺性や上げ下げとの段階を選択。 |
+| [重りで手首を上げ下げする](https://www.leicspart.nhs.uk/wp-content/uploads/2022/07/514-Tennis-Elbow.pdf) | 手首を起こす筋肉の筋力練習 | 発展 | 自分で上げ下げする負荷に耐えられる場合に。ほかの手首筋力種目との重複に注意。 |
+| [柔らかいボールを軽く握る](https://msk-bexley.nhs.uk/conditions/elbow-pain/tennis-elbow) | 握る力を少しずつ練習する | 標準 | 握力課題での症状を確認。仕事・家事で握る量も含めて負荷を調整。 |
+| [軽い重りで前腕を返す](https://msk-bexley.nhs.uk/conditions/elbow-pain/tennis-elbow) | 前腕を回す筋力の練習 | 発展 | 重りなしの回旋が可能な場合に。重さと回す範囲を指定。 |
 
 肩の筋力運動には一般的な肩の運動資料を参考にした種目も含みます。五十肩の全病期への適応を意味しません。うつ伏せで肘をつく運動など方向依存性のある種目は、症状反応を確認してから選択します。新たな画像・手順は患者へ渡す前に担当PTが動作と一致することを確認してください。

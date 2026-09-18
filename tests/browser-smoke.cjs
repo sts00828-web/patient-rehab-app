@@ -95,7 +95,7 @@ async function main(){
   await evaluate("S.patientName='<img src=x onerror=alert(1)>';persist();renderToday();");
   await check('patient name escaped',"!document.querySelector('.banner img')");
   await evaluate("calDate=new Date(2026,0,31);calNav(1)");await check('month end navigation',"calDate.getMonth()===1");
-  await check('all thirty images load',"(async()=>{const results=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>{const r=await fetch('assets/exercises/'+e.image);return r.ok&&(await r.blob()).size>1000}));return results.length===30&&results.every(Boolean)})()");
+  await check('all forty images load',"(async()=>{const results=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>{const r=await fetch('assets/exercises/'+e.image);return r.ok&&(await r.blob()).size>1000}));return results.length===40&&results.every(Boolean)})()");
   await evaluate("$('pin-input').value='';checkPin();applyTemplate('lowback');");
   await check('ten low-back illustrations and mobile layout',"document.querySelectorAll('#chooseTemplate img').length===10&&document.documentElement.scrollWidth<=390");
   await check('prescription action follows last exercise without covering it',"(()=>{const rows=$('chooseTemplate').querySelectorAll('.template-ex'),last=rows[rows.length-1],actions=$('chooseTemplate').querySelector('.template-actions');return getComputedStyle(actions).position==='static'&&last.getBoundingClientRect().bottom<=actions.getBoundingClientRect().top})()");
@@ -103,6 +103,17 @@ async function main(){
   await evaluate("for(let i=0;i<10;i++){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：左右各5回';}applySelectedTemplate();showShareQR();");
   await check('ten-exercise prescription generates and round-trips QR',"(()=>{const p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(buildShareUrl().split('#d=')[1])));return S.menu.length===10&&p.menu.length===10&&p.menu.some(e=>e.exerciseKey==='walking')&&!!document.querySelector('#qrBox svg')})()");
   await evaluate("closeQR();closeTherapist();");
+  await evaluate("$('pin-input').value='';checkPin();window.menuBeforeElbow=JSON.stringify(S.menu);applyTemplate('tennisElbow');");
+  await check('tennis elbow offers ten mobile choices without changing existing prescription',"document.querySelectorAll('#chooseTemplate img').length===10&&!document.querySelector('#chooseTemplate input:checked')&&JSON.stringify(S.menu)===menuBeforeElbow&&$('chooseTemplate').textContent.includes('段階違い')&&$('therapistModal').scrollWidth<=390");
+  await delay(250);fs.writeFileSync(path.join(art,'tennis-elbow-mobile.png'),Buffer.from((await send('Page.captureScreenshot',{format:'png'})).data,'base64'));
+  await evaluate("$('template-purpose').value='strength';filterTemplateExercises();$('template-level').value='基本';filterTemplateExercises();");
+  await check('elbow strength filter finds isometric entry',"document.querySelectorAll('.template-ex:not([hidden])').length===1&&document.querySelector('.template-ex:not([hidden])').textContent.includes('手の甲')");
+  await evaluate("previewTemplateExercise(6)");
+  await check('eccentric elbow guide explains assisted return and slow lowering',"$('guideModal').textContent.includes('反対の手で持ち上げ直します')&&$('guideModal').querySelector('img').getAttribute('src').includes('wrist-eccentric-extension')");
+  await evaluate("$('guideModal').remove();$('template-purpose').value='';$('template-level').value='';filterTemplateExercises();for(const i of [0,1,5]){$('pick-'+i).checked=true;$('dose-'+i).value='PT確認用：軽い力で5回';}applySelectedTemplate();showShareQR();");
+  await check('selected elbow exercises persist and generate transferable QR',"(()=>{const p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(buildShareUrl().split('#d=')[1])));return S.menu.length===3&&p.menu.length===3&&p.menu[2].exerciseKey==='wrist-isometric-extension'&&JSON.parse(localStorage.getItem('rehab_v2')).settings.menu[2].exerciseKey==='wrist-isometric-extension'&&!!document.querySelector('#qrBox svg')})()");
+  await evaluate("closeQR();closeTherapist();manualImport(buildShareUrl());");
+  await check('elbow prescription reimports with matching guides',"S.menu.length===3&&mediaFor(S.menu[2]).image==='wrist-isometric-extension.png'");
   await check('failed writes roll back in-memory changes',"(()=>{const before=S.patientName,original=Storage.prototype.setItem;Storage.prototype.setItem=()=>{throw Error('simulated quota failure')};try{S.patientName='not saved';persist()}catch{}finally{Storage.prototype.setItem=original}return S.patientName===before})()");
   await check('malformed import cannot overwrite state',"(()=>{const before=JSON.stringify(packState());manualImport(location.origin+'/#d='+encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify({menu:[{name:'Bad',dows:[9]}]}))));history.replaceState(null,'',location.pathname);return JSON.stringify(packState())===before})()");
   await evaluate("S.patientName='テスト患者B';persist();navigator.serviceWorker.ready.then(()=>true)");
@@ -112,7 +123,7 @@ async function main(){
   await send('Page.reload');await delay(1200);
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
   await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
-  await check('all new illustrations available offline',"(async()=>{const r=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>(await fetch('assets/exercises/'+e.image)).ok));return r.length===30&&r.every(Boolean)})()");
+  await check('all new illustrations available offline',"(async()=>{const r=await Promise.all(Object.values(EXERCISE_LIBRARY).map(async e=>(await fetch('assets/exercises/'+e.image)).ok));return r.length===40&&r.every(Boolean)})()");
   await check('legacy migration preserves raw backup and marks unknown history',"(()=>{localStorage.removeItem('rehab_v2');const old={patientName:'Legacy test',startDate:'2026-01-01',menu:[{id:'new',name:'New exercise',dows:[]}]};const logs={'2026-01-02':{done:{removed_exercise:true},vas:4,note:'keep'}};localStorage.setItem('rehab_settings',JSON.stringify(old));localStorage.setItem('rehab_logs',JSON.stringify(logs));S=null;L={};T={};archives=[];committed=null;loadState();return L['2026-01-02'].legacyUnknown&&L['2026-01-02'].vas===4&&JSON.parse(localStorage.getItem('rehab_legacy_backup')).logs===JSON.stringify(logs)})()");
   assert.deepEqual(errors,[],'browser runtime errors');
   await send('Browser.close').catch(()=>{});console.log('Browser smoke complete. Screenshots: .test-artifacts/');

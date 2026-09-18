@@ -104,5 +104,39 @@ for(const [id,[category,difficulty,purpose,equipment,selectionNote]] of Object.e
 const DISEASE_LIBRARY = {
   shoulder:{name:'五十肩（肩関節周囲炎）',icon:'💪',desc:'可動域・肩まわりの筋力から選ぶ10種目',guidance:'疼痛・病期・可動域で選択します。強い疼痛期の無理なストレッチは避け、筋力運動は負荷への反応を確認してください。術後・外傷後の制限を優先します。'},
   lowback:{name:'腰痛',icon:'🌿',desc:'動き・体幹・歩行から選ぶ10種目',guidance:'原因と運動方向への反応を確認します。屈曲・伸展で脚の症状が悪化する種目は選択しません。新たな筋力低下や排尿・排便の異常は運動追加より診察を優先します。'},
-  knee:{name:'変形性膝関節症（膝OA）',icon:'🦵',desc:'膝の動き・筋力・立位から選ぶ10種目',guidance:'腫れ・疼痛・膝折れ・転倒リスクに合わせ、範囲・負荷・支持物を調整してください。各10種目は候補であり、全種目を一律に処方するものではありません。'}
+  knee:{name:'変形性膝関節症（膝OA）',icon:'🦵',desc:'膝の動き・筋力・立位から選ぶ10種目',guidance:'腫れ・疼痛・膝折れ・転倒リスクに合わせ、範囲・負荷・支持物を調整してください。各10種目は候補であり、全種目を一律に処方するものではありません。'},
+  tennisElbow:{name:'上腕骨外側上顆炎（テニス肘）',icon:'🎾',desc:'肘・手首の動きと段階的な筋力練習10種目',guidance:'握る・持ち上げる作業量と運動後の症状を確認し、回数・重さ・頻度を個別に設定します。手首の筋力運動は段階違いの候補で、全種目を重ねて処方しません。赤み・熱感・腫れ、外傷後やしびれを伴う場合は診察・再評価を優先します。'}
 };
+
+const TENNIS_ELBOW_SOURCES = {
+  mobility:'https://www.newcastle-hospitals.nhs.uk/services/newcastle-occupational-health-service/information-for-staff/physiotherapy/self-help-leaflets/tennis-elbow/',
+  gentle:'https://www.rjah.nhs.uk/our-services/therapy/supported-self-care/tennis-elbow/',
+  stages:'https://www.leicspart.nhs.uk/wp-content/uploads/2022/07/514-Tennis-Elbow.pdf',
+  load:'https://msk-bexley.nhs.uk/conditions/elbow-pain/tennis-elbow',
+  aaos:'https://orthoinfo.aaos.org/globalassets/pdfs/2022-therapeutic-exercise-program-for-epicondylitis.pdf'
+};
+const tennisElbowExercises = [
+  ['elbow-bend-straighten','肘をゆっくり曲げ伸ばし','mobility','基本','肘の動きを保つ','椅子','動きの制限や外傷の有無を確認。痛い端まで伸ばし切らない。',
+    ['椅子に座り、上腕を体の横に置きます。','力を抜いた手のまま、肘をゆっくり曲げます。','楽な範囲まで伸ばして戻します。'],'反動をつけず、痛みが増す範囲を避けます。','mobility'],
+  ['forearm-turn','手のひらを上・下に返す','mobility','基本','前腕を回す動きの練習','机・タオル','まず重りなしで回旋への反応を確認。手首だけをひねらない。',
+    ['肘を直角に曲げ、前腕を机で支えます。','手首をまっすぐ保ち、手のひらを上へ返します。','ゆっくり下へ返し、中央へ戻します。'],'肘や肩を大きく動かさず、楽な範囲で行います。','mobility'],
+  ['wrist-active-extension','重りなしで手首を起こす','mobility','基本','手首を自分で動かす練習','机・タオル','手首を起こすだけで強く痛む場合は範囲や方法を見直す。',
+    ['手のひらを下にして前腕を机に置き、手首を端から出します。','指の力を抜き、手首を少し上へ起こします。','前腕を机につけたまま、ゆっくり戻します。'],'大きく反らす必要はありません。重りは持ちません。','stages'],
+  ['wrist-extensor-stretch','手首を下げて前腕の外側を伸ばす','mobility','標準','手首を起こす筋肉の柔軟性','椅子','伸張で外側の肘痛が増す場合は選択しない。肘の伸ばし具合を調整。',
+    ['手のひらを下に向け、腕を前へ出します。','反対の手を手の甲に添え、手首を軽く下へ曲げます。','前腕が軽く伸びるところで保ち、ゆっくり緩めます。'],'強く押したり、痛みを我慢して伸ばしたりしません。','gentle'],
+  ['wrist-flexor-stretch','手のひらを上にして前腕を伸ばす','mobility','標準','前腕の手のひら側の柔軟性','椅子','補助的な柔軟性の候補。手首や肘内側の痛み、しびれに注意。',
+    ['手のひらを上にして、腕を前へ出します。','反対の手で支え、指先を下へ向けるように手首を軽く反らします。','楽な伸びを感じる範囲で保ち、ゆっくり戻します。'],'指だけを強く引かず、しびれが出たら中止します。','aaos'],
+  ['wrist-isometric-extension','手の甲で反対の手を軽く押す','strength','基本','手首を動かさずに力を入れる','机・タオル','軽い力での反応を評価。下ろす練習・重りの上げ下げとの負荷重複を調整。',
+    ['手のひらを下にして前腕を机で支え、手首をまっすぐ保ちます。','反対の手を手の甲に当て、上へ起こすつもりで軽く押し合います。','手首を動かさずに保ち、ゆっくり力を抜きます。'],'強く押し合わず、呼吸を続けます。','gentle'],
+  ['wrist-eccentric-extension','手首の重りをゆっくり下ろす','strength','標準','手首を下ろす動きで負荷をかける','机・タオル・軽い重り','重さ・下ろす速さをPTが設定。等尺性や上げ下げとの段階を選択。',
+    ['手のひらを下にして前腕を机に置き、指定の重りを持ちます。','反対の手で手首を起こしてから、支えを離します。','運動する側だけで重りをゆっくり下ろし、反対の手で持ち上げ直します。'],'重りに引かれて急に落とさず、肘の痛みが増す場合は負荷を下げます。','aaos'],
+  ['wrist-resisted-extension','重りで手首を上げ下げする','strength','発展','手首を起こす筋肉の筋力練習','机・タオル・軽い重り','自分で上げ下げする負荷に耐えられる場合に。ほかの手首筋力種目との重複に注意。',
+    ['手のひらを下にして前腕を机で支え、指定の重りを持ちます。','前腕を動かさず、手首を少し上へ起こします。','手首をゆっくり下ろして戻します。'],'自己判断で重くせず、握り込みすぎないようにします。','stages'],
+  ['gentle-ball-grip','柔らかいボールを軽く握る','strength','標準','握る力を少しずつ練習する','机・タオル・柔らかいボール','握力課題での症状を確認。仕事・家事で握る量も含めて負荷を調整。',
+    ['前腕を机で支え、手首をまっすぐにします。','柔らかいボールを軽く握ります。','指定の時間で力を緩め、手を休めます。'],'全力で握らず、肘の痛みが増す強さでは行いません。','load'],
+  ['resisted-forearm-turn','軽い重りで前腕を返す','strength','発展','前腕を回す筋力の練習','机・タオル・軽い重り','重りなしの回旋が可能な場合に。重さと回す範囲を指定。',
+    ['肘を直角に曲げて前腕を机で支え、指定の軽い重りを持ちます。','手首をまっすぐに保ち、手のひらをゆっくり上・下へ返します。','中央へ戻し、力を緩めます。'],'重りの勢いでひねらず、肩や肘で代わりに動かしません。','load']
+];
+for(const [id,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of tennisElbowExercises){
+  EXERCISE_LIBRARY[id]={name,region:'tennisElbow',image:id+'.png',params:'回数・時間・重さはPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:TENNIS_ELBOW_SOURCES[source]};
+}
