@@ -9,7 +9,7 @@ const uid = () => crypto.randomUUID().replace(/-/g, '');
 const statusLabels = {done:'できた',partial:'一部できた',pain:'痛みで休んだ',forgot:'忘れた'};
 
 for (const key of Object.keys(TEMPLATES)) delete TEMPLATES[key];
-for (const [key,d] of Object.entries(DISEASE_LIBRARY)) TEMPLATES[key] = {...d, menu:Object.entries(EXERCISE_LIBRARY).filter(([,e])=>e.region===key).map(([exerciseKey,e])=>({name:e.name,params:e.params,note:e.caution,exerciseKey,dows:[]}))};
+for (const [key,d] of Object.entries(DISEASE_LIBRARY)) TEMPLATES[key] = {...d, menu:getDiseaseExerciseMenu(key)};
 
 function cleanTemplates(raw) {
   if (!C.record(raw) || Object.keys(raw).length > 100) throw Error('テンプレート形式が不正です。');

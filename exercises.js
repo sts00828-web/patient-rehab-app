@@ -179,3 +179,62 @@ EXERCISE_LIBRARY['wrist-eccentric-extension'].imageCaption='図は重りを下�
 EXERCISE_LIBRARY['resisted-forearm-turn'].imageCaption='図は開始姿勢の例です。肘・前腕を支え、手首をまっすぐ保って手のひらを上・下へ返します。';
 EXERCISE_LIBRARY['shoulder-isometric-internal'].imageCaption='肘を脇につけたまま、運動する側の手首をお腹の方向へ押し、反対の手で受け止めます。腕が動かない程度の軽い力にします。';
 EXERCISE_LIBRARY['wrist-flexor-stretch'].imageCaption='手のひらを上へ向けた姿勢から、指先を下へ向けるよう手首を反らした場面です。反対の手で手のひら側を支え、指先だけを引きません。';
+
+// First neck/shoulder batch: conservative care selected after clinical assessment.
+const NECK_SHOULDER_SOURCES = {
+  neckRotation:'https://www.nhs.uk/live-well/exercise/sitting-exercises/',
+  cervical:'https://msk-bexley.nhs.uk/conditions/neck-pain/cervical-spondylosis',
+  neckSideBend:'https://www.csp.org.uk/conditions/neck-pain/video-exercises-neck-pain',
+  cuff:'https://www.rjah.nhs.uk/our-services/therapy/supported-self-care/rotator-cuff-related-shoulder-pain/',
+  shoulder:EXERCISE_SOURCES.shoulder
+};
+const neckShoulderAdditions = [
+  ['neck-rotation','cervicalSpondylosis','椅子で顔をゆっくり左右へ向ける','mobility','基本','首を回す動きの練習','椅子',
+    '脊髄症・進行する神経症状を除外し、回旋で腕の痛みやしびれ、めまいが増えない方向と範囲を確認。',
+    ['椅子に座り、肩の力を抜いて正面を向きます。','あごを上げず、楽な範囲で顔を片側へゆっくり向けます。','正面へ戻し、PTに指定された側と範囲で繰り返します。'],
+    '手で首をひねりません。新しいしびれ、腕へ広がる痛み、めまいが出たら中止して相談してください。','neckRotation'],
+  ['neck-retraction','cervicalSpondylosis','あごを軽く後ろへ引く','mobility','基本','首を前へ突き出さず頭の位置を動かす','椅子',
+    '小さい後退運動への症状反応を確認。しびれが増える場合は選ばず、首の変形を矯正する目的では用いない。',
+    ['椅子に座り、肩の力を抜いて正面を向きます。','目線を水平に保ち、頭をわずかに後ろへ滑らせるようにあごを引きます。','呼吸を続け、ゆっくり力を抜いて元の位置へ戻します。'],
+    '手であごを押し込まず、上を向いたり深くうつむいたりしません。腕の痛みやしびれが増えたら中止します。','cervical'],
+  ['neck-side-bend','cervicalSpondylosis','首を小さく横へ傾ける','mobility','標準','首を横へ傾ける動きの練習','椅子',
+    '側屈で腕へ症状が広がらない側と範囲をPTが指定。原資料の動きを小さい範囲に調整した例。',
+    ['椅子に座り、両肩の力を抜いて正面を向きます。','顔を正面に向けたまま、耳を肩へ少し近づけるよう首を横へ傾けます。','ゆっくり中央へ戻し、PTに指定された側で行います。'],
+    '手で頭を引かず、肩をすくめません。しびれや腕へ広がる痛み、めまいが出たら中止して相談します。','neckSideBend'],
+  ['neck-isometric-side','cervicalSpondylosis','頭と手で横向きに軽く押し合う','strength','標準','首を動かさず軽く力を入れる','椅子',
+    '首の等尺性収縮が許可された場合のみ。力の強さ・保持時間・実施側を指定し、腕を上げる負担も確認。',
+    ['椅子に座り正面を向き、片手を同じ側のこめかみ付近へ添えます。','頭を横へ倒すつもりでごく軽く押し、手で受け止めます。','頭を動かさず呼吸を続けてから、ゆっくり力を抜きます。'],
+    '全力で押さず、息を止めません。首や腕の痛み、しびれが増えたら中止します。','cervical'],
+  ['shoulder-band-external','shoulderImpingement','ゴムバンドで腕を外へ開く','strength','発展','肩を外へ回す筋肉へ抵抗を加える','ゴムバンド・固定具',
+    '外旋の抵抗運動が可能な場合。等尺性外旋との段階を選択し、固定具・抵抗・動かす範囲をPTが確認。',
+    ['PTに指定された高さで固定したバンドを持ち、肘を脇につけて直角に曲げます。','肘を脇に保ち、手をゆっくり外へ開きます。','体をひねらず、ゆっくり元の位置へ戻します。'],
+    'バンドの傷や固定の緩みを確認し、肩をすくめたり肘を横へ持ち上げたりしません。痛みが増す負荷は避けます。','shoulder'],
+  ['wall-push-up','shoulderImpingement','壁に手をついて軽く腕立て','strength','発展','腕で支えながら肩まわりを使う','壁',
+    '肩・手首への荷重と立位が安定する場合。壁と足の距離、肘を曲げる深さをPTが指定。',
+    ['壁に向かって立ち、肩幅より少し広く両手を壁につけます。','体を一直線に保ち、肘を肩の高さより下で曲げて胸を壁へ近づけます。','壁を軽く押し、ゆっくり元の姿勢へ戻します。'],
+    '腰を反らさず、顔を壁へ突き出しません。肩や手首の痛みが増える場合は負荷を下げて相談します。','cuff']
+];
+for(const [id,region,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of neckShoulderAdditions){
+  EXERCISE_LIBRARY[id]={name,region,image:id+'.png',params:'回数・時間・範囲・負荷はPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:NECK_SHOULDER_SOURCES[source],clinicalRole:'症状・動作能力を確認して選択'};
+}
+EXERCISE_CHOICE_GROUPS['neck-mobility']={name:'首の可動性の練習',note:'回旋・側屈・頭の後退で動く方向が異なります。症状が増えない方向だけを選び、すべての方向を無理に行いません。'};
+for(const [id,variant] of Object.entries({'neck-rotation':'顔を左右へ向ける','neck-side-bend':'耳を肩へ近づける','neck-retraction':'目線を水平に保ち頭を後ろへ動かす'}))Object.assign(EXERCISE_LIBRARY[id],{choiceGroup:'neck-mobility',choiceVariant:variant});
+EXERCISE_CHOICE_GROUPS['shoulder-external-load']={name:'肩を外へ回す筋肉への負荷',note:'動かさず力を入れる方法とバンドに逆らって動かす方法です。症状に合わせた段階を選び、併用する場合は負荷を合算します。'};
+Object.assign(EXERCISE_LIBRARY['shoulder-isometric-external'],{choiceGroup:'shoulder-external-load',choiceVariant:'壁で受け止め、動かさず力を入れる'});
+Object.assign(EXERCISE_LIBRARY['shoulder-band-external'],{choiceGroup:'shoulder-external-load',choiceVariant:'バンドの抵抗で外へ動かす'});
+EXERCISE_LIBRARY['neck-retraction'].imageCaption='図の矢印は動かす方向を示します。目線を水平に保ち、頭全体をわずかに後ろへ動かします。首を深く曲げたり、手であごを押したりしません。';
+EXERCISE_LIBRARY['wall-push-up'].imageCaption='図は肘を軽く曲げた場面です。手と足の位置を変えず、体を一直線に保って肘を伸ばし、戻します。壁との距離と曲げる深さはPTに確認します。';
+EXERCISE_LIBRARY['neck-isometric-side'].imageCaption='頭と手で軽く押し合い、頭の位置は正面のまま保ちます。手はこめかみに添え、首を引っ張らないでください。';
+EXERCISE_LIBRARY['shoulder-band-external'].imageCaption='肘を脇につけた外旋です。肘を肩の高さまで上げる方法とは異なります。固定位置とバンドの強さはPTに確認します。';
+DISEASE_LIBRARY.cervicalSpondylosis={
+  name:'頚椎症（保存療法・PT評価後）',icon:'🌱',desc:'脊髄症を除外し、首の動き・補助運動から選ぶ7候補',
+  guidance:'診察・PT評価後の保存療法用です。脊髄症またはその疑い、進行する神経症状、外傷直後・術後には使いません。手の不器用さ、歩行の変化、両手足のしびれ、新しい筋力低下は速やかに再評価し、急な歩行不能や排尿・排便の異常は緊急受診を優先します。首は症状が増えない小さな範囲で動かし、手で引っ張りません。肩甲骨運動・バンド引き・歩行は補助候補です。',
+  prescriptionNote:'医師・PTが許可した保存療法中の運動です。首は小さな範囲で動かし、手で引っ張りません。新しいしびれ・腕へ広がる痛み・めまいが出たら中止して相談してください。手の不器用さ、歩行の変化、筋力低下は速やかに受診し、急な歩行不能や排尿・排便の異常は緊急受診してください。',
+  exerciseKeys:['neck-rotation','neck-retraction','neck-side-bend','neck-isometric-side','scapular-setting','band-row','walking']
+};
+DISEASE_LIBRARY.shoulderImpingement={
+  name:'肩インピンジメント（保存療法）',icon:'💪',desc:'腱板関連痛の動き・負荷を選ぶ8候補',
+  guidance:'腱板関連痛・肩峰下痛に対する診察・PT評価後の保存療法用です。外傷後の急な挙上不能・脱力、脱臼、術後の保護期は別の指示を優先します。机・壁の挙上は支持の違い、等尺性・バンド外旋は負荷の違いとして選択。棒での外旋は可動域制限がある場合だけ、壁腕立ては肩と手首に荷重できる場合だけ選びます。仕事・家事の負荷も含め調整し、競技復帰の判定には使いません。',
+  prescriptionNote:'診察・PT評価後の保存療法中に、指定された範囲と負荷で行います。術後・脱臼後の指示とは別です。運動後から翌日に痛みが明らかに増える場合は負荷を下げ相談してください。けがの後に急に腕が上がらない、脱力が進む、発熱・強い腫れ・赤みがある場合は運動を中止し受診してください。',
+  exerciseKeys:['table-slide','wall-slide','stick-external-rotation','scapular-setting','shoulder-isometric-external','shoulder-band-external','band-row','wall-push-up']
+};

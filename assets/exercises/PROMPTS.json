@@ -1,7 +1,7 @@
 {
   "mode": "built-in image_gen",
   "date": "2026-09-18",
-  "revision": "young-unified-character-40",
+  "revision": "young-unified-character-46",
   "character": "Same young Japanese adult man, 21–23, slim build, short black hair, youthful smooth face, teal T-shirt, navy full-length joggers, white/light-gray sneakers.",
   "masterReference": "pendulum.png",
   "prompts": [
@@ -298,6 +298,55 @@
       "characterReference": "assets/exercises/pendulum.png",
       "prompt": "Use case: scientific-educational. Create an original rehabilitation illustration using the input ONLY as reference for the SAME young Japanese man age 21-23, smooth youthful face, short side-part black hair, slim build, teal crewneck T-shirt and navy trousers. Same soft shaded clean medical illustration style on white background. Landscape 1536x1024. Frame head, torso, BOTH complete arms and hands prominently, seated at table if described; legs may be cropped at thighs to make wrist details easy to see. Exactly two anatomically correct arms and hands, no duplicated limbs or inset panels. No words, numbers, logos or watermark. No red pain marks. Show the exercise accurately with modest range. Seated at table. Right elbow bent 90 degrees supported on folded towel, right wrist straight just beyond table edge. Right hand holds a SMALL SHORT balanced light gray dumbbell, with thumb facing upward and forearm mid-rotation. Small teal curved double arrow around forearm axis indicates gently turning palm up/down while elbow stays planted. Left hand on thigh. Not a wrist curl; neutral wrist.",
       "refinementPrompt": "Edit only the table and movement cue. Preserve this exact young man, hands, posture and neutral wrist gripping the small vertical dumbbell. Remove the teal arrow entirely. The table must END at the wrist, with the dumbbell and hand over EMPTY WHITE space beyond the LEFT edge of the table. Keep towel supporting the forearm and elbow. This allows forearm rotation without the dumbbell hitting a tabletop. No words or other changes."
+    },
+    {
+      "id": "neck-rotation",
+      "operation": "reference-guided generation",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational rehabilitation illustration. The input is ONLY a reference for the same young Japanese man age21-23, smooth youthful face, short black side-part hair, slim build, plain teal T-shirt, navy full-length trousers, graywhite shoes. Preserve identity and soft shaded clean drawn style, white background, landscape1536x1024. Anatomically correct two arms/two hands per figure, no text, numbers, watermark or pain marks. Create TWO equal side-by-side waist-up panels with same man seated upright on stable chair, both hands resting on thighs, shoulders relaxed LEVEL and torso facing forward in BOTH panels. LEFT panel he gently turns face about30degrees to HIS left; RIGHT panel face turned about30degrees to HIS right. Head rotation only, eyes level, no chin lifted, no lateral tilt, no hand pulling. Clear distinct views showing gentle left/right rotation, no arrows.",
+      "refinements": [
+        "Edit only head orientation in BOTH panels. Preserve same young man, chair, identical forward-facing torso, relaxed shoulders, hands on thighs, style. The current heads turn TOO FAR sideways. Reduce head rotation substantially to ONLY20-25 degrees each direction from straight ahead. BOTH EYES and some of BOTH cheeks must remain visible in EACH panel. LEFT looks modestly to one side, RIGHT modestly opposite; neither is a side profile. Eyes horizontal, chin neutral. This is a SMALL comfortable motion example, not maximal neck rotation. No arrows or words."
+      ]
+    },
+    {
+      "id": "neck-retraction",
+      "operation": "reference-guided generation",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational rehabilitation illustration. The input is ONLY a reference for the same young Japanese man age21-23, smooth youthful face, short black side-part hair, slim build, plain teal T-shirt, navy full-length trousers, graywhite shoes. Preserve identity and soft shaded clean drawn style, white background, landscape1536x1024. Anatomically correct two arms/two hands per figure, no text, numbers, watermark or pain marks. Create TWO equal side-by-side SIDE PROFILE waist-up panels of same man sitting upright facing RIGHT, both hands on thighs and shoulders relaxed. LEFT panel neutral head posture. RIGHT panel gently glides whole HEAD HORIZONTALLY BACK a SMALL amount toward spine, forming a slight double chin. Eyes and nose remain horizontal, NO looking down, NO neck flexion or extension, NO chin lifting. A small straight horizontal teal arrow behind head pointing backward may clarify glide; no curved arrow. Subtle medically realistic movement.",
+      "refinements": [
+        "Correct the two-panel head-glide illustration so movement reads as a small HORIZONTAL translation of the WHOLE HEAD, not looking down. Same man and style. Both panels SIDE PROFILE facing RIGHT, IDENTICAL chair, torso and SHOULDER position relative to panel edges. LEFT panel begins with head mildly forward: ear visibly just FORWARD of shoulder. RIGHT panel shifts skull/ear/nose together 2-3cm BACKWARD toward LEFT until ear sits more nearly above shoulder. Nose tip stays at EXACT SAME HEIGHT between panels, eyes remain horizontal, face angle unchanged, no chin tipping down, no looking up. A small horizontal LEFT arrow behind the head in RIGHT panel. Subtle double chin caused by head translation. Clearly matched panel registration for comparing ear-to-shoulder alignment. Hands on thighs, white background, no labels.",
+        "Edit to a SINGLE illustration only. Remove the left panel completely, expand the right panel to center. Keep exactly same young man, teal shirt navy trousers, chair, relaxed hands on thighs, upright torso, head neutral, eyes level, SIDE PROFILE facing RIGHT. One small straight horizontal arrow behind head points LEFT, indicating the DIRECTION of gentle backward head translation. This is a SINGLE direction diagram, not start/end comparison. Do not tip the head down, no chin pushing, no text. White background, same style, landscape1536x1024. Natural human anatomy."
+      ]
+    },
+    {
+      "id": "neck-side-bend",
+      "operation": "reference-guided generation",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational rehabilitation illustration. The input is ONLY a reference for the same young Japanese man age21-23, smooth youthful face, short black side-part hair, slim build, plain teal T-shirt, navy full-length trousers, graywhite shoes. Preserve identity and soft shaded clean drawn style, white background, landscape1536x1024. Anatomically correct two arms/two hands per figure, no text, numbers, watermark or pain marks. Waist-up front view of same man seated upright on chair, both hands resting on thighs. Keep BOTH shoulders relaxed and at the SAME horizontal height, torso vertical. Gently tilt head only about15degrees bringing LEFT ear toward LEFT shoulder; nose remains pointing FORWARD, no rotation or chin lift. No hand touching head. Slight natural side bend, no exaggerated kink. Both neck contours anatomically plausible. No arrows.",
+      "refinements": []
+    },
+    {
+      "id": "neck-isometric-side",
+      "operation": "reference-guided generation",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational rehabilitation illustration. Input is ONLY reference for same young Japanese man age21-23, smooth youthful face, short black side-part hair, slim build, plain teal T-shirt, navy full-length trousers, graywhite shoes. Preserve identity and soft shaded clean drawn style, white background, landscape1536x1024. Anatomically correct two arms/two hands per figure, no text, numbers, watermark or pain marks. Waist-up front three-quarter view same man sitting upright. Head VERTICAL, eyes level, neck not moving. His RIGHT palm gently contacts RIGHT temple just above ear, fingers relaxed together pointing upward, right elbow comfortably bent to side. LEFT hand rests on left thigh. Show STATIC light opposition of head and hand, not pulling or bending neck. Keep face readable, shoulders relaxed, no arrows. Exactly two arms, correct palm and five fingers.",
+      "refinements": []
+    },
+    {
+      "id": "shoulder-band-external",
+      "operation": "reference-guided generation",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational rehabilitation illustration. Input is ONLY reference for same young Japanese man age21-23, smooth youthful face, short black side-part hair, slim build, plain teal T-shirt, navy full-length trousers, graywhite shoes. Preserve identity and soft shaded clean drawn style, white background, landscape1536x1024. Anatomically correct two arms/two hands per figure, no text, numbers, watermark or pain marks. TWO equal side-by-side front-view panels showing the same standing man from knees up. One elastic band securely attached to a fixed POST at elbow height on the LEFT of each panel. He exercises the arm on the RIGHT side of the image (his LEFT arm). That elbow is bent90degrees and stays tucked to his ribs, small folded towel between elbow and torso. Holds free end of band in that hand, wrist straight, forearm horizontal. LEFT panel hand begins near belly button with forearm pointing diagonally inward. RIGHT panel hand moves modestly to OUTSIDE of same elbow on right, rotating shoulder outwards; elbow stays at ribs and band stretches diagonally horizontally from post across lower torso to hand. Other arm relaxed alongside body, NOT holding band. No elbow straightening, no arm lifted sideways, no crossed limbs. Show continuous band connecting post and gripping hand in each panel.",
+      "refinements": []
+    },
+    {
+      "id": "wall-push-up",
+      "operation": "reference-guided generation",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Use case: scientific-educational rehabilitation illustration. Input is ONLY reference for same young Japanese man age21-23, smooth youthful face, short black side-part hair, slim build, plain teal T-shirt, navy full-length trousers, graywhite shoes. Preserve identity and soft shaded clean drawn style, white background, landscape1536x1024. Anatomically correct two arms/two hands per figure, no text, numbers, watermark or pain marks. TWO equal side-by-side FULL BODY SIDE VIEW panels same man facing a plain vertical lightgray wall to the RIGHT. Hands flat on wall about shoulder height and slightly wider than shoulders, feet hipwidth at PT-adjustable distance, heels on floor, head/torso/pelvis/legs aligned. LEFT panel elbows gently bent BELOW shoulder height, body leaning as one straight line toward wall for shallow wall push-up. RIGHT panel elbows almost straight as body pushes away; hands and feet stay at same positions. No deep bend, no sagging waist. Both palms visibly contact wall, wrists normal, exactly two arms. Navy pants full length and graywhite shoes.",
+      "refinements": [
+        "Edit this illustration into a SINGLE full-body side-view pose of exactly the same young man and clothing. REMOVE the second panel entirely. Show the shallow BENT-ELBOW phase of a wall push-up, facing right: palms flat against the vertical wall, hands approximately shoulder height and slightly wider apart, elbows comfortably BELOW shoulders, slightly bent. Feet stay planted, heels touching floor, body straight from head through hips to ankles, leaning as a single line toward wall. A comfortable small distance from wall, anatomically correct arms, wrists and five fingers, no arrows, no text. White background, same polished medical illustration. This image shows one pose only; the app text explains straightening the elbows and returning without moving feet."
+      ]
     }
   ]
 }

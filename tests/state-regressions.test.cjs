@@ -10,7 +10,7 @@ function tab(storage=new Map()) {
     document:{addEventListener(){},getElementById(id){if(id==='paste-url'||id==='update-url')return null;if(!nodes.has(id))nodes.set(id,{innerHTML:'',classList:{add(){},remove(){},contains(){return false}}});return nodes.get(id)}},
     localStorage:{getItem(k){return storage.get(k)||null},setItem(k,v){storage.set(k,v)}}});
   ctx.window=ctx;
-  for(const file of ['ui.js','exercises.js','app-v2.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
+  for(const file of ['ui.js','exercises.js','disease-library.js','app-v2.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
   vm.runInContext('modal=()=>{}',ctx);
   return {ctx,nodes,listeners,run:code=>vm.runInContext(code,ctx),storage};
 }
