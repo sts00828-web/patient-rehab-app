@@ -27,6 +27,7 @@ for(const [key,disease] of Object.entries(diseases)){
   gallery+='</div></section>';
 }
 doc+='\n## 根拠資料と調整例\n\n各リンクは動作の参考資料であり、説明・支持物・範囲を調整した種目を含みます。quad-settingはDorsetの静的四頭筋収縮を長座位・薄いタオルで行う調整例です。かかとを上げる短範囲膝伸展とは区別します。肩の筋力運動は一般的な肩の資料に基づく条件付き候補で、五十肩の全病期に適用しません。\n\n手首屈筋のストレッチは手掌側の柔軟性を目的とする補助候補です。外側上顆炎での伸筋群ストレッチとは別です。手首の重り運動は前腕を支持し、手首と手を机の端から出して行います。\n\n膝OAでは運動を個人に合わせることが推奨されます。候補数を固定する根拠ではありません。[NICE NG226](https://www.nice.org.uk/guidance/NG226/chapter/recommendations)。新しい図・手順は処方時にPTが実際の動作と照合してください。\n';
+doc+='\n## 汎用メニューを作らない対象\n\n後縦靭帯骨化症（OPLL）は神経所見・転倒リスク・術式などによる個別管理が必要なため、汎用メニューを設けていません。リハビリ不要という意味ではありません。頚椎症や頚椎椎間板ヘルニアのメニューを代用しないでください。判断と参考資料は [追加状況](ARTICLE_EXPANSION.md) に記載しています。\n';
 fs.writeFileSync(path.join(root,'MENU_GUIDE.md'),doc);
 fs.writeFileSync(galleryPath,gallery+'</main></body></html>\n');
 console.log('Updated menu guide and illustration gallery');

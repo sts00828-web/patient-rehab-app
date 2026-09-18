@@ -44,7 +44,7 @@ test('overlong restrictions fail before core could silently truncate them',()=>{
   assert.throws(()=>ctx.getDiseaseExerciseMenu('fixture'),/500/);
 });
 
-for(const disease of ['rotatorCuffTear','cervicalDiscHerniation'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
+for(const disease of ['rotatorCuffTear','cervicalDiscHerniation','anteriorShoulderDislocation','slapLesion'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
   const ctx=library(),day='2026-09-18',tomorrow='2026-09-19';
   const shared=new Set(['shoulder','lowback','knee','tennisElbow','cervicalSpondylosis','shoulderImpingement'].flatMap(key=>Array.from(ctx.getDiseaseExerciseKeys(key))));
   const selectedKeys=Array.from(ctx.getDiseaseExerciseKeys(disease)).filter(key=>shared.has(key)).slice(0,3);
@@ -63,4 +63,19 @@ for(const disease of ['rotatorCuffTear','cervicalDiscHerniation'])test(disease+'
   assert.equal(JSON.stringify(logs),originalLogs);assert.deepEqual(C.menuAt(state,logs,day,5),old);
   assert.equal(C.completion(state,logs,day,5).done,1);assert.equal(C.menuAt(state,logs,tomorrow,6).length,3);
   assert.equal(JSON.stringify(ctx.ex),originalExerciseData,'shared definitions are not rewritten');
+});
+
+test('new shoulder menus keep their clinician-selected conservative-care scope in patient instructions',()=>{
+  const ctx=library(),dislocation=ctx.ds.anteriorShoulderDislocation,slap=ctx.ds.slapLesion;
+  assert.match(dislocation.name,/前方/,'the selectable label must identify the dislocation direction');
+  assert.match(dislocation.guidance,/整復/,'reduction is a prerequisite, not an exercise');
+  assert.match(slap.guidance,/保存療法/,'SLAP exercise selection is for conservative care');
+  for(const disease of ['anteriorShoulderDislocation','slapLesion']){
+    const note=ctx.ds[disease].prescriptionNote;
+    assert.match(note,/医師/);assert.match(note,/PT/);assert.match(note,/許可/);
+    assert.match(note,/術後[^。]*(使いません|対象外|別)/,'postoperative restrictions travel with the prescription');
+    if(disease==='anteriorShoulderDislocation'){assert.match(note,/前方/);assert.match(note,/整復/);}
+    const validated=C.menu(ctx.getDiseaseExerciseMenu(disease).map((ex,i)=>({...ex,id:'scope_'+i})));
+    assert.ok(validated.every(ex=>ex.note.includes(note)),'scope survives the patient-menu note length limit');
+  }
 });

@@ -252,6 +252,7 @@ DISEASE_LIBRARY.rotatorCuffTear={
     {title:'Bexley NHS：Rotator Cuff Tears（動作の参考）',url:'https://msk-bexley.nhs.uk/conditions/shoulder-pain/rotator-cuff-tears'}
   ]
 };
+
 DISEASE_LIBRARY.cervicalDiscHerniation={
   name:'頚椎椎間板ヘルニア（保存療法・PT評価後）',icon:'🌱',desc:'脊髄症を除外し、症状が安定した人の4候補',
   guidance:'脊髄症を除外し、症状が落ち着いて医師・PTが運動を許可した保存療法中の候補です。脊髄症またはその疑い、進行する筋力低下、外傷直後・術後には使いません。回旋・頭の後退は腕や手へ症状が広がらない方向と範囲だけを選びます。肩甲骨運動・歩行は補助で、歩行やバランスに異常があれば歩行練習より診察を優先します。首の強い伸展、手で引くストレッチ、自己牽引を行いません。運動が不要と判断された場合は処方しません。',
@@ -262,5 +263,29 @@ DISEASE_LIBRARY.cervicalDiscHerniation={
     {title:'Bexley NHS：Cervical Radiculopathy',url:'https://msk-bexley.nhs.uk/conditions/neck-pain/cervical-radiculopathy'},
     {title:'Dynamic Health NHS：Cervical myelopathy and radiculopathy',url:'https://dynamichealth.nhs.uk/help-and-advice/neck-pain/cervical-myelopathy-and-radiculopathy/'},
     {title:'Norfolk NHS：Cervical Radiculopathy',url:'https://www.norfolkandwaveneycommunityhealth.nhs.uk/msk/self-help/neck/cervical-radiculopathy/'}
+  ]
+};
+
+// Individual clearance is required; these are not postoperative protocols.
+DISEASE_LIBRARY.anteriorShoulderDislocation={
+  name:'肩関節前方脱臼後（整復後・運動許可済み）',icon:'💪',desc:'骨折・骨傷なしの保存療法に限定する4候補',
+  guidance:'前方脱臼が整復され、骨折・骨傷がないことを確認し、医師・PTが保存療法で運動を許可した人の候補です。開始日・装具・範囲・負荷は個別指示を優先します。未整復、方向不明・後方・下方脱臼、再脱臼を繰り返す状態、神経・血管障害、術後には使いません。肩を横へ開いたまま大きく外へ回す姿勢を避け、机の運動も指定範囲内にします。内旋・外旋は肘を体側に置いた軽い等尺性運動で、腕を外へ開くストレッチとは異なります。競技復帰の判定には使いません。',
+  prescriptionNote:'前方脱臼の整復後、骨折・骨傷がなく医師・PTが許可した保存療法中の運動です。術後には使いません。装具・開始日・範囲・負荷の指示を守り、肩を横へ開いたまま大きく外へ回しません。抜けそうな感じや痛みが増したら中止して相談してください。変形や再脱臼、手の冷たさ・色の変化、強いしびれ・脱力は速やかに受診し、自分で戻しません。',
+  exerciseKeys:['table-slide','scapular-setting','shoulder-isometric-external','shoulder-isometric-internal'],
+  sources:[
+    {title:'AAOS：Shoulder Dislocation',url:'https://www.orthoinfo.org/diseases--conditions/dislocated-shoulder'},
+    {title:'Leeds NHS：Anterior shoulder dislocation without bony injury',url:'https://www.leedsth.nhs.uk/patients/resources/anterior-shoulder-dislocation-without-bony-injury/'},
+    {title:'Bexley NHS：Shoulder Instability（動作の参考）',url:'https://msk-bexley.nhs.uk/conditions/shoulder-pain/shoulder-instability'}
+  ]
+};
+DISEASE_LIBRARY.slapLesion={
+  name:'SLAP損傷（保存療法・PT評価後）',icon:'💪',desc:'症状と負荷を確認して選ぶ基礎運動4候補',
+  guidance:'診察で症状と損傷の関係を確認し、医師・PTが保存療法で運動を許可した人の基礎候補です。画像所見だけで処方せず、術後、脱臼後の保護期、強い不安定感や急な脱力がある場合には使いません。机の運動は可動域制限がある場合だけ選び、外旋の等尺性とバンドは負荷の段階として選びます。引っかかりや痛みを我慢して反復しません。後方の硬さへのストレッチ、上腕二頭筋への負荷、投球復帰は別途評価・指導が必要で、この4候補のみでは完結しません。',
+  prescriptionNote:'医師・PTが許可した保存療法中に、指定範囲・負荷で行う基礎運動です。術後には使いません。痛み・引っかかり・抜けそうな感じが増す場合は中止して相談してください。投球、懸垂、重い物を頭上へ持ち上げる動作は自己判断で再開しません。急な脱力、腕が上がらない、変形、強い腫れ・赤み・発熱は受診してください。',
+  exerciseKeys:['table-slide','scapular-setting','shoulder-isometric-external','shoulder-band-external'],
+  sources:[
+    {title:'AAOS：SLAP Tears',url:'https://www.orthoinfo.org/diseases--conditions/slap-tears'},
+    {title:'NATA：SLAP損傷の評価・治療・復帰基準に関する声明（2018）',url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC5894372/'},
+    {title:'AAOS：肩の運動（一般動作の参考）',url:'https://orthoinfo.aaos.org/globalassets/pdfs/2017-rehab_shoulder.pdf'}
   ]
 };
