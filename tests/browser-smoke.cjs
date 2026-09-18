@@ -42,6 +42,13 @@ async function main(){
     finally{Html5Qrcode=Original}
   })()`);
   await evaluate("window.confirm=()=>true;window.prompt=()=> 'テスト患者';window.alert=message=>{window.lastAlert=message};$('pin-input').value='';checkPin();updS('patientName','テスト患者');applyTemplate('shoulder');");
+  await send('Emulation.setDeviceMetricsOverride',{width:320,height:700,deviceScaleFactor:1,mobile:true});
+  await evaluate("$('chooseTemplate').remove();$('next-visit').value='2026-10-08';document.documentElement.style.setProperty('--top-inset','47px');$('hdr-name').textContent='表示名が長い患者さんのスマホ表示確認';");
+  await check('date inputs fit therapist modal on narrow phone',"(()=>{const modal=$('therapistModal').querySelector('.t-modal').getBoundingClientRect();return ['start-date','next-visit'].every(id=>{const r=$(id).getBoundingClientRect();return r.left>=modal.left+12&&r.right<=modal.right-12})})()");
+  await check('header and modal respect top inset and wrap long name',"(()=>{const name=$('hdr-name').getBoundingClientRect(),day=$('hdr-day').getBoundingClientRect(),title=$('hdr-title').getBoundingClientRect(),modal=$('therapistModal').querySelector('.t-modal').getBoundingClientRect();return title.top>=47&&modal.top>=47&&name.right<=day.left-4&&document.querySelector('.header').scrollWidth<=320})()");
+  const dateShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'therapist-dates-mobile.png'),Buffer.from(dateShot.data,'base64'));
+  await evaluate("document.documentElement.style.removeProperty('--top-inset');renderHeader();applyTemplate('shoulder');");
+  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await check('ten shoulder choices with no automatic selection',"document.querySelectorAll('#chooseTemplate img').length===10 && !document.querySelector('#chooseTemplate input:checked')");
   await check('purpose filter preserves selected exercise and dose',"(()=>{$('pick-0').checked=true;$('dose-0').value='5回';$('template-purpose').value='strength';filterTemplateExercises();return document.querySelectorAll('.template-ex:not([hidden])').length===4&&$('pick-0').checked&&$('dose-0').value==='5回'&&$('template-selection').textContent.includes('非表示 1種目')})()");
   await check('difficulty and search filters can combine',"(()=>{$('template-level').value='発展';$('template-search').value='ゴム';filterTemplateExercises();return document.querySelectorAll('.template-ex:not([hidden])').length===1&&document.querySelector('.template-ex:not([hidden])').textContent.includes('ゴムバンド')})()");
