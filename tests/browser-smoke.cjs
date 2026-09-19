@@ -55,6 +55,14 @@ async function main(){
   await evaluate("document.documentElement.style.removeProperty('--top-inset');renderHeader();applyTemplate('shoulder');");
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await check('ten shoulder choices with no automatic selection',"document.querySelectorAll('#chooseTemplate img').length===10 && !document.querySelector('#chooseTemplate input:checked')");
+  await check('built-in doses prefill drafts without choosing a patient side or confirming a prescription',"(()=>{const d=PRESCRIPTION_DEFAULTS.pendulum.prescription;return Object.keys(PRESCRIPTION_DEFAULTS).length===46&&$('dose-0-repetitions').value===d.repetitions&&$('dose-0-hold').value===d.hold&&$('dose-0-side').value===''&&!$('dose-0-schedule-confirmed').checked&&S.menu.length===0})()");
+  await check('empty imported saved default falls back to the built-in draft',"(()=>{T.doseDefault_empty={name:'empty',menu:[]};const draft=standardPrescription(TEMPLATES.shoulder.menu[0]);delete T.doseDefault_empty;return draft.prescription.repetitions===PRESCRIPTION_DEFAULTS.pendulum.prescription.repetitions})()");
+  await check('injury-specific range remains individual even when a clinician default exists',`(()=>{
+    const key='doseDefault_fixture';T[key]={name:'fixture',menu:[{id:'d',name:'table slide',exerciseKey:'table-slide',prescription:{side:'右',repetitions:'9回',sets:'1セット',hold:'該当なし',frequency:'1日1回',load:'以前の範囲',support:'机で支える'},dows:[]}]};
+    const ex=TEMPLATES.shoulder.menu.find(e=>e.exerciseKey==='table-slide');
+    const regular=initialPrescriptionDraft(ex,'shoulder'),injury=initialPrescriptionDraft(ex,'anteriorShoulderDislocation');delete T[key];
+    return regular.prescription.repetitions==='9回'&&regular.prescription.load==='以前の範囲'&&injury.prescription.load===''&&injury.scheduleConfirmed===false;
+  })()`);
   await check('unselected exercises hide prescription controls',"getComputedStyle($('dose-0-prescription')).display==='none'");
   await check('choice buttons and custom entry stay in sync',`(()=>{
     $('pick-0').checked=true;const field=$('dose-0-prescription');
@@ -210,6 +218,7 @@ async function main(){
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
   await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
   await check('all library illustrations available offline',"(async()=>{const images=[...new Set(Object.values(EXERCISE_LIBRARY).map(e=>e.image))];const r=await Promise.all(images.map(async image=>(await fetch('assets/exercises/'+image)).ok));return images.length>0&&r.every(Boolean)})()");
+  await check('built-in dose library is available offline',"typeof PRESCRIPTION_DEFAULTS!=='undefined'&&Object.keys(PRESCRIPTION_DEFAULTS).length===46");
   await check('empty URL gives visible feedback',"(()=>{showReceiveSettings();manualImport($('update-url').value);const ok=$('toast').textContent==='URLを入力してください';$('receiveModal').remove();return ok})()");
   await check('no illustration selection is saved and overrides name fallback',"(()=>{staffUnlocked=true;openTherapist();S.menu=C.menu([{id:'test_none',name:Object.values(EXERCISE_LIBRARY)[0].name,params:'5回',dows:[]}]);editEx(0);$('ee-image').value='';for(const key of Object.keys(C.prescriptionLabels))$('ee-'+key).value='test prescription';$('ee-schedule-confirmed').checked=true;saveEx();const ok=S.menu[0].mediaDisabled&&mediaFor(S.menu[0])===null&&JSON.parse(localStorage.getItem(STORE_KEY)).settings.menu[0].mediaDisabled;closeTherapist();return !!ok})()");
   await check('empty future prescription still shows today record and note',"(()=>{L[todayKey()]={menuSnapshot:C.clone(S.menu),done:{test_none:true},status:{test_none:'done'},vas:0,note:'keep'};C.changeMenu(S,L,[],todayKey(),dk(addDays(new Date(),1)));persist();renderToday();return document.querySelectorAll('#today-content .exercise-card').length===1&&!!$('note-ta')&&$('pain-value').textContent==='0 / 10'})()");
