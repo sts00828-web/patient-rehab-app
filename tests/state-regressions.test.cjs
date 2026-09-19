@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..'),C=require('../core.js');
 function tab(storage=new Map()) {
   const nodes=new Map(),listeners={};
   const ctx=vm.createContext({RehabCore:C,console,URL,Date,crypto:require('crypto').webcrypto,
-    setInterval(){},setTimeout(){},clearTimeout(){},alert(){},confirm(){return true},prompt(){return '架空患者'},
+    setInterval(){},setTimeout(){},clearTimeout(){},MutationObserver:class {observe(){}},alert(){},confirm(){return true},prompt(){return '架空患者'},
     navigator:{},location:{pathname:'/',hash:'',search:'',origin:'https://example.test'},
     addEventListener(name,fn){listeners[name]=fn},
     document:{addEventListener(){},getElementById(id){if(id==='paste-url'||id==='update-url')return null;if(!nodes.has(id))nodes.set(id,{innerHTML:'',classList:{add(){},remove(){},contains(){return false}}});return nodes.get(id)}},
@@ -18,7 +18,7 @@ const setup=`S=C.settings({patientId:'fake_patient',menu:[{id:'one',name:'架空
 test('deleting last future exercise retains today snapshot and pain controls',()=>{
   const a=tab();a.run(setup+`writableLog().status.one='done';C.changeMenu(S,L,[],todayKey(),dk(addDays(new Date(),1)));renderToday();`);
   assert.equal(a.run('todayExercises(new Date().getDay()).length'),1);
-  assert.ok(a.nodes.get('today-content').innerHTML.includes('EXERCISE 01'));
+  assert.ok(a.nodes.get('today-content').innerHTML.includes('exercise-card'));
   assert.ok(a.nodes.get('today-content').innerHTML.includes('note-ta'));
   a.run('C.applyMenuToday(S,L,todayKey(),new Date().getDay());renderToday()');
   assert.ok(a.nodes.get('today-content').innerHTML.includes('今日は休養日'));
@@ -65,4 +65,14 @@ test('explicit no illustration survives settings backup and share validation',()
   assert.equal(a.run('mediaFor(S.menu[0])'),null);
   assert.equal(a.run('C.settings(buildSharePayload(),"fake",todayKey()).menu[0].mediaDisabled'),true);
   assert.equal(a.run('!!mediaFor({...S.menu[0],mediaDisabled:false})'),true,'legacy name fallback stays compatible');
+});
+test('individual prescription and safety contacts survive backup, custom template and QR payload',()=>{
+  const a=tab();a.run(setup+`S.menu[0].prescription=C.prescription({side:'右',repetitions:'5回',sets:'1セット',hold:'該当なし',frequency:'1日1回',load:'重りなし',support:'椅子で支える'});S.menu[0].scheduleConfirmed=true;S.painContext='運動前';S.consultContact='担当窓口';S.restartInstructions='担当者と相談';T={custom_test:{name:'個別設定',icon:'',desc:'',menu:C.clone(S.menu)}};persist();loadState();`);
+  assert.equal(a.run('S.menu[0].prescription.side'),'右');
+  assert.equal(a.run('T.custom_test.menu[0].prescription.support'),'椅子で支える');
+  assert.equal(a.run('T.custom_test.menu[0].scheduleConfirmed'),true);
+  a.run(`var received=C.settings(JSON.parse(JSON.stringify(buildSharePayload())),'fake',todayKey());`);
+  for(const key of ['painContext','consultContact','restartInstructions'])assert.equal(a.run(`received.${key}`),a.run(`S.${key}`));
+  assert.equal(a.run('received.menu[0].prescription.frequency'),'1日1回');
+  assert.equal(a.run('received.menu[0].scheduleConfirmed'),true);
 });

@@ -12,9 +12,10 @@ function getDiseaseExerciseMenu(key) {
   const disease=DISEASE_LIBRARY[key];
   return getDiseaseExerciseKeys(key).map(exerciseKey=>{
     const exercise=EXERCISE_LIBRARY[exerciseKey];
-    const note=[exercise.caution,disease.prescriptionNote].filter(Boolean).join('\n');
-    // Core limits notes to 500 characters. Never silently lose a disease restriction.
-    if(note.length>500)throw Error('疾患の注意文は種目の注意と合わせて500文字以内にしてください。');
-    return {name:exercise.name,params:exercise.params,note,exerciseKey,dows:[]};
+    const diseaseNote=disease.prescriptionNote||'';
+    // Keep disease restrictions separate from the clinician's individual instructions.
+    // Exercise cautions are displayed directly from the library, without copying them.
+    if(diseaseNote.length>500)throw Error('疾患の注意文は500文字以内にしてください。');
+    return {name:exercise.name,params:exercise.params,note:'',diseaseNote,exerciseKey,dows:[]};
   });
 }

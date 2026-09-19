@@ -26,7 +26,7 @@ const EXERCISE_LIBRARY = {
     caution:'脚全体を持ち上げず、膝をタオルから離しません。',source:'https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee'},
   'sit-to-stand': {name:'椅子からの立ち座り',region:'knee',image:'sit-to-stand.png',params:'椅子の高さ・回数はPTと設定',
     steps:['動かない椅子に座り、両足を床につけます。','体を少し前に傾け、ゆっくり立ち上がります。','椅子の位置を確かめ、ゆっくり座ります。'],
-    caution:'ふらつく場合は一人で行わず、手の支え方をPTと確認してください。',source:'https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee'}
+    caution:'始める前に椅子の高さと手の支え方を担当の理学療法士と確認してください。ふらつく場合は一人で行わないでください。',source:'https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee'}
 };
 // Categories and difficulty are editorial selection aids, not validated clinical scores.
 const EXERCISE_GROUPS = {mobility:'動かす・柔軟性',strength:'筋力・姿勢の保持',function:'立位・日常動作'};
@@ -129,7 +129,7 @@ const tennisElbowExercises = [
   ['wrist-isometric-extension','手の甲で反対の手を軽く押す','strength','基本','手首を動かさずに力を入れる','机・タオル','軽い力での反応を評価。下ろす練習・重りの上げ下げとの負荷重複を調整。',
     ['手のひらを下にして前腕を机で支え、手首をまっすぐ保ちます。','反対の手を手の甲に当て、上へ起こすつもりで軽く押し合います。','手首を動かさずに保ち、ゆっくり力を抜きます。'],'強く押し合わず、呼吸を続けます。','gentle'],
   ['wrist-eccentric-extension','手首の重りをゆっくり下ろす','strength','標準','手首を下ろす動きで負荷をかける','机・タオル・軽い重り','重さ・下ろす速さをPTが設定。等尺性や上げ下げとの段階を選択。',
-    ['手のひらを下にして前腕を机で支え、手首と手を端から出して指定の重りを持ちます。','反対の手で手首を起こしてから、支えを離します。','運動する側だけで重りをゆっくり下ろし、反対の手で持ち上げ直します。'],'重りに引かれて急に落とさず、肘の痛みが増す場合は負荷を下げます。','aaos'],
+    ['手のひらを下にして前腕を机で支え、手首と手を端から出して指定の重りを持ちます。','反対の手で手首を起こしてから、支えを離します。','運動する側だけで重りをゆっくり下ろし、反対の手で持ち上げ直します。'],'重りに引かれて急に落とさないでください。肘の痛みが増す場合はいったん中止し、担当の理学療法士に負荷と再開方法を相談してください。','aaos'],
   ['wrist-resisted-extension','重りで手首を上げ下げする','strength','発展','手首を起こす筋肉の筋力練習','机・タオル・軽い重り','自分で上げ下げする負荷に耐えられる場合に。ほかの手首筋力種目との重複に注意。',
     ['手のひらを下にして前腕を机で支え、手首と手を端から出して指定の重りを持ちます。','前腕を動かさず、手首を少し上へ起こします。','手首をゆっくり下ろして戻します。'],'自己判断で重くせず、握り込みすぎないようにします。','stages'],
   ['gentle-ball-grip','柔らかいボールを軽く握る','strength','標準','握る力を少しずつ練習する','机・タオル・柔らかいボール','握力課題での症状を確認。仕事・家事で握る量も含めて負荷を調整。',
@@ -179,6 +179,7 @@ EXERCISE_LIBRARY['wrist-eccentric-extension'].imageCaption='図は重りを下�
 EXERCISE_LIBRARY['resisted-forearm-turn'].imageCaption='図は開始姿勢の例です。肘・前腕を支え、手首をまっすぐ保って手のひらを上・下へ返します。';
 EXERCISE_LIBRARY['shoulder-isometric-internal'].imageCaption='肘を脇につけたまま、運動する側の手首をお腹の方向へ押し、反対の手で受け止めます。腕が動かない程度の軽い力にします。';
 EXERCISE_LIBRARY['wrist-flexor-stretch'].imageCaption='手のひらを上へ向けた姿勢から、指先を下へ向けるよう手首を反らした場面です。反対の手で手のひら側を支え、指先だけを引きません。';
+EXERCISE_LIBRARY['sit-to-stand'].imageCaption='腕を組む姿勢は一例です。腕を組む必要はありません。担当の理学療法士が指定した椅子の高さと手の支え方で行ってください。';
 
 // First neck/shoulder batch: conservative care selected after clinical assessment.
 const NECK_SHOULDER_SOURCES = {
@@ -212,7 +213,7 @@ const neckShoulderAdditions = [
   ['wall-push-up','shoulderImpingement','壁に手をついて軽く腕立て','strength','発展','腕で支えながら肩まわりを使う','壁',
     '肩・手首への荷重と立位が安定する場合。壁と足の距離、肘を曲げる深さをPTが指定。',
     ['壁に向かって立ち、肩幅より少し広く両手を壁につけます。','体を一直線に保ち、肘を肩の高さより下で曲げて胸を壁へ近づけます。','壁を軽く押し、ゆっくり元の姿勢へ戻します。'],
-    '腰を反らさず、顔を壁へ突き出しません。肩や手首の痛みが増える場合は負荷を下げて相談します。','cuff']
+    '腰を反らさず、顔を壁へ突き出しません。肩や手首の痛みが増える場合はいったん中止し、担当の理学療法士に負荷と再開方法を相談してください。','cuff']
 ];
 for(const [id,region,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of neckShoulderAdditions){
   EXERCISE_LIBRARY[id]={name,region,image:id+'.png',params:'回数・時間・範囲・負荷はPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:NECK_SHOULDER_SOURCES[source],clinicalRole:'症状・動作能力を確認して選択'};
@@ -235,7 +236,7 @@ DISEASE_LIBRARY.cervicalSpondylosis={
 DISEASE_LIBRARY.shoulderImpingement={
   name:'肩インピンジメント（保存療法）',icon:'💪',desc:'腱板関連痛の動き・負荷を選ぶ8候補',
   guidance:'腱板関連痛・肩峰下痛に対する診察・PT評価後の保存療法用です。外傷後の急な挙上不能・脱力、脱臼、術後の保護期は別の指示を優先します。机・壁の挙上は支持の違い、等尺性・バンド外旋は負荷の違いとして選択。棒での外旋は可動域制限がある場合だけ、壁腕立ては肩と手首に荷重できる場合だけ選びます。仕事・家事の負荷も含め調整し、競技復帰の判定には使いません。',
-  prescriptionNote:'診察・PT評価後の保存療法中に、指定された範囲と負荷で行います。術後・脱臼後の指示とは別です。運動後から翌日に痛みが明らかに増える場合は負荷を下げ相談してください。けがの後に急に腕が上がらない、脱力が進む、発熱・強い腫れ・赤みがある場合は運動を中止し受診してください。',
+  prescriptionNote:'診察・PT評価後の保存療法中に、指定された範囲と負荷で行います。術後・脱臼後の指示とは別です。運動後から翌日に痛みが明らかに増える場合はいったん中止し、担当の理学療法士に負荷と再開方法を相談してください。けがの後に急に腕が上がらない、脱力が進む、発熱・強い腫れ・赤みがある場合は運動を中止し受診してください。',
   exerciseKeys:['table-slide','wall-slide','stick-external-rotation','scapular-setting','shoulder-isometric-external','shoulder-band-external','band-row','wall-push-up']
 };
 

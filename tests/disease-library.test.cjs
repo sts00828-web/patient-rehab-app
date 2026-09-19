@@ -10,7 +10,7 @@ const original={
 test('original forty IDs, order, prescription notes and template shape stay compatible',()=>{
   const ctx=library();for(const [disease,ids]of Object.entries(original)){
     assert.deepEqual(Array.from(ctx.getDiseaseExerciseKeys(disease)),ids);
-    const expected=ids.map(exerciseKey=>{const e=ctx.ex[exerciseKey];return{name:e.name,params:e.params,note:e.caution,exerciseKey,dows:[]}});
+    const expected=ids.map(exerciseKey=>{const e=ctx.ex[exerciseKey];return{name:e.name,params:e.params,note:'',diseaseNote:'',exerciseKey,dows:[]}});
     assert.deepEqual(JSON.parse(JSON.stringify(ctx.getDiseaseExerciseMenu(disease))),expected);
   }
 });
@@ -18,7 +18,7 @@ test('explicit membership can share other regions while preserving order and ori
   const ctx=library(),before=JSON.stringify(ctx.ex);ctx.ds.fixture={exerciseKeys:['heel-raise','pendulum'],prescriptionNote:'確認された範囲で行います。'};
   const keys=ctx.getDiseaseExerciseKeys('fixture');assert.deepEqual(Array.from(keys),['heel-raise','pendulum']);keys.reverse();
   assert.deepEqual(Array.from(ctx.getDiseaseExerciseKeys('fixture')),['heel-raise','pendulum']);
-  assert.equal(ctx.getDiseaseExerciseMenu('fixture')[0].note,ctx.ex['heel-raise'].caution+'\n確認された範囲で行います。');
+  assert.equal(ctx.getDiseaseExerciseMenu('fixture')[0].diseaseNote,'確認された範囲で行います。');
   assert.equal(JSON.stringify(ctx.ex),before);
 });
 test('unknown, duplicate, empty or malformed memberships are rejected',()=>{
@@ -36,7 +36,7 @@ test('disease restrictions survive compressed QR payload and patient state witho
   const decoded=JSON.parse(LZ.decompressFromEncodedURIComponent(LZ.compressToEncodedURIComponent(JSON.stringify(payload))));
   const received=C.settings(decoded,'fake',day);C.changeMenu(state,logs,received.menu,day,tomorrow);
   assert.deepEqual(logs[day].menuSnapshot,old);assert.equal(logs[day].done.old,true);
-  assert.equal(received.menu[0].exerciseKey,'heel-raise');assert.match(received.menu[0].note,/許可された負荷だけ/);
+  assert.equal(received.menu[0].exerciseKey,'heel-raise');assert.match(received.menu[0].diseaseNote,/許可された負荷だけ/);
   assert.equal(ctx.ex[received.menu[0].exerciseKey].image,ctx.ex['heel-raise'].image);
 });
 test('overlong restrictions fail before core could silently truncate them',()=>{
@@ -58,7 +58,7 @@ for(const disease of ['rotatorCuffTear','cervicalDiscHerniation','anteriorShould
   const encoded=LZ.compressToEncodedURIComponent(JSON.stringify({version:2,patientId:'fake',startDate:day,menu:C.menu(menu)}));
   const received=C.settings(JSON.parse(LZ.decompressFromEncodedURIComponent(encoded)),'fake',day);
   assert.deepEqual(received.menu.map(ex=>ex.exerciseKey),selectedKeys);
-  assert.ok(received.menu.every(ex=>ex.note.includes(ctx.ds[disease].prescriptionNote)));
+  assert.ok(received.menu.every(ex=>ex.diseaseNote.includes(ctx.ds[disease].prescriptionNote)));
   C.changeMenu(state,logs,received.menu,day,tomorrow);
   assert.equal(JSON.stringify(logs),originalLogs);assert.deepEqual(C.menuAt(state,logs,day,5),old);
   assert.equal(C.completion(state,logs,day,5).done,1);assert.equal(C.menuAt(state,logs,tomorrow,6).length,3);
@@ -76,6 +76,6 @@ test('new shoulder menus keep their clinician-selected conservative-care scope i
     assert.match(note,/術後[^。]*(使いません|対象外|別)/,'postoperative restrictions travel with the prescription');
     if(disease==='anteriorShoulderDislocation'){assert.match(note,/前方/);assert.match(note,/整復/);}
     const validated=C.menu(ctx.getDiseaseExerciseMenu(disease).map((ex,i)=>({...ex,id:'scope_'+i})));
-    assert.ok(validated.every(ex=>ex.note.includes(note)),'scope survives the patient-menu note length limit');
+    assert.ok(validated.every(ex=>ex.diseaseNote.includes(note)),'scope survives the patient-menu note length limit');
   }
 });

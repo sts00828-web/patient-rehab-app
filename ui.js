@@ -56,6 +56,7 @@ function switchTab(t) {
   if (t === 'today') renderToday();
   if (t === 'cal') { calDate = new Date(); calSelectedKey = null; renderCalendar(); }
   if (t === 'prog') renderProgress();
+  window.scrollTo({top:0,behavior:'instant'});
 }
 
 function bindTitleLongPress() {
@@ -180,7 +181,7 @@ function exportTemplates() {
   URL.revokeObjectURL(url);
 }
 
-function showShareQR() {
+function showShareQR(confirmed=false) {
   if (!requireStaff()) return;
   if (!S || !S.menu || S.menu.length === 0) {
     alert('メニューが未設定です。テンプレを選択するか、種目を追加してから転送してください。');
@@ -188,6 +189,12 @@ function showShareQR() {
   }
   const url = buildShareUrl();
   if (!url) return;
+  if(!confirmed){
+    modal('shareReviewModal','患者さんに渡す前の確認',`<p>左右・回数・曜日・支え方を確認し、必要に応じて患者さんと手順を開いて動作を確認してください。</p>${S.menu.map((ex,i)=>`<section class="template-ex"><h3>${escapeHtml(ex.name)}</h3>${prescriptionHtml(ex)}<button class="btn btn-out" onclick="showGuide(S.menu[${i}])">患者さん向けの手順を確認</button></section>`).join('')}${safetyHtml()}<p>痛みを記録する場面：${escapeHtml(S.painContext||'未設定。担当者から説明してください。')}</p><label class="pick-label"><input id="share-reviewed" type="checkbox">患者さんへの個別指示と注意を確認しました</label><button id="share-confirm" class="btn btn-pri" onclick="showShareQR(true)">確認して設定QRを表示</button>`);
+    return;
+  }
+  if(!document.getElementById('share-reviewed')?.checked){toast('個別指示と注意を確認してチェックしてください');return;}
+  closeModal('shareReviewModal');
   const html = `<div class="t-overlay on" id="qrModal" onclick="if(event.target===this)closeQR()">
     <div class="t-modal" style="max-width:420px;text-align:center">
       <div class="t-hd">
@@ -215,10 +222,10 @@ function showShareQR() {
   // QR生成
   try {
     if (typeof qrcode === 'undefined') throw new Error('qrcode未読込');
-    const qr = qrcode(0, 'M'); // type auto, error correction M
-    qr.addData(url);
-    qr.make();
-    document.getElementById('qrBox').innerHTML = qr.createSvgTag({ scalable:true, margin:2 });
+    let qr,level='M';
+    try{qr=qrcode(0,level);qr.addData(url);qr.make();}
+    catch{level='L';qr=qrcode(0,level);qr.addData(url);qr.make();}
+    document.getElementById('qrBox').innerHTML = qr.createSvgTag({ scalable:true, margin:4 })+(level==='L'?'<p class="hint">指示が多いため、明るい場所で画面全体を読み取ってください。読み取りにくい場合は下のURLをコピーして渡せます。</p>':'');
   } catch (e) {
     document.getElementById('qrBox').innerHTML =
       `<div style="color:var(--orange);font-size:12px;padding:20px">QR生成失敗：${escapeHtml(e.message)}<br>URLコピーをお使いください</div>`;

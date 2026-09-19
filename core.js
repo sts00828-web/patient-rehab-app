@@ -10,6 +10,12 @@
   const validDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s)) && new Date(s + 'T12:00:00Z').toISOString().slice(0, 10) === s;
   const id = x => typeof x === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(x) && !(x in Object.prototype);
   const record = x => !!x && typeof x === 'object' && !Array.isArray(x);
+  const prescriptionLabels = {side:'実施する側',repetitions:'回数',sets:'セット数',hold:'保持時間',frequency:'1日の実施回数',load:'負荷・強さ',support:'支え方'};
+  function prescription(raw) { return Object.fromEntries(Object.keys(prescriptionLabels).map(k=>[k,text(record(raw)?raw[k]:'',120).trim()])); }
+  function prescriptionIssues(ex) {
+    const p=prescription(ex.prescription);
+    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(ex.scheduleConfirmed===true?[]:['実施曜日の確認'])];
+  }
   function menu(input) {
     if (!Array.isArray(input) || input.length > 60) throw Error('メニューは60種目以内にしてください。');
     const seen = new Set();
@@ -20,8 +26,8 @@
       seen.add(mid);
       const dows = m.dows === undefined ? [] : m.dows;
       if (!Array.isArray(dows) || dows.some(x => !Number.isInteger(x) || x < 0 || x > 6)) throw Error('実施曜日が不正です。');
-      return { id: mid, name: text(m.name, 120), params: text(m.params, 100), note: text(m.note), dows: [...new Set(dows)],
-        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}) };
+      return { id: mid, name: text(m.name, 120), params: text(m.params, 100), note: text(m.note), ...(text(m.diseaseNote)?{diseaseNote:text(m.diseaseNote)}:{}), dows: [...new Set(dows)],
+        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), prescription:prescription(m.prescription), scheduleConfirmed:m.scheduleConfirmed===true, ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}) };
     });
   }
   function videoUrl(s) {
@@ -32,7 +38,7 @@
     if (!record(raw)) throw Error('設定データが不正です。');
     const result = { patientId: id(raw.patientId) ? raw.patientId : fallbackId,
       patientName: text(raw.patientName, 80), age: text(raw.age, 3), diagnosis: text(raw.diagnosis, 120),
-      therapistName: text(raw.therapistName, 80), startDate: validDate(raw.startDate) ? raw.startDate : today,
+      therapistName: text(raw.therapistName, 80), painContext:text(raw.painContext), consultContact:text(raw.consultContact), restartInstructions:text(raw.restartInstructions), startDate: validDate(raw.startDate) ? raw.startDate : today,
       nextVisit: validDate(raw.nextVisit) ? raw.nextVisit : '', template: id(raw.template) ? raw.template : null,
       menu: menu(raw.menu), knownSince: validDate(raw.knownSince) ? raw.knownSince : today, plans: [] };
     if (Array.isArray(raw.plans)) result.plans = raw.plans.slice(-1000).filter(p => record(p) && validDate(p.from)).map(p => ({from:p.from, menu:menu(p.menu)}));
@@ -122,5 +128,5 @@
     s.plans.push({from:today,menu:clone(next)});
     return today;
   }
-  return {clone,text,id,record,validDate,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,applyMenuToday,videoUrl};
+  return {clone,text,id,record,validDate,prescription,prescriptionLabels,prescriptionIssues,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,applyMenuToday,videoUrl};
 });
