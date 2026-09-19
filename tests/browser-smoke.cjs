@@ -62,6 +62,36 @@ async function main(){
   await check('visible date tracks saved value and can be cleared',"(()=>{$('next-visit').dispatchEvent(new Event('change',{bubbles:true}));const saved=S.nextVisit==='2026-10-08'&&JSON.parse(localStorage.getItem('rehab_v2')).settings.nextVisit==='2026-10-08'&&$('next-visit-display').textContent==='2026 / 10 / 08';clearNextVisit();const cleared=S.nextVisit===''&&$('next-visit').value===''&&$('next-visit-display').textContent==='日付を選択';$('next-visit').value='2026-10-08';$('next-visit').dispatchEvent(new Event('change',{bubbles:true}));return saved&&cleared})()");
   await check('oversized native date widget cannot enlarge visible field',"(()=>{const input=$('next-visit'),frame=input.parentElement,display=$('next-visit-display');input.style.minWidth='400px';const a=frame.getBoundingClientRect(),b=display.getBoundingClientRect();const ok=getComputedStyle(input).opacity==='0'&&getComputedStyle(frame).overflow==='hidden'&&b.right<=a.right-12&&a.right<320&&$('therapistModal').scrollWidth<=320;input.style.minWidth='';return ok})()");
   await check('tapping displayed date reaches enabled native picker',"(async()=>{$('next-visit').scrollIntoView({block:'center',behavior:'instant'});await new Promise(r=>requestAnimationFrame(r));const input=$('next-visit'),r=input.getBoundingClientRect();return !input.disabled&&input.type==='date'&&!!input.labels.length&&document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)===input})()");
+  await check('local video capture tools preserve prescription and release preview on close',`(async()=>{
+    const before=JSON.stringify(S);editEx(-1);
+    const capture=$('video-camera');if(capture.accept!=='video/*'||capture.getAttribute('capture')!=='environment')return false;
+    const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;canvas.getContext('2d').fillRect(0,0,64,64);
+    const stream=canvas.captureStream(10),recorder=new MediaRecorder(stream),parts=[];
+    recorder.ondataavailable=e=>parts.push(e.data);const stopped=new Promise(r=>recorder.onstop=r);recorder.start();await new Promise(r=>setTimeout(r,250));recorder.stop();await stopped;stream.getTracks().forEach(t=>t.stop());
+    const file=new File(parts,'synthetic-exercise.webm',{type:recorder.mimeType}),transfer=new DataTransfer();window.syntheticVideo=file;transfer.items.add(file);
+    const input=$('video-file');input.files=transfer.files;input.dispatchEvent(new Event('change'));
+    const player=$('video-local-player');await new Promise(r=>{player.onloadedmetadata=r;setTimeout(r,2000)});
+    const ok=!$('video-local-preview').hidden&&player.videoWidth===64&&$('video-download').href.startsWith('blob:')&&$('ee-video').value==='';
+    const href=$('video-download').href;closeModal('exEditModal');await new Promise(r=>setTimeout(r,0));
+    let revoked=false;try{await fetch(href)}catch{revoked=true;}
+    return ok&&revoked&&JSON.stringify(S)===before;
+  })()`);
+  await check('patient video saves locally, survives reopening and separates patients and exercise identity',`(async()=>{
+    const ex={id:'local_video_fixture',name:'Local exercise',prescription:{side:'right',repetitions:'5'}},patient=S.patientId,before=JSON.stringify(S);
+    const wait=async f=>{for(let i=0;i<100&&!f();i++)await new Promise(r=>setTimeout(r,25));return f();};
+    showGuide(ex);await wait(()=>!$('pv-choose').disabled);
+    const dt=new DataTransfer();dt.items.add(window.syntheticVideo);$('pv-file').files=dt.files;$('pv-file').dispatchEvent(new Event('change'));
+    if(!await wait(()=>!$('pv-save').disabled))return false;$('pv-save').click();
+    if(!await wait(()=>$('pv-save').hidden))return false;
+    const k=PatientVideo.key(patient,ex);localStorage.setItem('video_test_key',k);
+    const row=await PatientVideo.get(k);if(!row||row.blob.size!==syntheticVideo.size)return false;
+    closeModal('guideModal');showGuide({...ex,prescription:{side:'right',repetitions:'10'}});
+    if(!await wait(()=>$('pv-status').textContent.includes('変更')))return false;
+    closeModal('guideModal');S.patientId='other_local_video_patient';showGuide(ex);await wait(()=>!$('pv-choose').disabled);
+    const separate=$('pv-player').hidden;closeModal('guideModal');S.patientId=patient;
+    const changed=await PatientVideo.get(PatientVideo.key(patient,{...ex,name:'Different exercise'}));
+    return separate&&!changed&&JSON.stringify(S)===before&&!JSON.stringify(buildSharePayload()).includes('synthetic-exercise');
+  })()`);
   const dateShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'therapist-dates-mobile.png'),Buffer.from(dateShot.data,'base64'));
   await check('therapist evidence opens from candidate and preserves draft on close',"(()=>{applyTemplate('shoulder');const before=JSON.stringify(S);const pick=$('pick-0');pick.checked=true;const button=document.querySelector('[data-index=\"0\"] .evidence-button');button.click();const ok=!!$('evidenceModal')&&$('evidenceModal').textContent.includes('2013')&&$('evidenceModal').scrollWidth<=320;closeModal('evidenceModal');const kept=pick.checked;closeModal('chooseTemplate');return ok&&kept&&JSON.stringify(S)===before})()");
   await evaluate("document.documentElement.style.removeProperty('--top-inset');renderHeader();applyTemplate('shoulder');");
@@ -263,6 +293,7 @@ async function main(){
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
   await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
   await check('all library illustrations available offline',"(async()=>{const images=[...new Set(Object.values(EXERCISE_LIBRARY).map(e=>e.image))];const r=await Promise.all(images.map(async image=>(await fetch('assets/exercises/'+image)).ok));return images.length>0&&r.every(Boolean)})()");
+  await check('patient video persists across reload and offline and can be removed',"(async()=>{const k=localStorage.getItem('video_test_key');const row=await PatientVideo.get(k);if(!row||!row.blob.size)return false;await PatientVideo.remove(k);localStorage.removeItem('video_test_key');return !(await PatientVideo.get(k))})()");
   await check('built-in dose library is available offline',"typeof PRESCRIPTION_DEFAULTS!=='undefined'&&Object.keys(PRESCRIPTION_DEFAULTS).length===48");
   await check('empty URL gives visible feedback',"(()=>{showReceiveSettings();manualImport($('update-url').value);const ok=$('toast').textContent==='URLを入力してください';$('receiveModal').remove();return ok})()");
   await check('no illustration selection is saved and overrides name fallback',"(()=>{staffUnlocked=true;openTherapist();S.menu=C.menu([{id:'test_none',name:Object.values(EXERCISE_LIBRARY)[0].name,params:'5回',dows:[]}]);editEx(0);$('ee-image').value='';for(const key of Object.keys(C.prescriptionLabels))$('ee-'+key).value='test prescription';$('ee-schedule-confirmed').checked=true;saveEx();const ok=S.menu[0].mediaDisabled&&mediaFor(S.menu[0])===null&&JSON.parse(localStorage.getItem(STORE_KEY)).settings.menu[0].mediaDisabled;closeTherapist();return !!ok})()");
