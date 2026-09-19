@@ -7,6 +7,18 @@ vm.runInContext(fs.readFileSync(path.join(root,'exercises.js'),'utf8')+';globalT
 vm.runInContext(fs.readFileSync(path.join(root,'disease-library.js'),'utf8'),ctx);
 vm.runInContext(fs.readFileSync(path.join(root,'exercise-selection.js'),'utf8')+';globalThis.selection=ExerciseSelection;',ctx);
 const entries=Object.entries(ctx.library);
+test('all disease candidates share category and resistance order without changing source menus',()=>{
+  const rank=Object.keys(ctx.selection.groups);
+  for(const disease of Object.keys(ctx.diseases)){
+    const source=ctx.getDiseaseExerciseMenu(disease),before=JSON.stringify(source);
+    const sorted=[...source].sort(ctx.selection.compare);
+    for(let i=1;i<sorted.length;i++)assert.ok(rank.indexOf(ctx.selection.category(sorted[i-1].exerciseKey))<=rank.indexOf(ctx.selection.category(sorted[i].exerciseKey)));
+    assert.equal(JSON.stringify(source),before);
+  }
+  const keys=['resisted-forearm-turn','gentle-ball-grip','wrist-resisted-extension','wrist-isometric-extension','wrist-active-extension','wrist-extensor-stretch'].map(exerciseKey=>({exerciseKey})).sort(ctx.selection.compare).map(ex=>ex.exerciseKey);
+  assert.deepEqual(keys,['wrist-extensor-stretch','wrist-active-extension','wrist-isometric-extension','gentle-ball-grip','wrist-resisted-extension','resisted-forearm-turn']);
+  assert.ok(ctx.selection.compare({exerciseKey:'shoulder-isometric-external'},{exerciseKey:'shoulder-band-external'})<0);
+});
 test('published diseases have valid nonduplicated choices and every exercise has an illustration',()=>{
   for(const key of Object.keys(ctx.diseases)){
     const keys=ctx.getDiseaseExerciseKeys(key);assert.ok(keys.length>0&&keys.length<=60);
