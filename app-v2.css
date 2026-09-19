@@ -65,4 +65,13 @@ fieldset{min-width:0;border:1px solid var(--border);border-radius:10px;padding:1
 legend{font-weight:700;font-size:16px;max-width:100%;overflow-wrap:anywhere}
 fieldset>label:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:10px;padding:12px 0;font-size:16px;line-height:1.6}
 fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(--teal)}
+.dose-options{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.dose-choice{min-height:44px;min-width:44px;padding:8px 12px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--text);font:inherit;font-size:15px;cursor:pointer}
+.dose-choice[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+.dose-custom summary{font-size:14px;color:var(--teal);cursor:pointer;padding:8px 0;min-height:40px;overflow-wrap:anywhere}
+.dose-field{margin:12px 0;border-bottom:1px solid var(--border);padding-bottom:6px}
+.dose-reuse{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dose-reuse .btn{font-size:14px;margin:0}
+.template-ex:not(:has(.pick-label input:checked))>fieldset{display:none}
+@media(max-width:360px){.dose-reuse{grid-template-columns:1fr}}
 @media print{body{position:static!important;top:auto!important}.dynamic-dialog .t-hd{position:static}}

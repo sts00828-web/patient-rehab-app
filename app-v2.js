@@ -268,8 +268,48 @@ function renderTherapist(){
 }
 let selectedTemplate=null;
 function prescriptionFields(prefix,ex={}){
-  const p=C.prescription(ex.prescription),examples={side:'右／左／両側／該当なし',repetitions:'例：左右それぞれ5回（保持のみは該当なし）',sets:'例：1セット',hold:'例：5秒（保持しない場合は該当なし）',frequency:'例：実施日は1日1回',load:'例：重りなし・ゆっくり',support:'例：固定した椅子の背につかまる／支え不要'};
-  return `<fieldset><legend>患者さんへの個別指示</legend><p class="hint">空欄は未指定です。不要な項目は「該当なし」と入力してください。従来の指示・補足を残す場合は、以下の内容と矛盾しないことを確認してください。左右はイラストに合わせず、患者さんに実施してもらう側を指定します。</p>${Object.entries(C.prescriptionLabels).map(([k,label])=>`<label class="fld-lbl" for="${prefix}-${k}">${label}</label><input id="${prefix}-${k}" class="fld-inp" maxlength="120" value="${escapeAttr(p[k])}" placeholder="${escapeAttr(examples[k])}">`).join('')}<p>実施曜日</p><div class="day-options">${DOW_LABEL.map((label,i)=>`<label><input id="${prefix}-day-${i}" type="checkbox" ${(ex.dows||[]).includes(i)?'checked':''} onchange="document.getElementById('${prefix}-schedule-confirmed').checked=false">${label}</label>`).join('')}</div><p class="hint">曜日が未選択の場合は毎日です。</p><label><input id="${prefix}-schedule-confirmed" type="checkbox" ${ex.scheduleConfirmed?'checked':''}> 実施曜日を確認しました（未選択なら毎日）</label></fieldset>`;
+  const p=C.prescription(ex.prescription);
+  return `<fieldset id="${prefix}-prescription"><legend>患者さんへの個別指示</legend><div class="dose-reuse"><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','default')">保存した標準指示を使う</button><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','previous')">この患者の前回指示を使う</button></div><p class="hint">タップで選択できます。左右や負荷は患者さんに合わせて確認してください。両側に行う場合は「左右各○回」を選べます。</p>${Object.entries(C.prescriptionLabels).map(([k,label])=>`<div class="dose-field"><span id="${prefix}-${k}-label" class="fld-lbl">${label}</span><div class="dose-options" role="group" aria-labelledby="${prefix}-${k}-label">${prescriptionChoices[k].map((value,i)=>`<button type="button" class="dose-choice" data-dose-key="${k}" data-dose-index="${i}" aria-pressed="${p[k]===value}" onclick="choosePrescription('${prefix}','${k}',${i})">${escapeHtml(value)}</button>`).join('')}</div><details class="dose-custom" ${p[k]&&!prescriptionChoices[k].includes(p[k])?'open':''}><summary>その他・自由入力 <span id="${prefix}-${k}-custom-value">${p[k]&&!prescriptionChoices[k].includes(p[k])?escapeHtml(p[k]):''}</span></summary><label class="fld-lbl" for="${prefix}-${k}">${label}を入力</label><input id="${prefix}-${k}" class="fld-inp" maxlength="120" value="${escapeAttr(p[k])}" oninput="syncPrescriptionChoices('${prefix}')"></details></div>`).join('')}<p>実施曜日</p><button type="button" class="text-button" onclick="setEveryday('${prefix}')">毎日を選ぶ</button><div class="day-options">${DOW_LABEL.map((label,i)=>`<label><input id="${prefix}-day-${i}" type="checkbox" ${(ex.dows||[]).includes(i)?'checked':''} onchange="document.getElementById('${prefix}-schedule-confirmed').checked=false">${label}</label>`).join('')}</div><p class="hint">曜日が未選択の場合は毎日です。両側で回数が異なる場合などは自由入力で指定してください。</p><label><input id="${prefix}-schedule-confirmed" type="checkbox" ${ex.scheduleConfirmed?'checked':''}> この患者の左右・負荷・実施曜日を確認しました</label><button type="button" class="text-button" onclick="savePrescriptionDefault('${prefix}')">この内容を種目の標準指示として保存</button><p class="hint">標準指示はこの端末のカスタムテンプレートに保存されます。患者には自動適用されません。</p></fieldset>`;
+}
+const prescriptionChoices={side:['右','左','両側','該当なし'],repetitions:['5回','10回','左右各5回','左右各10回','該当なし'],sets:['1セット','2セット','3セット','該当なし'],hold:['該当なし','3秒','5秒','10秒','20秒','30秒'],frequency:['1日1回','1日2回','1日3回'],load:['重りなし','軽い力','該当なし'],support:['支え不要','安定した台につかまる','家族の見守り','該当なし']};
+function syncPrescriptionChoices(prefix){
+  const root=$(prefix+'-prescription');if(!root)return;
+  for(const [key,choices] of Object.entries(prescriptionChoices)){
+    const value=$(prefix+'-'+key).value;
+    root.querySelectorAll(`[data-dose-key="${key}"]`).forEach(button=>button.setAttribute('aria-pressed',String(value===choices[Number(button.dataset.doseIndex)])));
+    $(prefix+'-'+key+'-custom-value').textContent=value&&!choices.includes(value)?value:'';
+  }
+  $(prefix+'-schedule-confirmed').checked=false;
+}
+function choosePrescription(prefix,key,index){
+  if(!requireStaff()||!prescriptionChoices[key]?.[index])return;
+  $(prefix+'-'+key).value=prescriptionChoices[key][index];
+  $(prefix+'-'+key).closest('details').open=false;syncPrescriptionChoices(prefix);
+}
+function setEveryday(prefix){if(!requireStaff())return;for(let i=0;i<7;i++)$(prefix+'-day-'+i).checked=false;$(prefix+'-schedule-confirmed').checked=false;}
+function prescriptionExercise(prefix){
+  return prefix==='ee'?{name:$('ee-name').value.trim(),exerciseKey:$('ee-image').value}:getAllTemplates()[selectedTemplate]?.menu[Number(prefix.replace('dose-',''))];
+}
+function reusePrescription(prefix,kind){
+  if(!requireStaff())return;const ex=prescriptionExercise(prefix);if(!ex)return;
+  const same=m=>ex.exerciseKey?m.exerciseKey===ex.exerciseKey:!m.exerciseKey&&m.name===ex.name;
+  const saved=kind==='default'?Object.entries(T).filter(([k])=>k.startsWith('doseDefault_')).map(([,t])=>t.menu[0]).find(same):S.menu.find(same);
+  if(!saved){toast(kind==='default'?'この種目の標準指示は未保存です':'この患者の同じ種目の指示はありません');return;}
+  const current=readPrescription(prefix);
+  if(Object.values(current.prescription).some(Boolean)&&!confirm('入力中の個別指示と曜日を置き換えますか？ 補足・注意文はそのまま残します。'))return;
+  for(const key of Object.keys(prescriptionChoices)){$(prefix+'-'+key).value=saved.prescription?.[key]||'';$(prefix+'-'+key).closest('details').open=!!saved.prescription?.[key]&&!prescriptionChoices[key].includes(saved.prescription[key]);}
+  for(let i=0;i<7;i++)$(prefix+'-day-'+i).checked=saved.dows.includes(i);
+  syncPrescriptionChoices(prefix);toast('指示をコピーしました。患者さんに合わせて確認してください');
+}
+function savePrescriptionDefault(prefix){
+  if(!requireStaff())return;const ex=prescriptionExercise(prefix),dose=readPrescription(prefix),issues=C.prescriptionIssues(dose);
+  if(!ex?.name||issues.length){toast('種目名と個別指示・確認チェックを完成させてください');return;}
+  const same=m=>ex.exerciseKey?m.exerciseKey===ex.exerciseKey:!m.exerciseKey&&m.name===ex.name;
+  const existing=Object.entries(T).find(([k,t])=>k.startsWith('doseDefault_')&&same(t.menu[0]));
+  if(existing&&!confirm('この種目の標準指示を上書きしますか？'))return;
+  const key=existing?.[0]||'doseDefault_'+uid();
+  const next={...T,[key]:{name:'標準指示：'+ex.name,icon:'📋',desc:'処方時に患者さんに合わせて確認',menu:[{id:'default',name:ex.name,exerciseKey:ex.exerciseKey,params:'',note:'',...dose,scheduleConfirmed:false}]}};
+  try{T=cleanTemplates(next);persist();toast('標準指示を保存しました');}catch(e){alert(e.message);}
 }
 function readPrescription(prefix){
   return {prescription:C.prescription(Object.fromEntries(Object.keys(C.prescriptionLabels).map(k=>[k,$(`${prefix}-${k}`).value]))),dows:Array.from({length:7},(_,i)=>i).filter(i=>$(`${prefix}-day-${i}`).checked),scheduleConfirmed:$(`${prefix}-schedule-confirmed`).checked};

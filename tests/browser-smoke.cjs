@@ -55,6 +55,23 @@ async function main(){
   await evaluate("document.documentElement.style.removeProperty('--top-inset');renderHeader();applyTemplate('shoulder');");
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await check('ten shoulder choices with no automatic selection',"document.querySelectorAll('#chooseTemplate img').length===10 && !document.querySelector('#chooseTemplate input:checked')");
+  await check('unselected exercises hide prescription controls',"getComputedStyle($('dose-0-prescription')).display==='none'");
+  await check('choice buttons and custom entry stay in sync',`(()=>{
+    $('pick-0').checked=true;const field=$('dose-0-prescription');
+    field.querySelector('[data-dose-key="side"][data-dose-index="0"]').click();
+    const selected=$('dose-0-side').value==='右'&&field.querySelector('[data-dose-key="side"][aria-pressed="true"]').textContent==='右';
+    $('dose-0-side').value='右を中心に指定範囲';$('dose-0-side').dispatchEvent(new Event('input',{bubbles:true}));
+    const custom=!field.querySelector('[data-dose-key="side"][aria-pressed="true"]')&&$('dose-0-side-custom-value').textContent==='右を中心に指定範囲';
+    return selected&&custom&&!$('dose-0-schedule-confirmed').checked;
+  })()`);
+  await check('clinician defaults persist without prescribing automatically and require reconfirmation',`(()=>{
+    fillTestPrescription('dose-0');$('dose-0-day-1').checked=true;savePrescriptionDefault('dose-0');
+    const key=Object.keys(T).find(k=>k.startsWith('doseDefault_'));
+    const saved=JSON.parse(localStorage.getItem(STORE_KEY)).templates[key];
+    choosePrescription('dose-0','side',1);reusePrescription('dose-0','default');
+    const ok=saved.menu[0].prescription.side==='両側'&&saved.menu[0].scheduleConfirmed===false&&S.menu.length===0&&!(key in getAllTemplates())&&$('dose-0-side').value==='両側'&&$('dose-0-day-1').checked&&!$('dose-0-schedule-confirmed').checked;
+    delete T[key];persist();for(const k of Object.keys(prescriptionChoices))$('dose-0-'+k).value='';setEveryday('dose-0');syncPrescriptionChoices('dose-0');return ok;
+  })()`);
   await check('purpose filter preserves selected exercise and dose',"(()=>{$('pick-0').checked=true;$('dose-0').value='5回';$('template-purpose').value='strength';filterTemplateExercises();return document.querySelectorAll('.template-ex:not([hidden])').length===4&&$('pick-0').checked&&$('dose-0').value==='5回'&&$('template-selection').textContent.includes('非表示 1種目')})()");
   await check('difficulty and search filters can combine',"(()=>{$('template-level').value='発展';$('template-search').value='ゴム';filterTemplateExercises();return document.querySelectorAll('.template-ex:not([hidden])').length===1&&document.querySelector('.template-ex:not([hidden])').textContent.includes('ゴムバンド')})()");
   await check('empty filter gives visible feedback',"(()=>{$('template-search').value='存在しない種目';filterTemplateExercises();return !document.querySelector('.exercise-group:not([hidden])')&&$('template-results').textContent.includes('該当する種目がありません')})()");
@@ -68,6 +85,18 @@ async function main(){
   await check('complete exercise fields still require explicit schedule confirmation',"!!$('chooseTemplate')&&JSON.stringify(S.menu)===menuBeforeDoseCheck");
   await evaluate("$('dose-0-schedule-confirmed').checked=true;applySelectedTemplate();closeTherapist();");
   await check('three illustrated daily exercises',"document.querySelectorAll('.exercise-card').length===3 && S.menu.every(x=>x.exerciseKey)");
+  await check('previous prescription reuse leaves saved patient menu untouched until save',`(()=>{
+    staffUnlocked=true;openTherapist();editEx(0);const before=JSON.stringify(S.menu);
+    choosePrescription('ee','side',1);reusePrescription('ee','previous');
+    const ok=$('ee-side').value===S.menu[0].prescription.side&&!$('ee-schedule-confirmed').checked&&JSON.stringify(S.menu)===before;
+    return ok;
+  })()`);
+  await send('Emulation.setDeviceMetricsOverride',{width:320,height:700,deviceScaleFactor:1,mobile:true});
+  await evaluate("$('ee-prescription').scrollIntoView({block:'start',behavior:'instant'});");
+  await check('choice controls fit narrow phone without horizontal overflow',"$('exEditModal').scrollWidth<=320&&[...$('ee-prescription').querySelectorAll('.dose-choice')].every(b=>b.getBoundingClientRect().width>=44)");
+  const choiceShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'prescription-choices-mobile.png'),Buffer.from(choiceShot.data,'base64'));
+  await evaluate("closeModal('exEditModal');closeTherapist();");
+  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await check('unrecorded pain explicit',"$('pain-value').textContent==='未記録'");
   await check('partial and pain-related rest count as recorded without claiming full completion',"(()=>{setExerciseStatus(0,'partial');setExerciseStatus(1,'pain');setExerciseStatus(2,'forgot');const text=$('daily-record-summary').textContent;return text.includes('3種目中 3種目')&&text.includes('閉じて大丈夫')&&getCompletion(todayKey(),new Date().getDay()).done===0})()");
   await evaluate("setExerciseStatus(0,'done');setExerciseStatus(1,'done');setExerciseStatus(2,'done');saveVas(0);saveNote('保存の確認');");
