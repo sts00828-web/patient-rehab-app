@@ -82,5 +82,32 @@ fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(
 .dose-field.dose-error{border:2px solid #b3261e;border-radius:8px;padding:8px}
 .dose-field.dose-error>summary{color:#8c201a;background:#fff1ef}
 .dose-error-message{color:#8c201a;font-size:14px;font-weight:700;line-height:1.6;margin:8px 0}
+/* Compact candidate list; detailed editors retain their original controls. */
+.compact-catalog .t-hd{flex-wrap:wrap;gap:6px}
+.compact-catalog .t-hd h2{flex:1}
+.catalog-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.catalog-shortcuts .btn{margin:0;padding:8px 4px;font-size:14px}
+.compact-candidate{padding:10px;margin:8px 0}
+.candidate-heading{display:flex;align-items:center;gap:8px}
+.candidate-heading .pick-label{flex:1;align-items:center;min-height:44px;font-size:15px;line-height:1.5;cursor:pointer}
+.candidate-image{flex:0 0 64px;width:64px;height:48px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer}
+.candidate-image img{width:100%;height:100%;object-fit:contain}
+.candidate-purpose{font-size:12px;color:var(--text2);line-height:1.5;margin:4px 0}
+.candidate-purpose .level-badge{font-size:11px;padding:0 6px}
+.candidate-info>summary,.catalog-guidance>summary,.catalog-filters>summary,.selected-dose-details>summary{cursor:pointer;min-height:44px;padding:10px 0;font-size:14px;line-height:1.6}
+.candidate-info p{font-size:14px;line-height:1.6}
+.candidate-selected{border-top:1px solid var(--border);margin-top:4px;padding-top:8px}
+.compact-candidate:not(:has(.pick-label input:checked))>.candidate-selected{display:none}
+.compact-candidate:has(.pick-label input:checked){border-color:var(--teal);background:#fafdfc}
+.quick-side-label{display:flex;align-items:center;gap:10px;font-size:14px}
+.quick-side-label select{flex:1;min-width:0;width:auto;margin:0}
+.candidate-dose{font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0}
+.selected-dose-details>summary{color:var(--teal);font-weight:700}
+.selected-dose-details>summary.has-missing{color:#8c201a}
+.selected-only-toggle{display:flex;align-items:center;gap:8px;min-height:44px;font-size:15px}
+.selected-only-toggle input{width:22px;height:22px}
+.compact-catalog .exercise-group>h3{margin-top:8px;padding:8px 0}
+#exercise-catalog .tpl-card{min-height:90px;padding:10px}
+#exercise-catalog .tpl-desc{display:none}
 @media(max-width:360px){.dose-reuse{grid-template-columns:1fr}}
 @media print{body{position:static!important;top:auto!important}.dynamic-dialog .t-hd{position:static}}

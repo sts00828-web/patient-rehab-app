@@ -74,7 +74,14 @@ async function main(){
     const regular=initialPrescriptionDraft(ex,'shoulder'),injury=initialPrescriptionDraft(ex,'anteriorShoulderDislocation');delete T[key];
     return regular.prescription.repetitions==='9回'&&regular.prescription.load==='以前の範囲'&&injury.prescription.load===''&&injury.scheduleConfirmed===false;
   })()`);
-  await check('unselected exercises hide prescription controls',"getComputedStyle($('dose-0-prescription')).display==='none'");
+  await check('unselected exercises hide prescription controls',"$('dose-0-prescription').getBoundingClientRect().height===0");
+  await check('compact candidates keep ten choices under 1800 pixels without expanding dose editors',"(()=>{const rows=[...document.querySelectorAll('#chooseTemplate .template-ex')];return rows.length===10&&rows.reduce((n,row)=>n+row.getBoundingClientRect().height,0)<1800&&rows.every(row=>!row.querySelector('.selected-dose-details').open)})()");
+  await check('selected-only filter and quick side edit preserve candidate doses',`(()=>{
+    const before=$('dose-0-repetitions').value;$('pick-0').checked=true;$('pick-1').checked=true;updateTemplateSelection();
+    setQuickSide(0,'左');showSelectedCandidates();
+    const ok=document.querySelectorAll('#chooseTemplate .template-ex:not([hidden])').length===2&&$('dose-0-side').value==='左'&&$('dose-0-repetitions').value===before&&!$('dose-0-details').open;
+    $('pick-0').checked=false;$('pick-1').checked=false;setQuickSide(0,'');$('template-selected-only').checked=false;filterTemplateExercises();return ok;
+  })()`);
   await check('choice buttons and custom entry stay in sync',`(()=>{
     $('pick-0').checked=true;const field=$('dose-0-prescription');
     field.querySelector('[data-dose-key="side"][data-dose-index="0"]').click();
@@ -248,7 +255,8 @@ async function main(){
   for(let i=0;i<100;i++){if(await evaluate('!!navigator.serviceWorker.controller'))break;await delay(100);}
   await check('service worker controls page',"!!navigator.serviceWorker.controller");
   await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
-  await send('Page.reload');await delay(1200);
+  await send('Page.reload');
+  for(let i=0;i<100;i++){if(await evaluate("document.readyState==='complete'&&typeof C!=='undefined'&&typeof S!=='undefined'&&!!S"))break;await delay(100);}
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
   await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
   await check('all library illustrations available offline',"(async()=>{const images=[...new Set(Object.values(EXERCISE_LIBRARY).map(e=>e.image))];const r=await Promise.all(images.map(async image=>(await fetch('assets/exercises/'+image)).ok));return images.length>0&&r.every(Boolean)})()");

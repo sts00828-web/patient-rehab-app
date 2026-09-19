@@ -335,6 +335,7 @@ function syncPrescriptionChoices(prefix){
 function syncScheduleSummary(prefix){
   const days=Array.from({length:7},(_,i)=>i).filter(i=>$(prefix+'-day-'+i).checked);
   $(prefix+'-prescription').querySelector('.dose-schedule>summary').textContent='実施曜日：'+(days.length?days.map(d=>DOW_LABEL[d]).join('・'):'毎日')+'（変更）';
+  if(prefix.startsWith('dose-'))updateCandidateDose(Number(prefix.slice(5)));
 }
 function choosePrescription(prefix,key,index){
   if(!requireStaff()||!prescriptionChoices[key]?.[index])return;
@@ -372,15 +373,47 @@ function readPrescription(prefix,confirmOnSave=false){
   return {prescription:C.prescription(Object.fromEntries(Object.keys(C.prescriptionLabels).map(k=>[k,$(`${prefix}-${k}`).value]))),dows:Array.from({length:7},(_,i)=>i).filter(i=>$(`${prefix}-day-${i}`).checked),scheduleConfirmed:confirmOnSave||$(`${prefix}-schedule-confirmed`).checked};
 }
 function prescriptionSummary(p){return Object.entries(C.prescriptionLabels).map(([k,label])=>`${label}：${p[k]}`).join(' ／ ');}
+function templateCandidate(m,i,e,key){
+  const draft=T[key]?{...m,prescription:{...m.prescription,side:''},scheduleConfirmed:false}:initialPrescriptionDraft(m,templateMode==='append'&&['anteriorShoulderDislocation','rotatorCuffTear','slapLesion'].includes(S.template)?S.template:key);
+  return `<article class="template-ex compact-candidate" data-index="${i}" data-category="${e?.category||'custom'}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}">
+    <div class="candidate-heading"><label class="pick-label"><input type="checkbox" id="pick-${i}" ${T[key]?'checked':''} onchange="filterTemplateExercises()">${escapeHtml(m.name)}</label>${e?`<button type="button" class="candidate-image" onclick="previewTemplateExercise(${i})" aria-label="${escapeAttr(e.name)}のイラスト・手順"><img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy" width="1536" height="1024"></button>`:''}</div>
+    ${e?`<p class="candidate-purpose">${escapeHtml(e.purpose)} <span class="level-badge">${escapeHtml(e.difficulty)}</span></p><details class="candidate-info"><summary>選択時の注意・用具</summary><p>用具：${escapeHtml(e.equipment)}</p><p class="selection-note">${escapeHtml(e.selectionNote)}</p>${typeof ExerciseSelection!=='undefined'?ExerciseSelection.summary(e):''}<p class="hint">${escapeHtml(m.note||'')}</p><button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button></details>`:''}
+    <div class="candidate-selected"><label class="quick-side-label" for="quick-side-${i}">運動する側<select id="quick-side-${i}" class="fld-inp" onchange="setQuickSide(${i},this.value)"><option value="">選択してください</option>${prescriptionChoices.side.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join('')}</select></label><p id="dose-${i}-overview" class="candidate-dose"></p>
+      <details class="selected-dose-details" id="dose-${i}-details"><summary id="dose-${i}-details-summary">回数・負荷などを変更</summary><details class="legacy-dose" ${m.params&&T[key]?'open':''}><summary>補足指示（任意）</summary><label class="fld-lbl" for="dose-${i}">従来の指示・補足</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" maxlength="100"></details>${prescriptionFields('dose-'+i,draft)}</details>
+    </div></article>`;
+}
+function updateCandidateDose(i){
+  const overview=$('dose-'+i+'-overview');if(!overview)return;
+  const dose=readPrescription('dose-'+i),p=dose.prescription;
+  const missing=Object.entries(C.prescriptionLabels).filter(([k])=>!p[k]).map(([,label])=>label);
+  overview.textContent=[p.repetitions,p.sets,p.hold,p.frequency,dose.dows.length?dose.dows.map(d=>DOW_LABEL[d]).join('・')+'曜日':'毎日'].filter(Boolean).join(' ／ ')+(p.load?'\n負荷：'+p.load:'');
+  $('quick-side-'+i).value=prescriptionChoices.side.includes(p.side)?p.side:'';
+  const select=$('quick-side-'+i);let custom=select.querySelector('[data-custom]');custom?.remove();
+  if(p.side&&!prescriptionChoices.side.includes(p.side)){custom=document.createElement('option');custom.dataset.custom='true';custom.value=p.side;custom.textContent=p.side;select.appendChild(custom);select.value=p.side;}
+  $('dose-'+i+'-details-summary').textContent=missing.length?'未設定：'+missing.join('・')+'（開いて設定）':'回数・負荷・支え方などを変更';
+  $('dose-'+i+'-details-summary').classList.toggle('has-missing',missing.length>0);
+}
+function setQuickSide(i,value){
+  if(!requireStaff())return;
+  $('dose-'+i+'-side').value=value;syncPrescriptionChoices('dose-'+i);
+}
+function showSelectedCandidates(){
+  $('template-selected-only').checked=true;
+  for(const id of ['template-purpose','template-level','template-search'])$(id).value='';
+  filterTemplateExercises();$('chooseTemplate').scrollTo({top:0,behavior:'instant'});
+}
+
 function applyTemplate(key,mode='replace'){
   if(!requireStaff())return;const tpl=getAllTemplates()[key];if(!tpl)return;selectedTemplate=key;templateMode=mode==='append'?'append':'replace';
   const groups={...EXERCISE_GROUPS,custom:'その他の種目'};
   const grouped=Object.entries(groups).map(([category,label])=>{
     const rows=tpl.menu.map((m,i)=>({m,i,e:EXERCISE_LIBRARY[m.exerciseKey]})).filter(({e})=>(e?.category||'custom')===category);
     if(!rows.length)return '';
-    return `<section class="exercise-group" data-group="${category}"><h3>${escapeHtml(label)}</h3>${rows.map(({m,i,e})=>`<article class="template-ex" data-index="${i}" data-category="${category}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}"><label class="pick-label"><input type="checkbox" id="pick-${i}" ${T[key]?'checked':''} onchange="updateTemplateSelection()"> ${escapeHtml(m.name)}</label>${e?`<div class="template-summary"><button type="button" class="image-button" onclick="previewTemplateExercise(${i})" aria-label="${escapeAttr(e.name)}の手順を確認"><img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy" width="1536" height="1024"></button><div><span class="level-badge">${escapeHtml(e.difficulty)}</span><p>${escapeHtml(e.purpose)}</p><p class="hint">用具：${escapeHtml(e.equipment)}</p></div></div><p class="selection-note"><strong>選択時の注意：</strong>${escapeHtml(e.selectionNote)}</p>${typeof ExerciseSelection!=='undefined'?ExerciseSelection.summary(e):''}<button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button>`:''}<p class="hint">${escapeHtml(m.note||'')}</p><details class="legacy-dose" ${m.params&&T[key]?'open':''}><summary>補足指示（任意）</summary><label class="fld-lbl" for="dose-${i}">従来の指示・補足（任意）</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" maxlength="100" placeholder="必要な補足を入力"></details>${prescriptionFields("dose-"+i,T[key]?{...m,prescription:{...m.prescription,side:''},scheduleConfirmed:false}:initialPrescriptionDraft(m,templateMode==='append'&&['anteriorShoulderDislocation','rotatorCuffTear','slapLesion'].includes(S.template)?S.template:key))}</article>`).join('')}</section>`;
+    return `<section class="exercise-group" data-group="${category}"><h3>${escapeHtml(label)}</h3>${rows.map(({m,i,e})=>templateCandidate(m,i,e,key)).join('')}</section>`;
   }).join('');
-  modal('chooseTemplate',escapeHtml(tpl.name),`<div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p>${tpl.menu.length}種目の候補から必要なものを選んでください。標準値が入り、未設定の項目だけ選択・入力できます。</p><p class="hint">難易度は動作の目安です。病期・安全性を判定する尺度ではありません。</p><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>(EXERCISE_LIBRARY[m.exerciseKey]?.category||'custom')===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><div id="template-choice-warnings" aria-live="polite"></div><p>左右・負荷・曜日と患者さんの動作を確認して保存してください。</p><button class="btn btn-pri" onclick="applySelectedTemplate(true)">確認して保存・QRを表示</button><button class="btn btn-out" onclick="applySelectedTemplate()">確認して保存・運動選択を続ける</button></div>`);
+  modal('chooseTemplate',escapeHtml(tpl.name),`<details class="catalog-guidance"><summary>疾患の注意事項・選択前の確認</summary><div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p class="hint">標準値は患者さんに合わせて確認してください。難易度は動作の目安で、病期・安全性を判定する尺度ではありません。</p></details><p>${tpl.menu.length}種目から選択。画像を押すと手順を確認できます。</p><label class="selected-only-toggle"><input type="checkbox" id="template-selected-only" onchange="filterTemplateExercises()"> 選択済みだけ表示</label><details class="catalog-filters"><summary>検索・目的で絞り込む</summary><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>(EXERCISE_LIBRARY[m.exerciseKey]?.category||'custom')===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div></details><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><div id="template-choice-warnings" aria-live="polite"></div><p>左右・負荷・曜日と患者さんの動作を確認して保存してください。</p><button class="btn btn-pri" onclick="applySelectedTemplate(true)">確認して保存・QRを表示</button><button class="btn btn-out" onclick="applySelectedTemplate()">確認して保存・運動選択を続ける</button></div>`);
+  $('chooseTemplate').classList.add('compact-catalog');
+  $('chooseTemplate').querySelector('.t-hd').insertAdjacentHTML('beforeend',`<div class="catalog-shortcuts"><button id="selected-candidates-button" type="button" class="btn btn-out" onclick="showSelectedCandidates()">選択分を確認</button><button type="button" class="btn btn-pri" onclick="applySelectedTemplate(true)">保存・QR</button></div>`);
   filterTemplateExercises();
 }
 function previewTemplateExercise(i){const ex=getAllTemplates()[selectedTemplate]?.menu[i];if(ex)showGuide({...ex,...readPrescription('dose-'+i),params:$('dose-'+i)?.value.trim()||''});}
@@ -389,13 +422,15 @@ function updateTemplateSelection(){
   const count=root.querySelectorAll('.pick-label input:checked').length;
   const hidden=root.querySelectorAll('.template-ex[hidden] .pick-label input:checked').length;
   $('template-selection').textContent=`選択 ${count}種目${hidden?`（絞り込みで非表示 ${hidden}種目を含む）`:''}`;
+  if($('selected-candidates-button'))$('selected-candidates-button').textContent=`選択分を確認（${count}）`;
+  root.querySelectorAll('.template-ex').forEach(row=>updateCandidateDose(Number(row.dataset.index)));
   const warnings=$('template-choice-warnings');
   if(warnings&&typeof ExerciseSelection!=='undefined')warnings.innerHTML=ExerciseSelection.warnings([...root.querySelectorAll('.pick-label input:checked')].map(input=>getAllTemplates()[selectedTemplate]?.menu[Number(input.id.slice(5))]?.exerciseKey).filter(Boolean));
 }
 function filterTemplateExercises(){
   const root=$('chooseTemplate');if(!root)return;
   const category=$('template-purpose').value,level=$('template-level').value,query=$('template-search').value.trim().toLowerCase();let visible=0;
-  root.querySelectorAll('.template-ex').forEach(row=>{row.hidden=!!((category&&row.dataset.category!==category)||(level&&row.dataset.difficulty!==level)||(query&&!row.dataset.search.includes(query)));if(!row.hidden)visible++;});
+  root.querySelectorAll('.template-ex').forEach(row=>{row.hidden=!!(($('template-selected-only')?.checked&&!row.querySelector('.pick-label input').checked)||(category&&row.dataset.category!==category)||(level&&row.dataset.difficulty!==level)||(query&&!row.dataset.search.includes(query)));if(!row.hidden)visible++;});
   root.querySelectorAll('.exercise-group').forEach(group=>group.hidden=!group.querySelector('.template-ex:not([hidden])'));
   $('template-results').textContent=visible?`${visible}種目を表示中`:'該当する種目がありません。絞り込みを変更してください。';
   updateTemplateSelection();
