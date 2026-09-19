@@ -294,6 +294,29 @@ function prescriptionFields(prefix,ex={}){
   return `<fieldset id="${prefix}-prescription"><legend>患者さんへの個別指示</legend>${ex.defaultNote?`<div class="notice"><strong>標準指示のたたき台</strong><p>${escapeHtml(ex.defaultNote)}</p>${ex.defaultSource?`<a href="${escapeAttr(ex.defaultSource)}" target="_blank" rel="noopener noreferrer">参考資料</a>`:''}</div>`:''}<div class="dose-reuse"><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','default')">標準指示を入れる</button><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','previous')">この患者の前回指示を使う</button></div><p class="hint">タップで選択できます。左右や負荷は患者さんに合わせて確認してください。両側に行う場合は「左右各○回」を選べます。</p>${Object.entries(C.prescriptionLabels).map(([k,label])=>`<details class="dose-field" ${!p[k]?'open':''}><summary id="${prefix}-${k}-summary">${escapeHtml(label)}：${escapeHtml(p[k]||'選択してください')}</summary><span id="${prefix}-${k}-label" class="fld-lbl">${label}</span><div class="dose-options" role="group" aria-labelledby="${prefix}-${k}-label">${prescriptionChoices[k].map((value,i)=>`<button type="button" class="dose-choice" data-dose-key="${k}" data-dose-index="${i}" aria-pressed="${p[k]===value}" onclick="choosePrescription('${prefix}','${k}',${i})">${escapeHtml(value)}</button>`).join('')}</div><details class="dose-custom" ${p[k]&&!prescriptionChoices[k].includes(p[k])?'open':''}><summary>その他・自由入力 <span id="${prefix}-${k}-custom-value">${p[k]&&!prescriptionChoices[k].includes(p[k])?escapeHtml(p[k]):''}</span></summary><label class="fld-lbl" for="${prefix}-${k}">${label}を入力</label><input id="${prefix}-${k}" class="fld-inp" maxlength="120" value="${escapeAttr(p[k])}" oninput="syncPrescriptionChoices('${prefix}')"></details></details>`).join('')}<details class="dose-schedule"><summary>実施曜日：${ex.dows?.length?ex.dows.map(d=>DOW_LABEL[d]).join('・'):'毎日'}（変更）</summary><p>実施曜日</p><button type="button" class="text-button" onclick="setEveryday('${prefix}')">毎日を選ぶ</button><div class="day-options">${DOW_LABEL.map((label,i)=>`<label><input id="${prefix}-day-${i}" type="checkbox" ${(ex.dows||[]).includes(i)?'checked':''} onchange="document.getElementById('${prefix}-schedule-confirmed').checked=false;syncScheduleSummary('${prefix}')">${label}</label>`).join('')}</div><p class="hint">曜日が未選択の場合は毎日です。両側で回数が異なる場合などは自由入力で指定してください。</p></details><input id="${prefix}-schedule-confirmed" type="checkbox" hidden ${ex.scheduleConfirmed?'checked':''}><p class="hint">保存ボタンで、表示した左右・回数・負荷・曜日をこの患者さんの指示として確定します。</p><button type="button" class="text-button" onclick="savePrescriptionDefault('${prefix}')">この内容を種目の標準指示として保存</button><p class="hint">先生が保存した標準指示を優先して呼び出します。患者には確認・保存後に反映されます。</p></fieldset>`;
 }
 const prescriptionChoices={side:['右','左','両側','該当なし'],repetitions:['5回','10回','左右各5回','左右各10回','該当なし'],sets:['1セット','2セット','3セット','該当なし'],hold:['該当なし','3秒','5秒','10秒','20秒','30秒'],frequency:['1日1回','1日2回','1日3回'],load:['重りなし','軽い力','該当なし'],support:['支え不要','安定した台につかまる','家族の見守り','該当なし']};
+function showPrescriptionErrors(prefix,name){
+  const root=$(prefix+'-prescription');if(!root)return;
+  const row=root.closest('.template-ex');
+  // A selected exercise can be hidden by a search or purpose filter.
+  if(row?.hidden){
+    for(const id of ['template-purpose','template-level','template-search'])$(id).value='';
+    filterTemplateExercises();
+  }
+  let first=null;
+  for(const [key,label] of Object.entries(C.prescriptionLabels)){
+    const input=$(prefix+'-'+key),field=input.closest('.dose-field'),errorId=prefix+'-'+key+'-error';
+    $(errorId)?.remove();input.removeAttribute('aria-invalid');input.removeAttribute('aria-describedby');field.classList.remove('dose-error');
+    if(input.value.trim())continue;
+    field.open=true;field.classList.add('dose-error');input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby',errorId);
+    const error=document.createElement('p');error.id=errorId;error.className='dose-error-message';error.setAttribute('role','alert');
+    error.textContent=`${name}：${label}が未設定です。選択または入力してください。`;
+    const summary=$(prefix+'-'+key+'-summary');summary.after(error);first??=summary;
+  }
+  if(first){
+    for(let parent=first.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+    first.focus({preventScroll:true});first.scrollIntoView({block:'center',behavior:'instant'});
+  }
+}
 function syncPrescriptionChoices(prefix){
   const root=$(prefix+'-prescription');if(!root)return;
   for(const [key,choices] of Object.entries(prescriptionChoices)){
@@ -301,6 +324,10 @@ function syncPrescriptionChoices(prefix){
     root.querySelectorAll(`[data-dose-key="${key}"]`).forEach(button=>button.setAttribute('aria-pressed',String(value===choices[Number(button.dataset.doseIndex)])));
     $(prefix+'-'+key+'-custom-value').textContent=value&&!choices.includes(value)?value:'';
     $(prefix+'-'+key+'-summary').textContent=C.prescriptionLabels[key]+'：'+(value||'選択してください');
+    if(value.trim()){
+      const input=$(prefix+'-'+key);input.removeAttribute('aria-invalid');input.removeAttribute('aria-describedby');
+      input.closest('.dose-field').classList.remove('dose-error');$(prefix+'-'+key+'-error')?.remove();
+    }
   }
   $(prefix+'-schedule-confirmed').checked=false;
   syncScheduleSummary(prefix);
@@ -333,7 +360,7 @@ function reusePrescription(prefix,kind){
 }
 function savePrescriptionDefault(prefix){
   if(!requireStaff())return;const ex=prescriptionExercise(prefix),dose=readPrescription(prefix,true),issues=C.prescriptionIssues(dose);
-  if(!ex?.name||issues.length){toast('種目名と未設定の個別指示を入力してください');return;}
+  if(!ex?.name||issues.length){toast('種目名と未設定の個別指示を入力してください');if(issues.length)showPrescriptionErrors(prefix,ex?.name||'この運動');return;}
   const same=m=>!!m&&(ex.exerciseKey?m.exerciseKey===ex.exerciseKey:!m.exerciseKey&&m.name===ex.name);
   const existing=Object.entries(T).find(([k,t])=>k.startsWith('doseDefault_')&&same(t.menu[0]));
   if(existing&&!confirm('この種目の標準指示を上書きしますか？'))return;
@@ -376,7 +403,7 @@ function filterTemplateExercises(){
 function commitMenu(next){const from=C.changeMenu(S,L,next,todayKey(),dk(addDays(new Date(),1)));persist();renderTherapist();return from;}
 function applySelectedTemplate(share=false){
   if(!requireStaff())return;const tpl=getAllTemplates()[selectedTemplate],selected=[];
-  for(const [i,m] of tpl.menu.entries())if($('pick-'+i).checked){const dose=readPrescription('dose-'+i,true),issues=C.prescriptionIssues(dose);if(issues.length){toast(`${m.name}：${issues.join('・')}を確認してください`);return;}selected.push({...m,id:'ex_'+uid(),params:$('dose-'+i).value.trim(),...dose});}
+  for(const [i,m] of tpl.menu.entries())if($('pick-'+i).checked){const dose=readPrescription('dose-'+i,true),issues=C.prescriptionIssues(dose);if(issues.length){toast(`${m.name}：${issues.join('・')}を確認してください`);showPrescriptionErrors('dose-'+i,m.name);return;}selected.push({...m,id:'ex_'+uid(),params:$('dose-'+i).value.trim(),...dose});}
   if(!selected.length){toast('種目を選んでください');return;}
   if(templateMode==='replace'&&S.menu.length&&!confirm('現在のメニューを置き換えます。過去の記録はそのまま残ります。'))return;
   if(templateMode==='append'&&selected.some(ex=>S.menu.some(old=>ex.exerciseKey&&old.exerciseKey===ex.exerciseKey))){toast('すでに入っている運動があります。追加する種目だけを選んでください');return;}
@@ -390,7 +417,7 @@ function editEx(idx){
 function saveEx(){
   if(!requireStaff())return;const name=$('ee-name').value.trim(),params=$('ee-params').value.trim(),video=$('ee-video').value.trim();
   if(!name){toast('種目名を入力してください');return;}if(video&&!C.videoUrl(video)){toast('動画URLはhttps://で入力してください');return;}
-  const dose=readPrescription('ee',true),issues=C.prescriptionIssues(dose);if(issues.length){toast(`${issues.join('・')}を確認してください`);return;}
+  const dose=readPrescription('ee',true),issues=C.prescriptionIssues(dose);if(issues.length){toast(`${issues.join('・')}を確認してください`);showPrescriptionErrors('ee',name);return;}
   const next=C.clone(S.menu),old=__editingExIdx>=0?next[__editingExIdx]:{id:'ex_'+uid()};
   const ex={...old,name,params,note:$('ee-note').value,exerciseKey:$('ee-image').value,mediaDisabled:!$('ee-image').value,videoUrl:video,...dose};
   if(__editingExIdx>=0)next[__editingExIdx]=ex;else next.push(ex);const from=commitMenu(next);$('exEditModal').remove();toast(from===todayKey()?'保存しました':'本日分は保持し、明日から変更します');

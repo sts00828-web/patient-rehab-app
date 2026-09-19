@@ -99,6 +99,15 @@ async function main(){
   await check('Escape closes preview without losing prescription draft',"(()=>{document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));return !$('guideModal')&&!!$('chooseTemplate')&&$('pick-0').checked&&$('dose-0').value==='5回'})()");
   await evaluate("$('pick-9').checked=true;window.menuBeforeDoseCheck=JSON.stringify(S.menu);applySelectedTemplate();");
   await check('selected new exercise needs explicit dosage',"!!$('chooseTemplate')&&JSON.stringify(S.menu)===menuBeforeDoseCheck");
+  await check('missing load reveals a filtered exercise and focuses its expanded field without saving',`(()=>{
+    fillTestPrescription('dose-0');fillTestPrescription('dose-9');$('dose-9-load').value='';
+    $('dose-9-load').closest('.dose-field').open=false;
+    $('template-search').value='no matching exercise';filterTemplateExercises();applySelectedTemplate();
+    const field=$('dose-9-load').closest('.dose-field'),summary=$('dose-9-load-summary'),r=summary.getBoundingClientRect();
+    return !$('pick-9').closest('.template-ex').hidden&&field.open&&field.classList.contains('dose-error')&&document.activeElement===summary&&r.top>60&&r.bottom<innerHeight&&$('dose-9-load-error').textContent.includes('負荷')&&$('dose-9-load').getAttribute('aria-invalid')==='true'&&JSON.stringify(S.menu)===menuBeforeDoseCheck;
+  })()`);
+  const errorShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'prescription-error-mobile.png'),Buffer.from(errorShot.data,'base64'));
+  await check('choosing a missing value clears the inline error',"(()=>{choosePrescription('dose-9','load',0);return !$('dose-9-load-error')&&!$('dose-9-load').hasAttribute('aria-invalid')&&!$('dose-9-load').closest('.dose-field').classList.contains('dose-error')})()");
   await evaluate("$('pick-9').checked=false;updateTemplateSelection();");
   await evaluate("for(let i=0;i<3;i++){$('pick-'+i).checked=true;fillTestPrescription('dose-'+i);$('dose-'+i).value='PT確認用：5回';}$('dose-0-schedule-confirmed').checked=false;applySelectedTemplate();");
   await check('save confirms a complete prescription without an extra checkbox',"!$('chooseTemplate')&&S.menu.length===3&&S.menu.every(ex=>ex.scheduleConfirmed)");
@@ -122,6 +131,11 @@ async function main(){
     return ok;
   })()`);
   await send('Emulation.setDeviceMetricsOverride',{width:320,height:700,deviceScaleFactor:1,mobile:true});
+  await check('editing an exercise jumps to an empty collapsed field and preserves saved data',`(()=>{
+    const before=JSON.stringify(S.menu);$('ee-load').value='';$('ee-load').closest('.dose-field').open=false;saveEx();
+    const r=$('ee-load-summary').getBoundingClientRect();
+    return document.activeElement===$('ee-load-summary')&&$('ee-load').closest('.dose-field').open&&!!$('ee-load-error')&&r.top>60&&r.bottom<innerHeight&&JSON.stringify(S.menu)===before;
+  })()`);
   await evaluate("$('ee-prescription').scrollIntoView({block:'start',behavior:'instant'});");
   await check('choice controls fit narrow phone without horizontal overflow',"$('exEditModal').scrollWidth<=320&&[...$('ee-prescription').querySelectorAll('.dose-choice')].every(b=>b.getBoundingClientRect().width>=44)");
   const choiceShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'prescription-choices-mobile.png'),Buffer.from(choiceShot.data,'base64'));

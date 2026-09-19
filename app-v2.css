@@ -79,5 +79,8 @@ fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(
 .dose-field>summary{font-weight:600;color:var(--teal-d)}
 .dose-field[open]>summary{background:var(--teal-l);border-radius:6px}
 .template-ex:not(:has(.pick-label input:checked))>.legacy-dose{display:none}
+.dose-field.dose-error{border:2px solid #b3261e;border-radius:8px;padding:8px}
+.dose-field.dose-error>summary{color:#8c201a;background:#fff1ef}
+.dose-error-message{color:#8c201a;font-size:14px;font-weight:700;line-height:1.6;margin:8px 0}
 @media(max-width:360px){.dose-reuse{grid-template-columns:1fr}}
 @media print{body{position:static!important;top:auto!important}.dynamic-dialog .t-hd{position:static}}
