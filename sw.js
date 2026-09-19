@@ -1,8 +1,8 @@
 // Cache only this application's public assets, never settings URLs or other apps.
 importScripts('./exercises.js');
 const PREFIX = 'patient-rehab-' + encodeURIComponent(self.registration.scope) + '-';
-const CACHE = PREFIX + 'v35';
-const FILES = ['./','./index.html','./manifest.json','./core.js','./exercises.js','./prescription-defaults.js','./disease-library.js','./exercise-selection.js','./ui.js','./app-v2.js','./exercise-print.js','./app-v2.css',
+const CACHE = PREFIX + 'v36';
+const FILES = ['./','./index.html','./manifest.json','./core.js','./exercises.js','./prescription-defaults.js','./disease-library.js','./exercise-selection.js','./ui.js','./app-v2.js','./exercise-print.js','./exercise-evidence.js','./app-v2.css',
   './icon-180.png','./icon-192.png','./icon-512.png',
   './vendor/lz-string.min.js','./vendor/qrcode.min.js','./vendor/html5-qrcode.min.js',
   ...Object.values(EXERCISE_LIBRARY).map(e=>'./assets/exercises/'+e.image)];

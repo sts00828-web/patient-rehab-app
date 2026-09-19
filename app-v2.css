@@ -111,3 +111,7 @@ fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(
 #exercise-catalog .tpl-desc{display:none}
 @media(max-width:360px){.dose-reuse{grid-template-columns:1fr}}
 @media print{body{position:static!important;top:auto!important}.dynamic-dialog .t-hd{position:static}}
+.evidence-button{font:inherit;font-size:12px;color:var(--primary,#086777);background:transparent;border:1px solid #b8d5da;border-radius:6px;min-height:36px;padding:6px 8px;cursor:pointer;flex-shrink:0}
+.evidence-content{overflow-wrap:anywhere;line-height:1.65}
+.evidence-content h3{font-size:16px;margin:20px 0 8px}
+.evidence-content a{display:inline-block;padding:8px 0;text-decoration:underline}
