@@ -17,7 +17,7 @@ const ExerciseEvidence = (() => {
   function html(ex,disease){
     const e=EXERCISE_LIBRARY[ex?.exerciseKey];
     const matches=e&&DISEASE_LIBRARY[disease]&&getDiseaseExerciseKeys(disease).includes(ex.exerciseKey);
-    const g=matches&&guidelines[disease];
+    const g=matches&&(guidelines[disease]||guidelines[DISEASE_LIBRARY[disease]?.baseDisease]);
     const sources=matches?(DISEASE_LIBRARY[disease].sources||[]):[];
     return `<div class="evidence-content"><p class="hint">セラピスト向け参考情報。文献一覧は網羅的な検索結果ではありません。</p>
       <h3>運動方法の参考資料</h3>${e?`<p>${esc(e.name)}</p>${link(e.source,'運動マスターに登録された参考資料を開く')}<p class="hint">医療機関などの運動説明資料です。資料内の類似運動を参考としており、本アプリの説明・イラストとの完全一致や、この種目単独の有効性を保証するものではありません。</p>`:'<p>この独自種目には参考資料が登録されていません。</p>'}

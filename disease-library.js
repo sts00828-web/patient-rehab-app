@@ -16,6 +16,6 @@ function getDiseaseExerciseMenu(key) {
     // Keep disease restrictions separate from the clinician's individual instructions.
     // Exercise cautions are displayed directly from the library, without copying them.
     if(diseaseNote.length>500)throw Error('疾患の注意文は500文字以内にしてください。');
-    return {name:exercise.name,params:exercise.params,note:'',diseaseNote,exerciseKey,dows:[]};
+    return {name:exercise.name,params:exercise.params,note:disease.selectionNote||'',diseaseNote,exerciseKey,dows:[]};
   });
 }

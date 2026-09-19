@@ -79,3 +79,20 @@ test('new shoulder menus keep their clinician-selected conservative-care scope i
     assert.ok(validated.every(ex=>ex.diseaseNote.includes(note)),'scope survives the patient-menu note length limit');
   }
 });
+
+test('athlete menus retain patient restrictions and protect spondylolysis phase boundaries',()=>{
+ const ctx=library(),athletes=Object.entries(ctx.ds).filter(([,d])=>d.audience==='athlete');
+ assert.equal(athletes.length,11);
+ for(const [key,d] of athletes){
+  const source=ctx.getDiseaseExerciseMenu(key);
+  const clean=C.menu(source.map((ex,i)=>({...ex,id:'athlete_'+i})));
+  assert.ok(clean.every(ex=>ex.diseaseNote===d.prescriptionNote&&ex.note===d.selectionNote));
+  assert.ok(d.prescriptionNote.length<=500);
+ }
+ assert.deepEqual(Array.from(ctx.getDiseaseExerciseKeys('spondylolysisProtection')),['abdominal-brace','side-lying-hip-abduction']);
+ for(const key of ['spondylolysisProtection','spondylolysisReload']){
+  assert.ok(!ctx.getDiseaseExerciseKeys(key).includes('prone-on-elbows'));
+  assert.ok(!ctx.getDiseaseExerciseKeys(key).includes('knee-rolls'));
+  assert.match(ctx.ds[key].guidance,/骨癒合/);
+ }
+});

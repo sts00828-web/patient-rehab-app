@@ -336,3 +336,31 @@ DISEASE_LIBRARY.meniscalInjury={
   exerciseKeys:['heel-slide','quad-setting','straight-leg-raise','bridge','side-lying-hip-abduction','mini-squat'],
   sources:[{title:'Bexley NHS：Meniscal Tear in the Knee（保存療法と運動方法の参考）',url:'https://msk-bexley.nhs.uk/conditions/knee-pain/meniscal-tear-in-the-knee'},{title:'NHS：Meniscus tear（受診・治療の目安）',url:'https://www.nhs.uk/conditions/meniscus-tear/'}]
 };
+
+// Athlete home exercise candidates, not complete return-to-sport protocols.
+(()=>{
+  const sportNote='競技の練習量も運動負荷に含めます。翌日に痛み・腫れ・不安定感が増えたら中止しPTへ相談してください。走る・跳ぶ・投げる・接触練習の再開は、このメニューの達成だけで判断せず医師・PTの許可を受けてください。';
+  const rows=[
+    ['shoulderImpingement','肩の腱板関連痛',['table-slide','scapular-setting','shoulder-isometric-external','shoulder-band-external','band-row','wall-push-up'],'バンド外旋と壁での支持は負荷再開を確認後。肩をすくめる代償、投球や頭上動作の翌日反応を評価。'],
+    ['rotatorCuffTear','腱板断裂',['table-slide','scapular-setting','shoulder-isometric-external','band-row'],'抵抗運動は断裂の状態と残存筋力を評価し許可された範囲だけ。外傷後の急な脱力は運動より再診を優先。'],
+    ['anteriorShoulderDislocation','前方脱臼後',['table-slide','scapular-setting','shoulder-isometric-external','shoulder-isometric-internal'],'整復後・骨傷なしの保存療法限定。外転外旋や接触練習への進行は別途評価し、この候補に追加しない。'],
+    ['slapLesion','SLAP損傷',['table-slide','scapular-setting','shoulder-isometric-external','shoulder-band-external'],'投球量と引っかかりを確認。上腕二頭筋の負荷や投球プログラムは個別評価が必要。'],
+    ['tennisElbow','テニス肘',['wrist-extensor-stretch','wrist-isometric-extension','wrist-eccentric-extension','wrist-resisted-extension','resisted-forearm-turn','gentle-ball-grip'],'手首の等尺性・遠心性・反復抵抗は段階違いとして選ぶ。ラケットや投球の握り込みも負荷に合算。'],
+    ['ankleSprain','外側足関節捻挫',['ankle-pumps','heel-raise','supported-single-leg-stance','mini-squat','step-up'],'片脚立ち・浅いスクワット・段差は荷重許可と安定を確認後。疼痛、筋力、本人の自信、バランス、競技動作を復帰前に評価。'],
+    ['meniscalInjury','半月板損傷',['heel-slide','quad-setting','straight-leg-raise','bridge','side-lying-hip-abduction','mini-squat','step-up'],'段差と浅いスクワットは荷重許可後、翌日の腫れと膝の制御を確認。深い屈曲・切り返し・ジャンプは別途評価。'],
+    ['lowback','非特異的腰痛',['abdominal-brace','bridge','bird-dog','kneeling-plank','side-lying-hip-abduction','walking'],'腰椎分離症などの原因を除外した非特異的腰痛向け。四つ這い・膝プランクは症状安定後、体幹の制御を確認。'],
+    ['lumbarDiscHerniation','腰椎椎間板ヘルニア',['abdominal-brace','bird-dog','walking'],'神経症状が安定し体幹・活動練習を許可された人向け。最大筋力・重量挙げ・接触への復帰は個別判断。']
+  ];
+  for(const [baseDisease,label,exerciseKeys,focus] of rows){
+    const base=DISEASE_LIBRARY[baseDisease];
+    DISEASE_LIBRARY['athlete_'+baseDisease]={...base,baseDisease,audience:'athlete',name:label+'（アスリート・保存療法）',icon:'🏃',desc:exerciseKeys.length+'候補／基礎〜復帰準備',exerciseKeys,
+      guidance:base.guidance+' アスリート用の確認：'+focus+' 競技・ポジション・練習量・翌日の反応を評価。これは競技復帰プログラム全体ではありません。',
+      prescriptionNote:base.prescriptionNote+' '+sportNote,
+      selectionNote:focus};
+  }
+  const sources=[{title:'日本整形外科学会：腰椎分離症・分離すべり症',url:'https://www.joa.or.jp/public/sick/condition/spondiyolysis.html'},{title:'Sanford Health：分離症・すべり症の保存療法（2024年改訂・施設プロトコル）',url:'https://www.sanfordhealth.org/-/media/org/files/medical-professionals/resources-and-education/spondylolysis-non-operative-rehabilitation-guideline.pdf'}];
+  const guidance='診断と病期（骨癒合を目指す段階か、慢性分離か）、装具、運動・荷重制限を医師に確認します。術後、進行するすべり・神経症状は対象外。骨癒合期に痛みがないことだけで練習を再開しません。腰を反らす・ひねる運動、ジャンプ・重量負荷は自己判断で行いません。初期から行える運動も一律ではなく、医師の許可を優先。週数で自動進行せず、競技復帰は診察と競技動作の評価で判断します。';
+  const note='腰椎分離症の保存療法中に医師・PTが許可した運動だけ行います。術後には使いません。装具と運動休止の指示を守り、腰を反らす・ひねる・跳ぶ・重い物を持つ練習を自己判断で再開しません。腰痛が出たら中止して相談してください。新たな脚のしびれ・脱力は早急に受診し、尿が出ない・尿便が漏れる、股の間の感覚低下は直ちに救急受診してください。';
+  DISEASE_LIBRARY.spondylolysisProtection={audience:'athlete',name:'腰椎分離症（保護期・運動許可後）',icon:'🏃',desc:'個別許可された基礎運動2候補',guidance,prescriptionNote:note,exerciseKeys:['abdominal-brace','side-lying-hip-abduction'],sources,selectionNote:'骨癒合を目指す期間の運動許可を確認。腰を動かさず保持できる範囲に限る。運動休止の指示があれば処方しない。'};
+  DISEASE_LIBRARY.spondylolysisReload={audience:'athlete',name:'腰椎分離症（負荷再開許可後）',icon:'🏃',desc:'体幹・下肢の制御を整える6候補',guidance:guidance+' 医師が負荷再開を許可し、日常動作と基礎運動で症状が増えず腰の中間位を保てる場合だけ選択。',prescriptionNote:note+' 負荷再開の許可を受けた段階の運動です。完了しても競技復帰の許可にはなりません。',exerciseKeys:['abdominal-brace','bridge','bird-dog','kneeling-plank','side-lying-hip-abduction','mini-squat'],sources,selectionNote:'ブリッジ・手足上げ・膝プランクは腰が反らない範囲で選択。進行はフォーム・当日と翌日の症状反応を再評価して決める。'};
+})();
