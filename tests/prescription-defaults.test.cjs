@@ -18,3 +18,13 @@ test('unilateral loading and resistance are not invented for patients',()=>{
 test('default library is loaded and available in the offline application',()=>{
   for(const f of ['index.html','sw.js'])assert.ok(fs.readFileSync(path.join(root,f),'utf8').includes('prescription-defaults.js'));
 });
+
+test('athlete dose options avoid choosing side or weight and schedule recovery days',()=>{
+  const ctx=vm.createContext({});for(const f of ['exercises.js','prescription-defaults.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx);
+  for(const key of ['forearm-plank','side-plank','single-leg-plank','side-plank-leg-lift','floor-push-up','wrist-resisted-extension','lateral-hop-stick']){
+    for(const level of [2,3]){const d=ctx.athleteDosePreset(key,level);assert.ok(d);assert.equal(d.prescription.side,undefined);assert.equal(d.prescription.load,undefined);assert.deepEqual(Array.from(d.dows),[1,3,5]);}
+  }
+  assert.equal(ctx.athleteDosePreset('pendulum',3),null);
+  assert.equal(ctx.athleteDosePreset('forearm-plank',4),null);
+  assert.equal(ctx.athleteDosePreset('side-plank',3).prescription.hold,'30秒');
+});

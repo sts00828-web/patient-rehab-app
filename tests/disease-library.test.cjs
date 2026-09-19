@@ -89,7 +89,7 @@ test('athlete menus retain patient restrictions and protect spondylolysis phase 
   assert.ok(clean.every(ex=>ex.diseaseNote===d.prescriptionNote&&ex.note===d.selectionNote));
   assert.ok(d.prescriptionNote.length<=500);
  }
- assert.deepEqual(Array.from(ctx.getDiseaseExerciseKeys('spondylolysisProtection')),['abdominal-brace','side-lying-hip-abduction']);
+ assert.deepEqual(Array.from(ctx.getDiseaseExerciseKeys('spondylolysisProtection')),['abdominal-brace','side-lying-hip-abduction','forearm-plank','side-plank']);
  for(const key of ['spondylolysisProtection','spondylolysisReload']){
   assert.ok(!ctx.getDiseaseExerciseKeys(key).includes('prone-on-elbows'));
   assert.ok(!ctx.getDiseaseExerciseKeys(key).includes('knee-rolls'));

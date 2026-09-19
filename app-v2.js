@@ -277,13 +277,17 @@ function standardPrescription(ex,kind='default'){
   const same=m=>!!m&&(ex.exerciseKey?m.exerciseKey===ex.exerciseKey:!m.exerciseKey&&m.name===ex.name);
   const saved=kind==='default'?Object.entries(T).filter(([k])=>k.startsWith('doseDefault_')).map(([,t])=>t.menu[0]).find(same):null;
   const builtIn=typeof PRESCRIPTION_DEFAULTS!=='undefined'?PRESCRIPTION_DEFAULTS[ex.exerciseKey]:null;
-  if(saved)return {...C.clone(saved),defaultNote:'この端末で保存した標準指示を入れています。患者さんに合わせて確認してください。',scheduleConfirmed:false};
+  if(saved)return {...C.clone(saved),clinicianDefault:true,defaultNote:'この端末で保存した標準指示を入れています。患者さんに合わせて確認してください。',scheduleConfirmed:false};
   if(!builtIn)return null;
   return {prescription:C.prescription(builtIn.prescription),dows:[...builtIn.dows],scheduleConfirmed:false,defaultNote:builtIn.note,defaultSource:builtIn.source};
 }
 function initialPrescriptionDraft(ex,disease){
   const standard=standardPrescription(ex);if(!standard)return ex;
   const result={...ex,prescription:standard.prescription,dows:standard.dows,scheduleConfirmed:false,defaultNote:standard.defaultNote,defaultSource:standard.defaultSource};
+  if(DISEASE_LIBRARY[disease]?.audience==='athlete'&&disease!=='spondylolysisProtection'&&!standard.clinicianDefault){
+    const sport=athleteDosePreset(ex.exerciseKey,2);
+    if(sport){Object.assign(result.prescription,sport.prescription);result.dows=[...sport.dows];result.defaultNote+=' 強化用の編集案です。月水金・実施日に1回を仮設定。練習負荷と休息を考慮して変更してください。';}
+  }
   // Injury-specific range and loading permission must not be borrowed from another diagnosis.
   if(DISEASE_LIBRARY[disease]?.audience==='athlete'||['anteriorShoulderDislocation','rotatorCuffTear','slapLesion'].includes(disease)){
     result.prescription.load='';result.defaultNote+=' この疾患では、医師の許可と動かす範囲・負荷を個別に入力してください。';
@@ -300,7 +304,7 @@ function showPrescriptionErrors(prefix,name){
   const row=root.closest('.template-ex');
   // A selected exercise can be hidden by a search or purpose filter.
   if(row?.hidden){
-    for(const id of ['template-purpose','template-level','template-search'])$(id).value='';
+    for(const id of ['template-purpose','template-level','template-search','template-athlete-level'])if($(id))$(id).value='';
     filterTemplateExercises();
   }
   let first=null;
@@ -376,13 +380,28 @@ function readPrescription(prefix,confirmOnSave=false){
 function prescriptionSummary(p){return Object.entries(C.prescriptionLabels).map(([k,label])=>`${label}：${p[k]}`).join(' ／ ');}
 function templateCandidate(m,i,e,key){
   const draft=T[key]?{...m,prescription:{...m.prescription,side:''},scheduleConfirmed:false}:initialPrescriptionDraft(m,templateMode==='append'&&['anteriorShoulderDislocation','rotatorCuffTear','slapLesion'].includes(S.template)?S.template:key);
-  return `<article class="template-ex compact-candidate" data-index="${i}" data-category="${ExerciseSelection.category(m.exerciseKey)}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}">
+  return `<article class="template-ex compact-candidate" data-index="${i}" data-athlete-level="${e?.athleteLevel||(['band-row','shoulder-band-external','wrist-eccentric-extension','wrist-resisted-extension','resisted-forearm-turn'].includes(m.exerciseKey)?2:1)}" data-category="${ExerciseSelection.category(m.exerciseKey)}" data-difficulty="${escapeAttr(e?.difficulty||'')}" data-search="${escapeAttr([m.name,e?.purpose,e?.equipment].filter(Boolean).join(' ').toLowerCase())}">
     <div class="candidate-heading"><label class="pick-label"><input type="checkbox" id="pick-${i}" ${T[key]?'checked':''} onchange="filterTemplateExercises()">${escapeHtml(m.name)}</label>${e?`<button type="button" class="candidate-image" onclick="previewTemplateExercise(${i})" aria-label="${escapeAttr(e.name)}のイラスト・手順"><img src="assets/exercises/${e.image}" alt="${escapeAttr(e.name)}" loading="lazy" width="1536" height="1024"></button>`:''}</div>
-    ${e?`<p class="candidate-purpose">${escapeHtml(e.purpose)} <span class="level-badge">${escapeHtml(e.difficulty)}</span></p><details class="candidate-info"><summary>選択時の注意・用具</summary><p>用具：${escapeHtml(e.equipment)}</p><p class="selection-note">${escapeHtml(e.selectionNote)}</p>${typeof ExerciseSelection!=='undefined'?ExerciseSelection.summary(e):''}<p class="hint">${escapeHtml(m.note||'')}</p><button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button></details>`:''}
+    ${e?`<p class="candidate-purpose">${escapeHtml(e.purpose)} <span class="level-badge">${escapeHtml(DISEASE_LIBRARY[key]?.audience==='athlete'?({1:'基礎',2:'強化',3:'発展'}[e.athleteLevel||(['band-row','shoulder-band-external','wrist-eccentric-extension','wrist-resisted-extension','resisted-forearm-turn'].includes(m.exerciseKey)?2:1)]):e.difficulty)}</span></p><details class="candidate-info"><summary>選択時の注意・用具</summary><p>用具：${escapeHtml(e.equipment)}</p><p class="selection-note">${escapeHtml(e.selectionNote)}</p>${typeof ExerciseSelection!=='undefined'?ExerciseSelection.summary(e):''}<p class="hint">${escapeHtml(m.note||'')}</p><button type="button" class="btn btn-out" onclick="previewTemplateExercise(${i})">イラスト・手順を確認</button></details>`:''}
     <button type="button" class="evidence-button" onclick="showTemplateEvidence(${i})">エビデンス・参考資料</button>
-    <div class="candidate-selected"><label class="quick-side-label" for="quick-side-${i}">運動する側<select id="quick-side-${i}" class="fld-inp" onchange="setQuickSide(${i},this.value)"><option value="">選択してください</option>${prescriptionChoices.side.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join('')}</select></label><p id="dose-${i}-overview" class="candidate-dose"></p>
+    <div class="candidate-selected">${athleteDoseButtons(m,i,key)}<label class="quick-side-label" for="quick-side-${i}">運動する側<select id="quick-side-${i}" class="fld-inp" onchange="setQuickSide(${i},this.value)"><option value="">選択してください</option>${prescriptionChoices.side.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join('')}</select></label><p id="dose-${i}-overview" class="candidate-dose"></p>
       <details class="selected-dose-details" id="dose-${i}-details"><summary id="dose-${i}-details-summary">回数・負荷などを変更</summary><details class="legacy-dose" ${m.params&&T[key]?'open':''}><summary>補足指示（任意）</summary><label class="fld-lbl" for="dose-${i}">従来の指示・補足</label><input class="fld-inp" id="dose-${i}" value="${T[key]?escapeAttr(m.params):''}" maxlength="100"></details>${prescriptionFields('dose-'+i,draft)}</details>
     </div></article>`;
+}
+function athleteDoseButtons(ex,i,key){
+  if(DISEASE_LIBRARY[key]?.audience!=='athlete'||key==='spondylolysisProtection'||!athleteDosePreset(ex.exerciseKey,2))return '';
+  return `<div class="athlete-dose"><p>回数・時間・曜日の案を選ぶ（重量は個別設定）</p><button type="button" class="btn btn-out" onclick="applyAthleteDose(${i},2)">強化案：2セット</button><button type="button" class="btn btn-out" onclick="applyAthleteDose(${i},3)">発展案：3セット</button><p class="hint">重量・バンド抵抗、可動域、休息を負荷欄に指定。反復種目の発展案は抵抗を再評価し、回数を抑えて3セット。標準化された治療量ではありません。</p></div>`;
+}
+function applyAthleteDose(i,level){
+  if(!requireStaff()||DISEASE_LIBRARY[selectedTemplate]?.audience!=='athlete'||selectedTemplate==='spondylolysisProtection')return;
+  const ex=getAllTemplates()[selectedTemplate]?.menu[i],draft=ex&&athleteDosePreset(ex.exerciseKey,level);if(!draft)return;
+  const prefix='dose-'+i;
+  for(const [key,value] of Object.entries(draft.prescription))$(prefix+'-'+key).value=value;
+  for(let day=0;day<7;day++)$(prefix+'-day-'+day).checked=draft.dows.includes(day);
+  // Reassess actual load whenever choosing a new volume; never silently carry a lighter load.
+  $(prefix+'-load').value='';$(prefix+'-schedule-confirmed').checked=false;
+  syncScheduleSummary(prefix);syncPrescriptionChoices(prefix);
+  toast('回数・曜日の案を入れました。負荷・範囲・休息を確認してください');
 }
 function updateCandidateDose(i){
   const overview=$('dose-'+i+'-overview');if(!overview)return;
@@ -401,7 +420,7 @@ function setQuickSide(i,value){
 }
 function showSelectedCandidates(){
   $('template-selected-only').checked=true;
-  for(const id of ['template-purpose','template-level','template-search'])$(id).value='';
+  for(const id of ['template-purpose','template-level','template-search','template-athlete-level'])if($(id))$(id).value='';
   filterTemplateExercises();$('chooseTemplate').scrollTo({top:0,behavior:'instant'});
 }
 
@@ -413,7 +432,7 @@ function applyTemplate(key,mode='replace'){
     if(!rows.length)return '';
     return `<section class="exercise-group" data-group="${category}"><h3>${escapeHtml(label)}</h3>${rows.map(({m,i,e})=>templateCandidate(m,i,e,key)).join('')}</section>`;
   }).join('');
-  modal('chooseTemplate',escapeHtml(tpl.name),`<details class="catalog-guidance"><summary>疾患の注意事項・選択前の確認</summary><div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p class="hint">標準値は患者さんに合わせて確認してください。難易度は動作の目安で、病期・安全性を判定する尺度ではありません。</p></details><p>${tpl.menu.length}種目から選択。画像を押すと手順を確認できます。</p><label class="selected-only-toggle"><input type="checkbox" id="template-selected-only" onchange="filterTemplateExercises()"> 選択済みだけ表示</label><details class="catalog-filters"><summary>検索・目的で絞り込む</summary><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>ExerciseSelection.category(m.exerciseKey)===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div></details><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><div id="template-choice-warnings" aria-live="polite"></div><p>左右・負荷・曜日と患者さんの動作を確認して保存してください。</p><button class="btn btn-pri" onclick="applySelectedTemplate(true)">確認して保存・QRを表示</button><button class="btn btn-out" onclick="applySelectedTemplate()">確認して保存・運動選択を続ける</button></div>`);
+  modal('chooseTemplate',escapeHtml(tpl.name),`<details class="catalog-guidance"><summary>疾患の注意事項・選択前の確認</summary><div class="notice">${escapeHtml(DISEASE_LIBRARY[key]?.guidance||'必要な種目を選び、回数を確認してください。')}</div><p class="hint">標準値は患者さんに合わせて確認してください。難易度は動作の目安で、病期・安全性を判定する尺度ではありません。</p></details><p>${tpl.menu.length}種目から選択。画像を押すと手順を確認できます。</p>${DISEASE_LIBRARY[key]?.audience==='athlete'?`<label for="template-athlete-level">強化段階で絞り込む<select id="template-athlete-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての段階</option value="1">基礎</option><option value="2">強化</option><option value="3">発展</option></select></label><p class="hint">院内用の動作分類です。FIFA 11+のレベル番号や復帰基準とは異なります。</p>`:''}<label class="selected-only-toggle"><input type="checkbox" id="template-selected-only" onchange="filterTemplateExercises()"> 選択済みだけ表示</label><details class="catalog-filters"><summary>検索・目的で絞り込む</summary><div class="template-filters"><label for="template-purpose">目的<select id="template-purpose" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべての目的</option>${Object.entries(groups).filter(([c])=>tpl.menu.some(m=>ExerciseSelection.category(m.exerciseKey)===c)).map(([c,l])=>`<option value="${c}">${escapeHtml(l)}</option>`).join('')}</select></label><label for="template-level">難易度の目安<select id="template-level" class="fld-inp" onchange="filterTemplateExercises()"><option value="">すべて</option><option>基本</option><option>標準</option><option>発展</option></select></label><label class="search-field" for="template-search">種目名・目的・用具で探す<input id="template-search" class="fld-inp" type="search" oninput="filterTemplateExercises()" placeholder="例：椅子、体幹"></label></div></details><p id="template-results" class="hint" aria-live="polite"></p>${grouped}<div class="template-actions"><p id="template-selection" role="status"></p><div id="template-choice-warnings" aria-live="polite"></div><p>左右・負荷・曜日と患者さんの動作を確認して保存してください。</p><button class="btn btn-pri" onclick="applySelectedTemplate(true)">確認して保存・QRを表示</button><button class="btn btn-out" onclick="applySelectedTemplate()">確認して保存・運動選択を続ける</button></div>`);
   $('chooseTemplate').classList.add('compact-catalog');
   $('chooseTemplate').querySelector('.t-hd').insertAdjacentHTML('beforeend',`<div class="catalog-shortcuts"><button id="selected-candidates-button" type="button" class="btn btn-out" onclick="showSelectedCandidates()">選択分を確認</button><button type="button" class="btn btn-pri" onclick="applySelectedTemplate(true)">保存・QR</button></div>`);
   filterTemplateExercises();
@@ -431,8 +450,8 @@ function updateTemplateSelection(){
 }
 function filterTemplateExercises(){
   const root=$('chooseTemplate');if(!root)return;
-  const category=$('template-purpose').value,level=$('template-level').value,query=$('template-search').value.trim().toLowerCase();let visible=0;
-  root.querySelectorAll('.template-ex').forEach(row=>{row.hidden=!!(($('template-selected-only')?.checked&&!row.querySelector('.pick-label input').checked)||(category&&row.dataset.category!==category)||(level&&row.dataset.difficulty!==level)||(query&&!row.dataset.search.includes(query)));if(!row.hidden)visible++;});
+  const athleteLevel=$('template-athlete-level')?.value,category=$('template-purpose').value,level=$('template-level').value,query=$('template-search').value.trim().toLowerCase();let visible=0;
+  root.querySelectorAll('.template-ex').forEach(row=>{row.hidden=!!(($('template-selected-only')?.checked&&!row.querySelector('.pick-label input').checked)||(athleteLevel&&row.dataset.athleteLevel!==athleteLevel)||(category&&row.dataset.category!==category)||(level&&row.dataset.difficulty!==level)||(query&&!row.dataset.search.includes(query)));if(!row.hidden)visible++;});
   root.querySelectorAll('.exercise-group').forEach(group=>group.hidden=!group.querySelector('.template-ex:not([hidden])'));
   $('template-results').textContent=visible?`${visible}種目を表示中`:'該当する種目がありません。絞り込みを変更してください。';
   updateTemplateSelection();

@@ -337,6 +337,47 @@ DISEASE_LIBRARY.meniscalInjury={
   sources:[{title:'Bexley NHS：Meniscal Tear in the Knee（保存療法と運動方法の参考）',url:'https://msk-bexley.nhs.uk/conditions/knee-pain/meniscal-tear-in-the-knee'},{title:'NHS：Meniscus tear（受診・治療の目安）',url:'https://www.nhs.uk/conditions/meniscus-tear/'}]
 };
 
+// Advanced athlete movements. Doses are editable drafts, not return-to-sport tests.
+(()=>{
+  const fifa='https://doi.org/10.15857/ksep.2019.28.2.141';
+  const strength='https://www.orthoinfo.org/staying-healthy/starting-a-strength-training-program/';
+  const rows=[
+    ['forearm-plank','プランク（膝をつかない）',2,'体幹をまっすぐ保つ力を鍛える','マット',
+      ['うつ伏せから肘を肩の真下につき、両つま先を床につけます。','膝を床から離し、頭からかかとまでをまっすぐに保ちます。','呼吸を続けて指定時間保ち、膝を床について休みます。'],
+      '腰を反らす・お尻を高く上げる・息を止める動作を避けます。姿勢が崩れる前に終了します。',fifa,'肘と両つま先で支えます。膝は床につけません。'],
+    ['side-plank','サイドプランク（膝を伸ばす）',2,'体幹の横方向の支持力を鍛える','マット',
+      ['指定された側を下にして横向きになり、肘を肩の真下に置きます。','両膝を伸ばして足を重ね、下側の前腕と足の外側で支えて腰を浮かせます。','胸と骨盤を正面に保ち、指定時間で腰をゆっくり床に戻します。'],
+      '肩に痛みや抜けそうな感じがある場合は中止します。腰をねじらず、呼吸を続けます。',fifa,'運動する側は下になって支える側です。図と左右が違っても処方された側で行います。'],
+    ['single-leg-plank','プランクで片脚を浮かせて保つ',3,'片脚を動かしても体幹を安定させる','マット',
+      ['両前腕と両つま先で通常のプランクを作ります。','指定された脚を膝を伸ばしたまま少しだけ浮かせ、骨盤を水平に保ちます。','指定時間で足を戻し、膝をついて休みます。反対側は処方された場合だけ行います。'],
+      '脚を高く上げて腰を反らしません。通常のプランクで安定できない場合は選択しません。',fifa,'運動する側は浮かせる脚です。腰の高さは変えません。'],
+    ['side-plank-leg-lift','サイドプランクで上の脚を浮かせる',3,'体幹の横方向と股関節の支持力を鍛える','マット',
+      ['指定された側を下にし、膝を伸ばしたサイドプランクを作ります。','上の脚を少し離し、胸と骨盤の向きを変えずに保ちます。','指定時間で上の脚を戻し、腰を床に下ろして休みます。'],
+      '腰をねじる・骨盤が落ちる・肩がすくむ場合は終了します。脚を高く上げすぎません。',fifa,'運動する側は下の支持側です。浮かせるのは反対側の脚です。'],
+    ['split-squat','足を前後に開いてしゃがむ（スプリットスクワット）',2,'片脚に比重を置いて下肢の筋力を鍛える','滑らない靴・平らな床',
+      ['指定された脚を前にして足を前後に開き、後ろのかかとを上げます。','足の位置を変えず、前の膝をつま先と同じ向きに曲げて体を下げます。','前足の裏で床を押し、ゆっくり元の高さに戻ります。'],
+      '深さはPTの指定まで。膝を内側に入れず、前のかかとを浮かせません。重りは指定された場合だけ使います。',strength,'運動する側は前の脚です。図の深さまで下げる必要はありません。'],
+    ['single-leg-squat','片脚でしゃがむ（片脚スクワット）',3,'片脚で膝と骨盤を制御する力を鍛える','滑らない靴・平らな床',
+      ['指定された脚で立ち、反対の足を少し前に浮かせます。','お尻を後ろへ引き、支持脚の膝を指定された深さまで曲げます。','かかとを床につけたままゆっくり立ち上がり、姿勢を整えます。'],
+      '膝が内側に入る・骨盤が傾く・ぐらつく場合は中止します。深くしゃがむ競争にしません。',fifa,'運動する側は床について支える脚です。浮かせた脚ではありません。'],
+    ['single-leg-heel-raise','片脚でかかとを上げ下げする',2,'片脚でのふくらはぎの筋力を鍛える','安定した台・滑らない靴',
+      ['台に手を添え、指定された脚で立ち、反対の足を床から浮かせます。','支持脚の膝を伸ばしたままかかとを上げます。','反動をつけずゆっくりかかとを床へ戻します。'],
+      '足首を外側へ倒さず、手で体を持ち上げません。段差の縁では行いません。',strength,'運動する側は床に接してかかとを上げる脚です。手の支え方はPTの指示に従います。'],
+    ['floor-push-up','床で腕立て伏せ',2,'肩・腕と体幹の支持力を鍛える','滑らない床・マット',
+      ['両手を肩の下につき、両つま先で支えて膝を床から離します。','体を一直線に保ち、肘を横へ広げすぎず指定の深さまで胸を下げます。','両手で床を押して戻ります。腰を反らさず呼吸を続けます。'],
+      '肩・手首・肘の痛みや不安定感で中止。肩の荷重許可を確認し、胸を無理に深く下げません。',strength,'左は開始姿勢、右は下ろした姿勢です。動く深さは個別指示を優先します。'],
+    ['lateral-hop-stick','片脚で横に跳び、止まる',3,'片脚着地で衝撃を吸収し姿勢を制御する','滑らない靴・障害物のない平らな床',
+      ['指定された脚で立ち、膝と股関節を少し曲げます。','指定された横方向・距離へ小さく跳び、同じ脚で静かに着地します。','膝をつま先の方向に曲げて衝撃を吸収し、姿勢を止めてから次を行います。'],
+      '跳躍と片脚着地を個別に許可された場合だけ。膝崩れ、痛み、不安定感で中止し、連続で跳びません。',fifa,'同じ脚で離地・着地します。距離と方向はPTが指定し、最初は院内で確認します。'],
+    ['plank-shoulder-tap','腕立て姿勢で反対の肩に触れる',3,'片手支持でも肩と体幹を安定させる','滑らない床・マット',
+      ['両手を肩の下につき、足を少し広げた腕立て姿勢を作ります。','指定された手を床から離し、反対の肩にゆっくり触れます。','骨盤の向きを保ちながら手を床に戻します。左右交互は指示された場合だけ行います。'],
+      '片手荷重の許可後に選択。肩の不安定感・痛み、体の大きなねじれが出たら中止します。',strength,'運動する側は床から離す手です。支持する腕は反対側です。']
+  ];
+  for(const [key,name,athleteLevel,purpose,equipment,steps,caution,source,imageCaption] of rows){
+    EXERCISE_LIBRARY[key]={name,region:'athleteAdvanced',image:key+'.png',params:'回数・時間・負荷はPTと確認',category:key==='lateral-hop-stick'?'function':'strength',difficulty:'発展',athleteLevel,purpose,equipment,steps,caution:caution+' 症状が増える場合は中止し、翌日の反応もPTへ伝えます。',source,imageCaption,clinicalRole:'負荷・フォーム・病期をPTが確認した後の強化候補',selectionNote:'動作を院内で確認し、許可された範囲・負荷だけを処方。段階は動作の目安で、競技復帰判定ではありません。'};
+  }
+})();
+
 // Athlete home exercise candidates, not complete return-to-sport protocols.
 (()=>{
   const sportNote='競技の練習量も運動負荷に含めます。翌日に痛み・腫れ・不安定感が増えたら中止しPTへ相談してください。走る・跳ぶ・投げる・接触練習の再開は、このメニューの達成だけで判断せず医師・PTの許可を受けてください。';
@@ -363,4 +404,46 @@ DISEASE_LIBRARY.meniscalInjury={
   const note='腰椎分離症の保存療法中に医師・PTが許可した運動だけ行います。術後には使いません。装具と運動休止の指示を守り、腰を反らす・ひねる・跳ぶ・重い物を持つ練習を自己判断で再開しません。腰痛が出たら中止して相談してください。新たな脚のしびれ・脱力は早急に受診し、尿が出ない・尿便が漏れる、股の間の感覚低下は直ちに救急受診してください。';
   DISEASE_LIBRARY.spondylolysisProtection={audience:'athlete',name:'腰椎分離症（保護期・運動許可後）',icon:'🏃',desc:'個別許可された基礎運動2候補',guidance,prescriptionNote:note,exerciseKeys:['abdominal-brace','side-lying-hip-abduction'],sources,selectionNote:'骨癒合を目指す期間の運動許可を確認。腰を動かさず保持できる範囲に限る。運動休止の指示があれば処方しない。'};
   DISEASE_LIBRARY.spondylolysisReload={audience:'athlete',name:'腰椎分離症（負荷再開許可後）',icon:'🏃',desc:'体幹・下肢の制御を整える6候補',guidance:guidance+' 医師が負荷再開を許可し、日常動作と基礎運動で症状が増えず腰の中間位を保てる場合だけ選択。',prescriptionNote:note+' 負荷再開の許可を受けた段階の運動です。完了しても競技復帰の許可にはなりません。',exerciseKeys:['abdominal-brace','bridge','bird-dog','kneeling-plank','side-lying-hip-abduction','mini-squat'],sources,selectionNote:'ブリッジ・手足上げ・膝プランクは腰が反らない範囲で選択。進行はフォーム・当日と翌日の症状反応を再評価して決める。'};
+})();
+
+// The clinic authorizes standard planks after corset fitting, subject to individual clearance.
+(()=>{
+  const additions={
+    shoulderImpingement:['floor-push-up','plank-shoulder-tap'],
+    rotatorCuffTear:['shoulder-band-external','floor-push-up','plank-shoulder-tap'],
+    anteriorShoulderDislocation:['shoulder-band-external','band-row','floor-push-up','plank-shoulder-tap'],
+    slapLesion:['band-row','floor-push-up','plank-shoulder-tap'],
+    tennisElbow:[],
+    ankleSprain:['single-leg-heel-raise','split-squat','single-leg-squat','lateral-hop-stick'],
+    meniscalInjury:['split-squat','single-leg-squat','lateral-hop-stick'],
+    lowback:['forearm-plank','side-plank','single-leg-plank','side-plank-leg-lift','split-squat','single-leg-squat'],
+    lumbarDiscHerniation:['forearm-plank','side-plank','single-leg-plank','side-plank-leg-lift']
+  };
+  const progress='強化・発展は各動作への負荷許可後に選択。フォームと当日・翌日の症状を確認し、重量・回数・速度を同時に増やしません。練習と自主トレの合計負荷を調整します。';
+  for(const [base,keys] of Object.entries(additions)){
+    const d=DISEASE_LIBRARY['athlete_'+base];
+    d.exerciseKeys=[...new Set([...d.exerciseKeys.filter(k=>k!=='kneeling-plank'),...keys])];
+    d.selectionNote=d.selectionNote.replace('四つ這い・膝プランク','四つ這い・通常プランク');
+    d.guidance+=' '+progress;
+    d.guidance+=' 強化候補を追加しています。'+(keys.includes('floor-push-up')?'床での腕立ては両手荷重、肩タッチは片手荷重を許可し院内で安定を確認した後だけ選択します。':'')+(keys.includes('lateral-hop-stick')?'跳躍は、跳躍許可と片脚着地の制御を個別に確認した場合だけです。':'');
+    d.desc=d.exerciseKeys.length+'候補／基礎・強化・発展';
+    if(['ankleSprain','meniscalInjury','lowback','lumbarDiscHerniation'].includes(base))d.sources=[...(d.sources||[]),{title:'FIFA 11+を用いた大学男子選手の試験（2019）：段階構成の参考・傷害治療の検証ではありません',url:'https://doi.org/10.15857/ksep.2019.28.2.141'}];
+  }
+  const clinic='院内方針：コルセット装着後、医師・PTが許可し腰の中間位を保てる場合は、膝をつかないプランクと膝を伸ばしたサイドプランクを選択できます。装具だけで自動的に許可せず、装着方法と種目別の可否を確認します。';
+  for(const key of ['spondylolysisProtection','spondylolysisReload']){
+    const d=DISEASE_LIBRARY[key];
+    d.exerciseKeys=d.exerciseKeys.filter(k=>k!=='kneeling-plank');
+    d.exerciseKeys.push('forearm-plank','side-plank');
+    d.guidance+=' '+clinic;
+    d.selectionNote='装具装着後、種目ごとの許可を確認。腰を反らさず、痛みや姿勢の崩れで中止。';
+    d.prescriptionNote+=' プランク・サイドプランクはコルセット装着後、医師・PTが許可した場合だけ行います。図に装具がなくても装着指示を守ってください。';
+  }
+  DISEASE_LIBRARY.spondylolysisProtection.desc='装具装着・個別許可後の4候補';
+  const reload=DISEASE_LIBRARY.spondylolysisReload;
+  reload.exerciseKeys.push('single-leg-plank','side-plank-leg-lift','split-squat','single-leg-squat');
+  reload.desc=reload.exerciseKeys.length+'候補／強化・発展';
+  reload.guidance+=' 片脚支持・脚挙上は再評価と種目別の許可後。跳躍・重量挙げの再開は別途判断。';
+  EXERCISE_CHOICE_GROUPS['athlete-plank']={name:'前面の体幹支持',note:'通常版と片脚版は進行の選択肢です。両方を足す前に総負荷を確認してください。'};
+  EXERCISE_CHOICE_GROUPS['athlete-side-plank']={name:'側面の体幹支持',note:'脚挙上は支持を保てる場合の発展です。自動的に追加しません。'};
+  for(const [group,keys] of [['athlete-plank',['forearm-plank','single-leg-plank']],['athlete-side-plank',['side-plank','side-plank-leg-lift']]])for(const key of keys){EXERCISE_LIBRARY[key].choiceGroup=group;EXERCISE_LIBRARY[key].choiceVariant=EXERCISE_LIBRARY[key].name;}
 })();

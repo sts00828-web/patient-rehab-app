@@ -5,6 +5,16 @@
  */
 const PRESCRIPTION_DEFAULTS = (() => {
   const rows = {
+    'forearm-plank':['1回','20秒','','両前腕と両つま先で支える','保持中も呼吸。セット間は60秒休息を目安にPTが調整。'],
+    'side-plank':['1回','20秒','','下側の前腕と足の外側で支える','側は下の支持側。セット間は60秒休息を目安に調整。'],
+    'single-leg-plank':['1回','20秒','','両前腕と反対側のつま先で支える','側は浮かせる脚。腰を反らさず保持。'],
+    'side-plank-leg-lift':['1回','20秒','','下側の前腕と足の外側で支える','側は下の支持側。上の脚は少しだけ離す。'],
+    'split-squat':['10回','保持なし','','支え不要（院内で安定を確認）','側は前脚。深さ・追加重量・休息を個別設定。'],
+    'single-leg-squat':['8回','保持なし','','支え不要（院内で安定を確認）','側は支持脚。膝の向き・深さ・追加重量を確認。'],
+    'single-leg-heel-raise':['10回','保持なし','','安定した台に手を添える','側は支持脚。反動を使わず、ゆっくり下ろす。'],
+    'floor-push-up':['10回','保持なし','','両手と両つま先で支える','左右は両側。深さと肩の荷重許可を確認。'],
+    'lateral-hop-stick':['5回','着地で2秒静止','','支え不要（院内で着地を確認）','側は離地・着地する脚。距離・方向・休息を個別設定。'],
+    'plank-shoulder-tap':['左右各5回','保持なし','','両つま先と片手で支える','側は動かす手。左右交互なら両側を指定。'],
     'ankle-pumps':['5往復','保持なし','重りなし・痛みのない小さい範囲','脚を前に伸ばして座り両手で上体を支える','固定・可動域の許可を確認。図は両側だが実施側は個別に指定。'],
     'supported-single-leg-stance':['3回','','','動かない台を手で支え、目を開けて行う','片脚荷重の許可、保持時間・手の支え方・見守りを個別指定。運動する側は床について支える脚。'],
     // repetitions, hold, load/range, support, clinician review note
@@ -62,3 +72,19 @@ const PRESCRIPTION_DEFAULTS = (() => {
     note:'入力用の編集案です。文献の標準用量ではありません。左右・実施日と患者への適合を確認してください。'+note
   }]));
 })();
+
+// Editable clinic drafts. Level names are not FIFA levels or validated rehab doses.
+function athleteDosePreset(key,level){
+  if(![2,3].includes(level))return null;
+  const e=EXERCISE_LIBRARY[key];if(!e||(e.category!=='strength'&&key!=='lateral-hop-stick'))return null;
+  const staticKeys=['forearm-plank','side-plank','single-leg-plank','side-plank-leg-lift'];
+  const resistance=['band-row','shoulder-band-external','wrist-eccentric-extension','wrist-resisted-extension','resisted-forearm-turn'];
+  // Isometrics and low-load activation need specific durations, not generic dynamic repetitions.
+  if(!e.athleteLevel&&!resistance.includes(key))return null;
+  const p={sets:level===2?'2セット':'3セット',frequency:'実施日に1回'};
+  if(staticKeys.includes(key)){p.repetitions='1回';p.hold=level===2?'20秒':'30秒';}
+  else if(key==='lateral-hop-stick'){p.repetitions=level===2?'5回':'8回';p.hold='着地で2秒静止';}
+  else if(key==='plank-shoulder-tap'){p.repetitions=level===2?'左右各5回':'左右各8回';p.hold='保持なし';}
+  else{p.repetitions=level===2?'10回':'8回';p.hold='保持なし';}
+  return {prescription:p,dows:[1,3,5]};
+}

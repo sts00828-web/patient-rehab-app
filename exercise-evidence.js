@@ -20,7 +20,7 @@ const ExerciseEvidence = (() => {
     const g=matches&&(guidelines[disease]||guidelines[DISEASE_LIBRARY[disease]?.baseDisease]);
     const sources=matches?(DISEASE_LIBRARY[disease].sources||[]):[];
     return `<div class="evidence-content"><p class="hint">セラピスト向け参考情報。文献一覧は網羅的な検索結果ではありません。</p>
-      <h3>運動方法の参考資料</h3>${e?`<p>${esc(e.name)}</p>${link(e.source,'運動マスターに登録された参考資料を開く')}<p class="hint">医療機関などの運動説明資料です。資料内の類似運動を参考としており、本アプリの説明・イラストとの完全一致や、この種目単独の有効性を保証するものではありません。</p>`:'<p>この独自種目には参考資料が登録されていません。</p>'}
+      <h3>運動方法の参考資料</h3>${e?`<p>${esc(e.name)}</p>${link(e.source,'運動マスターに登録された参考資料を開く')}<p class="hint">${e.athleteLevel?'段階構成を参考にした運動プログラムの研究、または筋力トレーニングの一般資料です。本アプリの各疾患・種目・用量を直接検証した資料ではありません。':'医療機関などの運動説明資料です。資料内の類似運動を参考としており、本アプリの説明・イラストとの完全一致や、この種目単独の有効性を保証するものではありません。'}</p>`:'<p>この独自種目には参考資料が登録されていません。</p>'}
       <h3>疾患・介入全体のガイドライン</h3>${g?`<p>${esc(DISEASE_LIBRARY[disease]?.name||disease)}</p><p><strong>${esc(g.title)}</strong><br>${esc(g.publisher)} ／ ${esc(g.year)}年</p><p>${esc(g.scope)}</p>${link(g.url,'ガイドライン原文・掲載ページを開く')}`:'<p>この処方区分に対応するガイドラインは未登録です。エビデンスがないという意味ではありません。</p>'}
       ${sources.length?`<h3>疾患別の追加参考資料</h3><p class="hint">疾患説明や運動方法の参考を含みます。個々の種目の効果を直接検証した研究とは区別してください。</p>${sources.map(s=>link(s.url,s.title)).join('')}`:''}
       <h3>処方量について</h3><p>アプリの標準回数・セット数・保持時間は入力補助用の初期値です。この数値自体を研究で検証した処方量として提示しているわけではありません。個々の患者の状態に合わせて調整してください。</p>

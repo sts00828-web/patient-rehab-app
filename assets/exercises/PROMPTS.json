@@ -1,7 +1,7 @@
 {
   "mode": "built-in image_gen",
   "date": "2026-09-19",
-  "revision": "young-unified-character-48",
+  "revision": "young-unified-character-58",
   "character": "Same young Japanese adult man, 21–23, slim build, short black hair, youthful smooth face, teal T-shirt, navy full-length joggers, white/light-gray sneakers.",
   "masterReference": "pendulum.png",
   "prompts": [
@@ -361,6 +361,66 @@
       "operation": "generate",
       "characterReference": "assets/exercises/pendulum.png",
       "prompt": "Scientific educational rehabilitation illustration. Reference supplied image ONLY for identity, clothes and softly shaded medical art style: exactly same youthful slim Japanese man 21-23, short black hair teal shirt navy full-length joggers white/lightgray sneakers. New pose: SUPPORTED SINGLE LEG STANCE, front three-quarter view, full body head to shoes. White background, landscape 1536x1024. Man stands beside sturdy waist-height four-legged table positioned on his left. LEFT hand palm rests securely on table near edge for balance; right arm relaxed at side. LEFT leg is the supporting leg, knee soft and nearly straight, entire LEFT sneaker flat on floor from heel to toe. RIGHT knee bends gently so RIGHT sneaker is lifted just 5-10 cm off floor behind or slightly beside supporting leg, clear empty space below lifted shoe. Hips and shoulders level, trunk upright not leaning. Eyes open looking forward. Clearly two legs and two feet, no crossed limbs, no floating support foot. Calm controlled posture, no unstable surface, no weights. Table stable wide legs. No text, arrows, numbers, watermark. Do not copy pendulum exercise. Highlight safe hand-supported balance, not heel rise, not stretching or lunging."
+    },
+    {
+      "id": "forearm-plank",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration, 1536x1024 landscape, pure white background, soft realistic painted style. Reference is CHARACTER AND STYLE ONLY: use exactly same young Japanese man black hair teal T-shirt navy full-length joggers white-gray sneakers. Do not reproduce reference exercise/table. Single full body side view of standard forearm plank. Both elbows directly below shoulders, forearms flat pointing forward, palms down, both knees straight and OFF mat, both toes supporting. Head, shoulders, hips and ankles aligned, natural neutral lumbar spine. No arrows. Anatomically correct hands feet joints, calm face, thin gray exercise mat where floor exercise, ample margins entire body visible. No words, logos, watermark, arrows unless explicitly requested."
+    },
+    {
+      "id": "side-plank",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration, 1536x1024 landscape, pure white background, soft realistic painted style. Reference is CHARACTER AND STYLE ONLY: use exactly same young Japanese man black hair teal T-shirt navy full-length joggers white-gray sneakers. Do not reproduce reference exercise/table. Single full body frontal three-quarter view of a standard FULL side plank, support on lower forearm elbow directly under shoulder and outer edge of lower shoe, BOTH knees straight, stacked feet, hips raised straight trunk in same plane as legs. Upper hand on hip. No arrows. Anatomically correct hands feet joints, calm face, thin gray exercise mat where floor exercise, ample margins entire body visible. No words, logos, watermark, arrows unless explicitly requested."
+    },
+    {
+      "id": "single-leg-plank",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Single full body side three-quarter view forearm plank with ONE straight leg lifted only about 10cm off mat, other toes remain planted. Both forearms flat elbow under shoulders, both knees straight off floor. Pelvis level no spinal arch. Lifted foot just a little higher than other, not exaggerated. No arrows. All anatomy correct, full body with margins, gray mat for floor exercises. No writing or logos."
+    },
+    {
+      "id": "side-plank-leg-lift",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Single full body frontal three-quarter view full side plank with upper straight leg raised about 20cm, lower straight leg outer shoe planted. Support lower forearm elbow under shoulder; upper hand on hip. Pelvis stacked with no rotation, neutral straight trunk and lower leg. No arrows. All anatomy correct, full body with margins, gray mat for floor exercises. No writing or logos."
+    },
+    {
+      "id": "split-squat",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Two equal panels same man full body side three-quarter view stationary split squat without weights. Left panel standing split stance one leg ahead other behind, rear heel raised. Right panel same stationary foot positions, both knees bent, rear knee near but not touching mat, front knee above foot and pointing same direction, upright neutral torso, hands on hips. Small simple rightward transition arrow in whitespace BETWEEN panels, no text. All anatomy correct, full body with margins. No writing or logos."
+    },
+    {
+      "id": "single-leg-squat",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Two equal panels same man full body front three-quarter view single-leg shallow squat without weights. Left stands on LEFT leg, RIGHT foot a little forward hovering, hands forward. Right bends LEFT knee about 45 degrees sitting hips back, RIGHT foot still hovering forward; left knee aligned second toe, heel flat, pelvis level. Not pistol/deep squat. Single small arrow between panels no text. All anatomy correct, full body with margins. No writing or logos."
+    },
+    {
+      "id": "single-leg-heel-raise",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Two equal panels same man full body back three-quarter view single-leg calf raise on flat floor, fingertips resting on a stable high table. Left panel LEFT foot flat, RIGHT foot lifted by flexing right knee backward. Right panel same left supporting leg straight and LEFT heel raised, ball of left foot on floor, right foot still floating. Clearly distinguish left support foot from lifted right leg. No steps or ledges. No text. All anatomy correct, full body with margins. No writing or logos."
+    },
+    {
+      "id": "floor-push-up",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Two equal panels same man full body side three-quarter view standard floor pushup. Left high plank on palms under shoulders and toes, arms extended, both knees off floor. Right same foot and hand positions, elbows bent closeish to trunk about 30 degrees from body, chest lowered without touching floor. Straight head shoulders pelvis ankles throughout. No text. All anatomy correct, full body with margins. No writing or logos."
+    },
+    {
+      "id": "lateral-hop-stick",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Two equal panels same man full body frontal view lateral single-leg hop and stick. Left standing on LEFT foot with slight hip knee flexion, right foot floating, arms ready. Right same man landed 30cm laterally on same LEFT foot, knee flexed aligned over second toe, right foot still floating, trunk stable. One small rightwards horizontal arrow BETWEEN figures indicates sideways travel. No equipment, no text. All anatomy correct, full body with margins. No writing or logos."
+    },
+    {
+      "id": "plank-shoulder-tap",
+      "operation": "generate",
+      "characterReference": "pendulum.png",
+      "prompt": "Medical exercise illustration 1536x1024 white background, same young Japanese man as reference (character and style only), black hair teal T-shirt navy full joggers gray-white shoes, soft realistic painted style. Single full body three-quarter front-side view high plank shoulder tap. LEFT palm flat floor directly below left shoulder supports body, RIGHT hand touching LEFT shoulder naturally. BOTH legs straight off floor, both toes planted slightly wider than shoulders, body straight neutral back and square level pelvis. Five digits per hand, natural right elbow bend. Full figure ample whitespace, no arrows. All anatomy correct, full body with margins. No writing or logos."
     }
   ]
 }
