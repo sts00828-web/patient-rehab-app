@@ -180,6 +180,7 @@ EXERCISE_LIBRARY['resisted-forearm-turn'].imageCaption='図は開始姿勢の例
 EXERCISE_LIBRARY['shoulder-isometric-internal'].imageCaption='肘を脇につけたまま、運動する側の手首をお腹の方向へ押し、反対の手で受け止めます。腕が動かない程度の軽い力にします。';
 EXERCISE_LIBRARY['wrist-flexor-stretch'].imageCaption='手のひらを上へ向けた姿勢から、指先を下へ向けるよう手首を反らした場面です。反対の手で手のひら側を支え、指先だけを引きません。';
 EXERCISE_LIBRARY['sit-to-stand'].imageCaption='腕を組む姿勢は一例です。腕を組む必要はありません。担当の理学療法士が指定した椅子の高さと手の支え方で行ってください。';
+EXERCISE_LIBRARY['pelvic-tilt'].imageCaption='お尻を床につけたまま、腰と床の隙間をそっと小さくし、力を抜いて元に戻します。腰を強く反らしたり、お尻を持ち上げたりしません。';
 
 // First neck/shoulder batch: conservative care selected after clinical assessment.
 const NECK_SHOULDER_SOURCES = {
