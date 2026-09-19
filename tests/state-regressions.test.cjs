@@ -15,6 +15,16 @@ function tab(storage=new Map()) {
   return {ctx,nodes,listeners,run:code=>vm.runInContext(code,ctx),storage};
 }
 const setup=`S=C.settings({patientId:'fake_patient',menu:[{id:'one',name:'架空運動',params:'5回',note:'',dows:[]}],startDate:todayKey(),knownSince:todayKey()},'fake',todayKey());L={};`;
+test('optional chart number survives local backup and archives but never enters share payload',()=>{
+  const a=tab();a.run(setup+`S.chartId='000123';S.patientName='架空患者';persist();loadState();archiveCurrent();persist();loadState();`);
+  assert.equal(a.run('S.chartId'),'000123');
+  assert.equal(a.run('archives[0].settings.chartId'),'000123');
+  assert.equal(a.run('S.patientId'),'fake_patient');
+  assert.equal(a.run("'chartId' in buildSharePayload()"),false);
+  assert.equal(a.run("'patientName' in buildSharePayload()"),false);
+  a.run("S=C.settings({menu:[]},'new_prescription',todayKey())");
+  assert.equal(a.run('S.chartId'),'');assert.equal(a.run('S.patientName'),'');
+});
 test('deleting last future exercise retains today snapshot and pain controls',()=>{
   const a=tab();a.run(setup+`writableLog().status.one='done';C.changeMenu(S,L,[],todayKey(),dk(addDays(new Date(),1)));renderToday();`);
   assert.equal(a.run('todayExercises(new Date().getDay()).length'),1);

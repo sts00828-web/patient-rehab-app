@@ -26,6 +26,17 @@ async function main(){
   await send('Page.navigate',{url:origin+'/'});
   for(let i=0;i<100;i++){if(await evaluate("typeof RehabCore !== 'undefined' && typeof activeDay !== 'undefined' && document.readyState === 'complete'"))break;await delay(100);}
   await evaluate("window.fillTestPrescription=prefix=>{const values={side:'両側',repetitions:'5回',sets:'1セット',hold:'該当なし',frequency:'1日1回',load:'重りなし',support:'椅子で支える'};for(const [key,value] of Object.entries(values))$(prefix+'-'+key).value=value;$(prefix+'-schedule-confirmed').checked=true;};");
+  await check('PIN disabled opens staff workspace directly and optional identity fields remain blank',`(()=>{
+    openPinModal();return staffUnlocked&&!$('pinModal').classList.contains('on')&&$('patient-chart-id').value===''&&$('patient-name').value===''&&!$('patient-info').open;
+  })()`);
+  await check('optional chart ID round trips through storage without changing internal ID',`(()=>{
+    const id=S.patientId;updS('chartId','00001234');updS('patientName','架空テスト');
+    const stored=JSON.parse(localStorage.getItem(STORE_KEY)).settings;
+    const restored=C.settings(stored,'fallback',todayKey());
+    const ok=restored.chartId==='00001234'&&restored.patientName==='架空テスト'&&restored.patientId===id;
+    updS('chartId','');updS('patientName','');return ok;
+  })()`);
+  await evaluate('closeTherapist()');
   await check('first launch and local vendor dependencies',"typeof LZString==='object' && typeof qrcode==='function' && typeof Html5Qrcode==='function' && !storageBlocked");
   await check('cancel pending camera startup stops it before reopening',`(async()=>{
     const Original=Html5Qrcode;let resolveStart,created=0,stopped=0,cleared=0;
@@ -45,7 +56,7 @@ async function main(){
   })()`);
   await evaluate("window.confirm=()=>true;window.prompt=()=> 'テスト患者';window.alert=message=>{window.lastAlert=message};$('pin-input').value='';checkPin();updS('patientName','テスト患者');applyTemplate('shoulder');");
   await send('Emulation.setDeviceMetricsOverride',{width:320,height:700,deviceScaleFactor:1,mobile:true});
-  await evaluate("$('chooseTemplate').remove();$('next-visit').value='2026-10-08';document.documentElement.style.setProperty('--top-inset','47px');$('hdr-name').textContent='表示名が長い患者さんのスマホ表示確認';");
+  await evaluate("$('chooseTemplate').remove();$('patient-info').open=true;$('next-visit').value='2026-10-08';document.documentElement.style.setProperty('--top-inset','47px');$('hdr-name').textContent='表示名が長い患者さんのスマホ表示確認';");
   await check('date inputs fit therapist modal on narrow phone',"(()=>{const modal=$('therapistModal').querySelector('.t-modal').getBoundingClientRect();return ['start-date','next-visit'].every(id=>{const r=$(id).getBoundingClientRect();return r.left>=modal.left+12&&r.right<=modal.right-12})})()");
   await check('header and modal respect top inset and wrap long name',"(()=>{const name=$('hdr-name').getBoundingClientRect(),day=$('hdr-day').getBoundingClientRect(),title=$('hdr-title').getBoundingClientRect(),modal=$('therapistModal').querySelector('.t-modal').getBoundingClientRect();return title.top>=47&&modal.top>=47&&name.right<=day.left-4&&document.querySelector('.header').scrollWidth<=320})()");
   await check('visible date tracks saved value and can be cleared',"(()=>{$('next-visit').dispatchEvent(new Event('change',{bubbles:true}));const saved=S.nextVisit==='2026-10-08'&&JSON.parse(localStorage.getItem('rehab_v2')).settings.nextVisit==='2026-10-08'&&$('next-visit-display').textContent==='2026 / 10 / 08';clearNextVisit();const cleared=S.nextVisit===''&&$('next-visit').value===''&&$('next-visit-display').textContent==='日付を選択';$('next-visit').value='2026-10-08';$('next-visit').dispatchEvent(new Event('change',{bubbles:true}));return saved&&cleared})()");
@@ -90,9 +101,20 @@ async function main(){
   await check('selected new exercise needs explicit dosage',"!!$('chooseTemplate')&&JSON.stringify(S.menu)===menuBeforeDoseCheck");
   await evaluate("$('pick-9').checked=false;updateTemplateSelection();");
   await evaluate("for(let i=0;i<3;i++){$('pick-'+i).checked=true;fillTestPrescription('dose-'+i);$('dose-'+i).value='PT確認用：5回';}$('dose-0-schedule-confirmed').checked=false;applySelectedTemplate();");
-  await check('complete exercise fields still require explicit schedule confirmation',"!!$('chooseTemplate')&&JSON.stringify(S.menu)===menuBeforeDoseCheck");
-  await evaluate("$('dose-0-schedule-confirmed').checked=true;applySelectedTemplate();closeTherapist();");
+  await check('save confirms a complete prescription without an extra checkbox',"!$('chooseTemplate')&&S.menu.length===3&&S.menu.every(ex=>ex.scheduleConfirmed)");
+  await evaluate("closeTherapist();");
   await check('three illustrated daily exercises',"document.querySelectorAll('.exercise-card').length===3 && S.menu.every(x=>x.exerciseKey)");
+  await check('catalog append preserves existing prescription IDs and values',`(()=>{
+    staffUnlocked=true;openTherapist();const before=JSON.stringify(S.menu);const diagnosis=S.diagnosis;
+    applyTemplate('knee','append');$('pick-0').checked=true;fillTestPrescription('dose-0');applySelectedTemplate();
+    const ok=S.menu.length===4&&JSON.stringify(S.menu.slice(0,3))===before&&S.diagnosis===diagnosis;
+    commitMenu(S.menu.slice(0,3));closeTherapist();return ok;
+  })()`);
+  await check('custom set selects all exercises but does not reuse previous patient side',`(()=>{
+    staffUnlocked=true;openTherapist();T.custom_quicktest={name:'test set',menu:C.clone(S.menu)};
+    applyTemplate('custom_quicktest');const ok=$('pick-0').checked&&$('pick-1').checked&&$('pick-2').checked&&$('dose-0-side').value==='';
+    $('chooseTemplate').remove();delete T.custom_quicktest;closeTherapist();return ok;
+  })()`);
   await check('previous prescription reuse leaves saved patient menu untouched until save',`(()=>{
     staffUnlocked=true;openTherapist();editEx(0);const before=JSON.stringify(S.menu);
     choosePrescription('ee','side',1);reusePrescription('ee','previous');
@@ -151,11 +173,9 @@ async function main(){
   await check('recorded start date stays disabled in new date control',"$('start-date').disabled&&$('start-date').parentElement.classList.contains('is-disabled')");
   await check('same-day logged prescription unchanged',"getCompletion(todayKey(),new Date().getDay()).pct===100 && todayExercises(new Date().getDay())[0].exerciseKey==='pendulum'");
   await check('next-day prescription updated',"C.menuAt(S,L,dk(addDays(new Date(),1)),addDays(new Date(),1).getDay())[0].exerciseKey==='heel-slide'");
-  await evaluate("showShareQR();$('share-confirm').click();");
-  await check('share confirmation cannot be bypassed with its checkbox unchecked',"!!$('shareReviewModal')&&!$('qrModal')&&!$('share-reviewed').checked");
-  await evaluate("$('share-reviewed').checked=true;$('share-confirm').click();");
-  await check('checked share review generates QR and closes confirmation',"!$('shareReviewModal')&&!!document.querySelector('#qrBox svg')");await evaluate('closeQR()');
-  await check('share excludes identifying profile and PIN',"(()=>{const u=buildShareUrl(),p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(u.split('#d=')[1])));return !u.includes('?d=')&&!('passcode' in p)&&!('patientName' in p)&&!('diagnosis' in p)&&!('age' in p);})()");
+  await evaluate("showShareQR();");
+  await check('complete saved prescription goes straight to QR',"!$('shareReviewModal')&&!!document.querySelector('#qrBox svg')");await evaluate('closeQR()');
+  await check('share excludes identifying profile and PIN',"(()=>{const u=buildShareUrl(),p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(u.split('#d=')[1])));return !u.includes('?d=')&&!('passcode' in p)&&!('patientName' in p)&&!('chartId' in p)&&!('diagnosis' in p)&&!('age' in p);})()");
   await evaluate("window.oldId=S.patientId;window.sameUrl=buildShareUrl();closeTherapist();manualImport(sameUrl);");
   await check('same-patient QR preserves logs',"S.patientId===oldId && getLog(todayKey()).vas===0");
   await evaluate("const foreign={version:2,patientId:'another_patient',startDate:todayKey(),menu:[{id:'other',name:'別の運動',params:'確認用',dows:[]}]};manualImport(location.origin+'/#d='+encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(foreign))));");

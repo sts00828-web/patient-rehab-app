@@ -73,5 +73,11 @@ fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(
 .dose-reuse{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .dose-reuse .btn{font-size:14px;margin:0}
 .template-ex:not(:has(.pick-label input:checked))>fieldset{display:none}
+.pt-details{margin:14px 0;border:1px solid var(--border);border-radius:10px;padding:8px 12px}
+.pt-details>summary,.dose-field>summary,.dose-schedule>summary,.legacy-dose>summary{min-height:44px;padding:10px 4px;cursor:pointer;line-height:1.6;overflow-wrap:anywhere}
+.dose-field{border-bottom:1px solid var(--border);padding-bottom:4px}
+.dose-field>summary{font-weight:600;color:var(--teal-d)}
+.dose-field[open]>summary{background:var(--teal-l);border-radius:6px}
+.template-ex:not(:has(.pick-label input:checked))>.legacy-dose{display:none}
 @media(max-width:360px){.dose-reuse{grid-template-columns:1fr}}
 @media print{body{position:static!important;top:auto!important}.dynamic-dialog .t-hd{position:static}}

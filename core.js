@@ -37,7 +37,7 @@
   function settings(raw, fallbackId, today) {
     if (!record(raw)) throw Error('設定データが不正です。');
     const result = { patientId: id(raw.patientId) ? raw.patientId : fallbackId,
-      patientName: text(raw.patientName, 80), age: text(raw.age, 3), diagnosis: text(raw.diagnosis, 120),
+      patientName: text(raw.patientName, 80), chartId: text(raw.chartId, 80), age: text(raw.age, 3), diagnosis: text(raw.diagnosis, 120),
       therapistName: text(raw.therapistName, 80), painContext:text(raw.painContext), consultContact:text(raw.consultContact), restartInstructions:text(raw.restartInstructions), startDate: validDate(raw.startDate) ? raw.startDate : today,
       nextVisit: validDate(raw.nextVisit) ? raw.nextVisit : '', template: id(raw.template) ? raw.template : null,
       menu: menu(raw.menu), knownSince: validDate(raw.knownSince) ? raw.knownSince : today, plans: [] };
