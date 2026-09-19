@@ -44,7 +44,7 @@ test('overlong restrictions fail before core could silently truncate them',()=>{
   assert.throws(()=>ctx.getDiseaseExerciseMenu('fixture'),/500/);
 });
 
-for(const disease of ['rotatorCuffTear','cervicalDiscHerniation','anteriorShoulderDislocation','slapLesion'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
+for(const disease of ['rotatorCuffTear','cervicalDiscHerniation','anteriorShoulderDislocation','slapLesion','lumbarSpinalStenosis','lumbarDiscHerniation'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
   const ctx=library(),day='2026-09-18',tomorrow='2026-09-19';
   const shared=new Set(['shoulder','lowback','knee','tennisElbow','cervicalSpondylosis','shoulderImpingement'].flatMap(key=>Array.from(ctx.getDiseaseExerciseKeys(key))));
   const selectedKeys=Array.from(ctx.getDiseaseExerciseKeys(disease)).filter(key=>shared.has(key)).slice(0,3);

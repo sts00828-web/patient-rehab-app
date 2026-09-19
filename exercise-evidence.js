@@ -17,9 +17,11 @@ const ExerciseEvidence = (() => {
     const e=EXERCISE_LIBRARY[ex?.exerciseKey];
     const matches=e&&DISEASE_LIBRARY[disease]&&getDiseaseExerciseKeys(disease).includes(ex.exerciseKey);
     const g=matches&&guidelines[disease];
+    const sources=matches?(DISEASE_LIBRARY[disease].sources||[]):[];
     return `<div class="evidence-content"><p class="hint">セラピスト向け参考情報。文献一覧は網羅的な検索結果ではありません。</p>
       <h3>運動方法の参考資料</h3>${e?`<p>${esc(e.name)}</p>${link(e.source,'運動マスターに登録された参考資料を開く')}<p class="hint">医療機関などの運動説明資料です。資料内の類似運動を参考としており、本アプリの説明・イラストとの完全一致や、この種目単独の有効性を保証するものではありません。</p>`:'<p>この独自種目には参考資料が登録されていません。</p>'}
       <h3>疾患・介入全体のガイドライン</h3>${g?`<p>${esc(DISEASE_LIBRARY[disease]?.name||disease)}</p><p><strong>${esc(g.title)}</strong><br>${esc(g.publisher)} ／ ${esc(g.year)}年</p><p>${esc(g.scope)}</p>${link(g.url,'ガイドライン原文・掲載ページを開く')}`:'<p>この処方区分に対応するガイドラインは未登録です。エビデンスがないという意味ではありません。</p>'}
+      ${sources.length?`<h3>疾患別の追加参考資料</h3><p class="hint">疾患説明や運動方法の参考を含みます。個々の種目の効果を直接検証した研究とは区別してください。</p>${sources.map(s=>link(s.url,s.title)).join('')}`:''}
       <h3>処方量について</h3><p>アプリの標準回数・セット数・保持時間は入力補助用の初期値です。この数値自体を研究で検証した処方量として提示しているわけではありません。個々の患者の状態に合わせて調整してください。</p>
       <p class="hint">文献情報の登録日：2026-09-19。リンク先の閲覧にはインターネット接続が必要です。資料によっては英語・PDF・有料本文です。</p></div>`;
   }

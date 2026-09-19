@@ -291,3 +291,22 @@ DISEASE_LIBRARY.slapLesion={
     {title:'AAOS：肩の運動（一般動作の参考）',url:'https://orthoinfo.aaos.org/globalassets/pdfs/2017-rehab_shoulder.pdf'}
   ]
 };
+
+// Lumbar conditions: diagnosis and symptom response, not imaging alone, guide selection.
+DISEASE_LIBRARY.lumbarSpinalStenosis={
+  name:'腰部脊柱管狭窄症（保存療法・PT評価後）',icon:'🚶',desc:'症状反応と歩行能力を確認して選ぶ5候補',
+  guidance:'診察で血管性の歩行障害などを鑑別し、医師・PTが運動を許可した保存療法中の候補です。術後、進行する筋力低下、排尿・排便の異常は対象外です。膝抱え・膝倒しは症状が増えない方向と範囲だけを選択します。立ち座りと横向きの脚上げは下肢機能に応じた補助運動です。歩行は症状を我慢する持久力試験にせず、休憩場所・補助具・一回の時間を個別に設定します。前かがみで楽になるとは限らず、画像上の狭窄だけで運動を追加しません。',
+  prescriptionNote:'医師・PTが許可した保存療法中の運動です。術後には使いません。脚の痛み・しびれが増えたら中止し相談してください。歩行は指定時間内で症状が強くなる前に休み、補助具の指示を守ります。新たに尿が出にくい・尿や便が漏れる、股の間の感覚が鈍い、急な両脚の脱力があれば直ちに救急受診してください。進む筋力低下も早急に受診してください。',
+  exerciseKeys:['knee-to-chest','knee-rolls','side-lying-hip-abduction','sit-to-stand','walking'],
+  sources:[
+    {title:'Bexley NHS：Spinal Stenosis（保存療法・運動方法の参考）',url:'https://msk-bexley.nhs.uk/conditions/back-pain/spinal-stenosis'},
+    {title:'Dynamic Health NHS：Lumbar stenosis（運動方法の参考）',url:'https://dynamichealth.nhs.uk/help-and-advice/lower-back-pain/lumbar-stenosis/'}
+  ]
+};
+DISEASE_LIBRARY.lumbarDiscHerniation={
+  name:'腰椎椎間板ヘルニア（保存療法・PT評価後）',icon:'🌱',desc:'症状が安定し、反応を確認できた人の4候補',
+  guidance:'医師・PTが保存療法で運動を許可し、進行する神経症状がない人の候補です。術後・急激な症状悪化は対象外です。ヘルニアという診断名だけで伸展運動を処方しません。うつ伏せで肘をつく運動は、院内で脚の症状が広がらず適切な反応が得られることをPTが確認した場合だけ選択し、範囲・保持時間を指定します。腹部の運動・四つ這いの手足上げは症状が落ち着き体幹練習を許可した段階、歩行は症状が増えない短時間から個別設定します。運動でヘルニアを押し戻すという説明はしません。',
+  prescriptionNote:'医師・PTが許可した保存療法中の運動です。術後には使いません。指定範囲・時間を守り、脚の先へ痛みやしびれが広がる、新たな脱力が出る場合は中止して相談してください。腰を反らす運動は院内で確認した場合だけ行います。新たに尿が出にくい・尿や便が漏れる、股の間の感覚が鈍い、急な両脚の脱力があれば直ちに救急受診してください。進む筋力低下も早急に受診してください。',
+  exerciseKeys:['prone-on-elbows','abdominal-brace','bird-dog','walking'],
+  sources:[{title:'NHS：Slipped disc（活動・受診の目安。個別種目の直接検証ではありません）',url:'https://www.nhs.uk/conditions/slipped-disc/'}]
+};
