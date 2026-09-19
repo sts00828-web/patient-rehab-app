@@ -44,11 +44,11 @@ test('overlong restrictions fail before core could silently truncate them',()=>{
   assert.throws(()=>ctx.getDiseaseExerciseMenu('fixture'),/500/);
 });
 
-for(const disease of ['rotatorCuffTear','cervicalDiscHerniation','anteriorShoulderDislocation','slapLesion','lumbarSpinalStenosis','lumbarDiscHerniation'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
+for(const disease of ['rotatorCuffTear','cervicalDiscHerniation','anteriorShoulderDislocation','slapLesion','lumbarSpinalStenosis','lumbarDiscHerniation','ankleSprain','meniscalInjury'])test(disease+' reuses existing exercises and preserves recorded prescription through QR update',()=>{
   const ctx=library(),day='2026-09-18',tomorrow='2026-09-19';
   const shared=new Set(['shoulder','lowback','knee','tennisElbow','cervicalSpondylosis','shoulderImpingement'].flatMap(key=>Array.from(ctx.getDiseaseExerciseKeys(key))));
-  const selectedKeys=Array.from(ctx.getDiseaseExerciseKeys(disease)).filter(key=>shared.has(key)).slice(0,3);
-  assert.equal(selectedKeys.length,3,'three reusable exercises are available');assert.ok(ctx.ds[disease].prescriptionNote);
+  const selectedKeys=Array.from(ctx.getDiseaseExerciseKeys(disease)).filter(key=>disease==='ankleSprain'||shared.has(key)).slice(0,3);
+  assert.equal(selectedKeys.length,3,'three library exercises are available');assert.ok(ctx.ds[disease].prescriptionNote);
   const originalExerciseData=JSON.stringify(ctx.ex);
   const old=C.menu([{...ctx.getDiseaseExerciseMenu('shoulder')[0],id:'old_recorded',params:'旧指示5回'}]);
   const state=C.settings({patientId:'fake',startDate:day,menu:old},'fake',day);

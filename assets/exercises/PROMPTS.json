@@ -1,7 +1,7 @@
 {
   "mode": "built-in image_gen",
-  "date": "2026-09-18",
-  "revision": "young-unified-character-46",
+  "date": "2026-09-19",
+  "revision": "young-unified-character-48",
   "character": "Same young Japanese adult man, 21–23, slim build, short black hair, youthful smooth face, teal T-shirt, navy full-length joggers, white/light-gray sneakers.",
   "masterReference": "pendulum.png",
   "prompts": [
@@ -349,6 +349,18 @@
       "refinements": [
         "Edit this illustration into a SINGLE full-body side-view pose of exactly the same young man and clothing. REMOVE the second panel entirely. Show the shallow BENT-ELBOW phase of a wall push-up, facing right: palms flat against the vertical wall, hands approximately shoulder height and slightly wider apart, elbows comfortably BELOW shoulders, slightly bent. Feet stay planted, heels touching floor, body straight from head through hips to ankles, leaning as a single line toward wall. A comfortable small distance from wall, anatomically correct arms, wrists and five fingers, no arrows, no text. White background, same polished medical illustration. This image shows one pose only; the app text explains straightening the elbows and returning without moving feet."
       ]
+    },
+    {
+      "id": "ankle-pumps",
+      "operation": "generate",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Scientific educational rehabilitation illustration. Use supplied image ONLY as identity and art-style reference: exact same slim young Japanese man age 21-23, short black hair, teal shirt and full-length navy joggers. NEW exercise: ankle pumps in long sitting on a pale gray mat, torso upright comfortably supported by both hands resting on mat behind hips, both legs straight forward without locked knees, barefoot to expose ankle mechanics. Landscape 1536x1024 white background. Two clearly separated side-by-side panels of the SAME person from identical near-side profile viewpoint, head and feet fully visible. Left panel both ankles gently dorsiflexed toes towards shins. Right panel same position with both ankles gently plantarflexed pointing feet away, NOT just curling toes. Heels remain on mat in both panels, legs and knees do not move. Natural two feet each with five toes, no extreme plantarflexion, no inversion. No arrows, no text, no watermark. Clean softly shaded medical illustration matching reference. Facial identity and teal/navy clothing must match. Do not depict reference pendulum pose or table."
+    },
+    {
+      "id": "supported-single-leg-stance",
+      "operation": "generate",
+      "characterReference": "assets/exercises/pendulum.png",
+      "prompt": "Scientific educational rehabilitation illustration. Reference supplied image ONLY for identity, clothes and softly shaded medical art style: exactly same youthful slim Japanese man 21-23, short black hair teal shirt navy full-length joggers white/lightgray sneakers. New pose: SUPPORTED SINGLE LEG STANCE, front three-quarter view, full body head to shoes. White background, landscape 1536x1024. Man stands beside sturdy waist-height four-legged table positioned on his left. LEFT hand palm rests securely on table near edge for balance; right arm relaxed at side. LEFT leg is the supporting leg, knee soft and nearly straight, entire LEFT sneaker flat on floor from heel to toe. RIGHT knee bends gently so RIGHT sneaker is lifted just 5-10 cm off floor behind or slightly beside supporting leg, clear empty space below lifted shoe. Hips and shoulders level, trunk upright not leaning. Eyes open looking forward. Clearly two legs and two feet, no crossed limbs, no floating support foot. Calm controlled posture, no unstable surface, no weights. Table stable wide legs. No text, arrows, numbers, watermark. Do not copy pendulum exercise. Highlight safe hand-supported balance, not heel rise, not stretching or lunging."
     }
   ]
 }

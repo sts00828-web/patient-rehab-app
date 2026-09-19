@@ -1,6 +1,7 @@
 /* Therapist reference viewer. Never part of a patient prescription or share payload. */
 const ExerciseEvidence = (() => {
   const guidelines = {
+    ankleSprain: {title:'Ankle Stability and Movement Coordination Impairments: Lateral Ankle Ligament Sprains Revision',year:'2021',publisher:'APTA Orthopedics / JOSPT',url:'https://doi.org/10.2519/jospt.2021.0302',scope:'外側足関節捻挫・慢性足関節不安定症の評価と介入を扱います。内側・高位捻挫や術後へそのまま適用しません。個々の患者の荷重・運動開始許可を確認してください。'},
     shoulder: {title:'Shoulder Pain and Mobility Deficits: Adhesive Capsulitis',year:'2013',publisher:'APTA Orthopedics / JOSPT',url:'https://doi.org/10.2519/jospt.2013.0302',scope:'凍結肩の評価と介入を扱うガイドラインです。他の肩疾患や術後への適用は別に判断してください。'},
     lowback: {title:'Interventions for the Management of Acute and Chronic Low Back Pain: Revision 2021',year:'2021',publisher:'APTA Orthopedics / JOSPT',url:'https://doi.org/10.2519/jospt.2021.0304',scope:'急性・慢性腰痛の介入を扱います。患者の病態・症状に対応する推奨を原文で確認してください。'},
     knee: {title:'Osteoarthritis in over 16s: diagnosis and management (NG226)',year:'2022',publisher:'NICE',url:'https://www.nice.org.uk/guidance/ng226/chapter/Recommendations#therapeutic-exercise',scope:'1.3.1〜1.3.4：個人に合わせた筋力・有酸素運動などを扱います。このアプリの個別種目・回数を直接検証したものではありません。'},

@@ -9,7 +9,7 @@ function setup(){
   return ctx;
 }
 test('every built-in exercise exposes its registered source without modifying the prescription',()=>{
-  const c=setup();assert.equal(Object.keys(c.library).length,46);
+  const c=setup();assert.equal(Object.keys(c.library).length,48);
   for(const [exerciseKey,e] of Object.entries(c.library)){
     const ex={exerciseKey,prescription:{repetitions:'patient-specific'}};
     const before=JSON.stringify(ex),html=c.evidence.html(ex,'knee');

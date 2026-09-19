@@ -310,3 +310,29 @@ DISEASE_LIBRARY.lumbarDiscHerniation={
   exerciseKeys:['prone-on-elbows','abdominal-brace','bird-dog','walking'],
   sources:[{title:'NHS：Slipped disc（活動・受診の目安。個別種目の直接検証ではありません）',url:'https://www.nhs.uk/conditions/slipped-disc/'}]
 };
+
+// Shared lower-limb movements. No automatic progression or clearance for sport.
+EXERCISE_LIBRARY['ankle-pumps']={
+  name:'足首をゆっくり曲げ伸ばしする',region:'ankleSprain',image:'ankle-pumps.png',params:'回数・範囲はPTと設定',category:'mobility',difficulty:'基本',purpose:'足首の曲げ伸ばしを取り戻す',equipment:'マット',selectionNote:'固定を外して動かす許可と座位の安定を確認。足首を内外へひねらない。',clinicalRole:'症状・動作能力を確認して選択',
+  steps:['脚を前に伸ばして座り、両手を後ろについて上体を支えます。','指定された側のかかとを床につけたまま、足先をすねの方へゆっくり起こします。','次に足先をゆっくり遠ざけ、楽な位置へ戻します。足首を横にひねりません。'],
+  caution:'装具や固定は自己判断で外しません。痛み・腫れが増える場合は中止し相談してください。',imageCaption:'左図は足先を起こす場面、右図は遠ざける場面です。図は両側ですが、指定された側だけ動かします。指だけでなく足首から動かします。',source:'https://www.worcsacute.nhs.uk/leaflets/ankle-sprain/'
+};
+EXERCISE_LIBRARY['supported-single-leg-stance']={
+  name:'台につかまって片脚で立つ',region:'ankleSprain',image:'supported-single-leg-stance.png',params:'時間・支え方はPTと設定',category:'function',difficulty:'標準',purpose:'片脚で体を支えるバランスを練習する',equipment:'動かない安定した台・滑りにくい靴',selectionNote:'片脚への全荷重が許可され、手で支えて安全に立てる場合だけ選択。見守りの要否を確認。',clinicalRole:'荷重許可・転倒リスクを確認して選択',
+  steps:['動かない台のそばに立ち、指定された手の支え方で台をつかみます。','指定された運動側の足裏全体を床につけ、反対の足を少しだけ浮かせます。','目を開けたまま指定時間だけ保ち、浮かせた足をゆっくり床へ戻します。'],
+  caution:'手を離す・目を閉じる・不安定な床で行う変更はしません。ぐらつき・痛みが出たら両足を床に戻して中止します。見守りを指示された場合は一人で行いません。',imageCaption:'運動する側は床について体を支える脚です。浮かせる脚とは逆です。図の左右に合わせず、PTが指定した側と手の支え方で行います。',source:'https://www.worcsacute.nhs.uk/leaflets/ankle-sprain/'
+};
+DISEASE_LIBRARY.ankleSprain={
+  name:'足関節捻挫（外側・保存療法・PT評価後）',icon:'🦶',desc:'運動・荷重の許可を確認して選ぶ4候補',
+  guidance:'外側靭帯の捻挫で、骨折・脱臼・高位捻挫などを除外し、医師・PTが保存療法で運動を許可した人の候補です。内側・高位捻挫、術後、強い不安定性はこの汎用メニューの対象外です。足首の曲げ伸ばしは可動域運動の許可後、かかと上げ・歩行は荷重許可後、片脚立ちは片脚への全荷重と支持下での安定を確認後に選択します。装具・松葉杖・開始時期は個別指示を優先。4候補だけで競技復帰の判定はできません。',
+  prescriptionNote:'医師・PTが許可した外側の足首捻挫の保存療法用です。術後には使いません。装具・荷重・開始時期の指示を守り、走る・跳ぶ・ひねる動作を自己判断で再開しません。運動後から翌日に痛み・腫れが増える場合は中止し相談してください。片脚立ちは台で支え、見守りの指示を守ります。足先の冷たさ・色の変化・強いしびれ、変形、急な荷重不能は速やかに受診してください。',
+  exerciseKeys:['ankle-pumps','heel-raise','supported-single-leg-stance','walking'],
+  sources:[{title:'Worcestershire NHS：Ankle Sprain（段階別運動の参考）',url:'https://www.worcsacute.nhs.uk/leaflets/ankle-sprain/'}]
+};
+DISEASE_LIBRARY.meniscalInjury={
+  name:'半月板損傷（保存療法・PT評価後）',icon:'🦵',desc:'腫れ・引っかかりと荷重を確認して選ぶ6候補',
+  guidance:'医師が保存療法を選択し、PTが腫れ・可動域・荷重能力を評価した人の候補です。縫合・部分切除などの術後、膝がロックして動かない場合、荷重不能、強い不安定性や急激な腫れは対象外です。踵滑らせは指定された屈曲範囲だけ、膝押しと脚上げは伸展と筋制御に応じて選び負荷を合算します。ブリッジ・横向きの脚上げは補助、浅いスクワットは荷重許可と安定を確認後。深い屈曲・ひねり・ジャンプは含めません。断裂形態による制限を優先し、画像所見だけで一律処方しません。',
+  prescriptionNote:'医師・PTが許可した保存療法中の運動です。半月板の縫合・切除など術後には使いません。指定された曲げる範囲・荷重を守り、深くしゃがむ・膝をひねる・跳ぶ動作を自己判断で追加しません。運動後から翌日に腫れ・痛みが増えたら中止して相談してください。膝が引っかかって動かない、急な強い腫れ、体重をかけられない場合は早急に受診してください。赤み・熱感・発熱がある場合も受診してください。',
+  exerciseKeys:['heel-slide','quad-setting','straight-leg-raise','bridge','side-lying-hip-abduction','mini-squat'],
+  sources:[{title:'Bexley NHS：Meniscal Tear in the Knee（保存療法と運動方法の参考）',url:'https://msk-bexley.nhs.uk/conditions/knee-pain/meniscal-tear-in-the-knee'},{title:'NHS：Meniscus tear（受診・治療の目安）',url:'https://www.nhs.uk/conditions/meniscus-tear/'}]
+};
