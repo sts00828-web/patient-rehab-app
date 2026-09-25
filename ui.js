@@ -310,7 +310,7 @@ function startQrScan() {
       </div>
       <p style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.6">
         セラピストの「設定データQR」をカメラに向けてください。<br>
-        自動的に読み取られます。
+        白い余白を含め、QR全体を大きく映してください。<br>ぼやけるときは少し離し、明るい場所で静止してください。
       </p>
       <div id="qr-reader" style="width:100%;background:#000;border-radius:8px;overflow:hidden;min-height:280px"></div>
       <div id="qr-reader-status" style="text-align:center;margin-top:8px;font-size:12px;color:var(--text2)">カメラを起動しています...</div>
@@ -323,14 +323,17 @@ function startQrScan() {
 
   const session = { scanner: null, cancelled: false, started: false, ready: null, closing: null };
   __qrScanner = session;
-  const config = { fps: 10, qrbox: { width: 240, height: 240 } };
+  // qrboxを省略して全フレームを読む。vendored版の縮小抑制も明示的に有効化。
+  const config = { fps: 5, useNativeResolution: true, videoConstraints: {
+    facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 }
+  } };
   let handled = false;
   session.ready = Promise.resolve().then(() => {
     if (session.cancelled) return;
-    session.scanner = new Html5Qrcode('qr-reader');
-    return session.scanner.start(
+    session.scanner = new Html5Qrcode('qr-reader', { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] });
+    const start = scanConfig => session.scanner.start(
     { facingMode: 'environment' },  // リアカメラ優先
-    config,
+    scanConfig,
     (decodedText) => {
       if (handled || session.cancelled) return;
       handled = true;
@@ -342,6 +345,12 @@ function startQrScan() {
     },
     () => { /* 各フレームの未検出は無視 */ }
     ).then(() => { session.started = true; });
+    return start(config).catch(err => {
+      // ライブラリはgetUserMediaの例外を文字列化する。制約非対応時だけ1回再試行。
+      // 権限拒否・機器使用中では再要求せず、キャンセル後も再起動しない。
+      if (session.cancelled || !/OverconstrainedError|ConstraintNotSatisfiedError|TypeError/.test(String(err))) throw err;
+      return start({ fps: config.fps, useNativeResolution: true });
+    });
   }).then(() => {
     if (session.cancelled) return;
     const s = document.getElementById('qr-reader-status');
