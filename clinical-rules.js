@@ -9,7 +9,7 @@
   const categoryById=id=>Object.hasOwn(catalog.categories,id)?catalog.categories[id]:undefined;
   const isNew=ex=>(ex.exerciseKey||'').startsWith('v02_');
   // Explicit authoring table: ranges use their lower endpoint as an editable proposal.
-  // Neither patient permissions nor weekdays are inferred from these numbers.
+  // Patient permissions are never inferred from these numbers.
   const dosePresets={
     R:{reps:5,sets:1,doseUnit:'回',sessionsPerDay:1,daysPerWeek:7},
     S:{reps:2,sets:1,doseUnit:'回',holdSeconds:10,sessionsPerDay:1,daysPerWeek:7},
@@ -52,7 +52,7 @@
     return {version:str(r.version)||'0.2',categoryId:str(r.categoryId),revision:str(r.revision),
       clinical:{approved:a.approved===true,reviewer:str(a.reviewer),date:date(a.date)},
       patient:{confirmed:p.confirmed===true,reviewer:str(p.reviewer),date:date(p.date),patientId:str(p.patientId)},
-      side:str(r.side),reps:num(r.reps),sets:num(r.sets),holdSeconds:num(r.holdSeconds),holdNotApplicable:r.holdNotApplicable===true,restSeconds:num(r.restSeconds),sessionsPerDay:num(r.sessionsPerDay),daysPerWeek:num(r.daysPerWeek),
+      side:str(r.side),reps:num(r.reps),sets:num(r.sets),holdSeconds:num(r.holdSeconds),holdNotApplicable:r.holdNotApplicable===true,restSeconds:r.restSeconds===0?0:num(r.restSeconds),sessionsPerDay:num(r.sessionsPerDay),daysPerWeek:num(r.daysPerWeek),
       doseUnit:str(r.doseUnit),doseDetail:str(r.doseDetail),doseDirections:str(r.doseDirections),amountBasis:str(r.amountBasis),load:str(r.load),rom:str(r.rom),support:str(r.support),constraints:str(r.constraints),
       imageCompatible:r.imageCompatible===true,imageId:str(r.imageId),imageSha256:str(r.imageSha256),supervised:r.supervised===true,
       sportPlan:str(r.sportPlan),extraReason:str(r.extraReason),postoperative:typeof r.postoperative==='boolean'?r.postoperative:null,
@@ -104,5 +104,20 @@
   }
   function imagePath(ex,preview=false){const d=definition(ex);return d&&d.image&&!ex.mediaDisabled&&(preview||issues(ex).length===0)?d.image:null;}
   function prescription(raw){const r=normalize(raw),basis={total:'合計',per_side:'指定側につき',each_side:'左右各',each_direction:`${r.doseDirections||'方向未指定'}の各方向`,round_trip:'往復'};return {side:({right:'右',left:'左',bilateral:'両側',alternating:'左右交互',none:'左右指定なし'})[r.side]||'',repetitions:r.reps&&r.doseUnit?(r.amountBasis==='round_trip'?`1セット＝片道${r.reps}${r.doseUnit}の往復（計${r.reps*2}${r.doseUnit}）`:`${r.reps}${r.doseUnit}（${basis[r.amountBasis]||'片側/合計未確認'}）`)+(r.doseDetail?'／'+r.doseDetail:''):'',sets:r.sets?`${r.sets}セット`:'',hold:r.holdSeconds?`${r.holdSeconds}秒`:r.holdNotApplicable?'保持なし（PT確認）':'',frequency:r.sessionsPerDay&&r.daysPerWeek?`1日${r.sessionsPerDay}回・週${r.daysPerWeek}日`:'',load:[r.load,r.rom].filter(Boolean).join('／'),support:r.support};}
-  return {normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,dosePresetById,doseOverrides};
+  function weekdayDraft(days){return [...({1:[1],2:[1,4],3:[1,3,5],4:[1,2,4,6],5:[1,2,3,4,5],6:[1,2,3,4,5,6],7:[0,1,2,3,4,5,6]}[days]||[])];}
+  function initialDose(id,saved){
+    const draft=doseDraft(id);if(!draft)return null;
+    const source=saved?.clinicalV02||{},clean=normalize(source);
+    for(const k of ['reps','sets','holdSeconds','restSeconds','sessionsPerDay','daysPerWeek','doseUnit','doseDetail','doseDirections','amountBasis','support']){
+      const v=clean[k];if(v===null||v===''||v===undefined)continue;
+      if(['sets','sessionsPerDay','daysPerWeek'].includes(k)&&!Number.isInteger(v))continue;
+      if(k==='daysPerWeek'&&v>7||k==='sessionsPerDay'&&v>24)continue;
+      if(k==='doseUnit'&&!['回','秒','歩','分','呼吸','本'].includes(v))continue;
+      if(k==='amountBasis'&&!['total','per_side','each_side','each_direction','round_trip'].includes(v))continue;
+      draft[k]=v;
+    }
+    const days=saved?.dows,valid=Array.isArray(days)&&days.length>0&&days.every(d=>Number.isInteger(d)&&d>=0&&d<7)&&new Set(days).size===days.length;
+    return {clinicalV02:draft,dows:valid?[...days]:weekdayDraft(draft.daysPerWeek)};
+  }
+  return {normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
 });

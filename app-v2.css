@@ -158,3 +158,7 @@ fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(
 button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid #ba6600;outline-offset:3px;}
 @media (max-height:500px) {#patientSession .guide-image {max-height:160px;}#patientSession .t-hd {padding:6px;}#patientSession .session-actions {padding:4px 0;}}
 @media (prefers-reduced-motion:reduce) {*,*::before,*::after {animation:none!important;scroll-behavior:auto!important;}}
+
+/* Prescription correction targets */
+[aria-invalid="true"]{outline:2px solid #b42318;outline-offset:2px}
+.clinical-field-error{color:#b42318;font-weight:700;margin:8px 0;overflow-wrap:anywhere}
