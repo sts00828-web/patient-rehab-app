@@ -255,16 +255,48 @@ function openPatientSession(i){
   drawPatientSession(ex);
 }
 showExercise=openPatientSession;
+function sessionDoseHtml(ex){
+  const p=ex.prescription||{};
+  const hold=p.hold&&!['該当なし','保持設定なし','保持なし（PT確認）'].includes(p.hold)?`保持・動作の時間：${p.hold}`:'';
+  return `<p class="session-dose"><strong>実施側：${escapeHtml(p.side||'担当者に確認')}</strong><br>${escapeHtml([p.repetitions,p.sets,hold,ex.params].filter(Boolean).join(' ／ ')||'量は担当者に確認してください')}</p>`;
+}
+function nextPatientSessionIndex(){
+  const items=patientItems(),s=patientSession,log=getLog(s.day),at=items.findIndex(ex=>ex.id===s.itemId);
+  if(s.history)return -1;
+  for(let offset=1;offset<items.length;offset++){const i=(at+offset)%items.length;if(!log.status?.[items[i].id]&&!log.done?.[items[i].id])return i;}
+  return -1;
+}
+function nextPatientSession(){
+  try{currentSessionExercise();const i=nextPatientSessionIndex();if(i>=0){patientSession=null;openPatientSession(i);}}catch(e){sessionError(e);}
+}
 function drawPatientSession(ex){
   const s=patientSession,m=CR.isNew(ex)?CR.definition(ex):legacyMediaFor(ex),problems=patientAccessIssues(ex),log=getLog(s.day),events=(log.events||[]).filter(e=>e.prescription_item_id===ex.id&&e.prescription_version===s.revision),last=events.at(-1),status=log.status?.[ex.id]||(log.done?.[ex.id]?'done':'');
-  modal('patientSession',escapeHtml(ex.name),`<div data-patient-session><p class="notice"><strong>いつもと違う強い痛み、しびれ・力の入りにくさが出たら中止してください。</strong></p>${exerciseNotices(ex,m)}${prescriptionHtml(ex)}${problems.length?`<p class="notice">開始できません：${escapeHtml(problems.join('、'))}</p>`:''}${exerciseImageHtml(ex)}<p>${escapeHtml(CR.patientSteps(ex,m).join(' ')||'院内で説明された手順を確認してください。')}</p>${m?`<details><summary>目的・用具</summary><p>${escapeHtml(m.purpose)}／${escapeHtml(m.equipment)}</p></details>`:''}<p>胸痛・強い息苦しさ・失神・急な麻痺は119など緊急対応を優先してください。新しい排尿困難・失禁、会陰部の感覚異常、急な強い両脚症状は速やかに救急受診してください。</p>${consultationHtml()}<div class="session-inputs"><label for="session-reps">実際の量（任意・空欄は回数不明）</label><input id="session-reps" class="fld-inp" type="number" min="0" step="any"><label for="session-reason">理由・メモ（任意）</label><input id="session-reason" class="fld-inp" maxlength="500"></div><p role="status" id="session-status">${s.saved?'この端末に保存済み':s.started?'実施中（完了は未記録）':status?'今日の状態：'+(statusLabels[status]||status):'未開始'}</p><div class="session-actions">${s.saved||status&&!s.started?`<button class="btn btn-pri" onclick="newPatientSession()">別の回を始める</button><button class="btn btn-out" onclick="correctPatientRecord('${last?.event_id||''}')">記録を訂正</button>`:s.started?`<button class="btn btn-pri" onclick="recordPatientSession('done')">できた・記録する</button><button class="btn btn-out" onclick="recordPatientSession('partial')">一部だけできた</button><button class="btn btn-stop" onclick="recordPatientSession('pain')">痛みなどで中止</button>`:`<button data-start class="btn btn-pri" ${problems.length?'disabled':''} onclick="startPatientSession()">運動を始める</button><button class="btn btn-out" onclick="recordPatientSession('rest')">今日は休む</button>`}</div>${events.length?`<details><summary>実施回・訂正履歴 ${events.length}件</summary>${events.map(e=>`<p>${escapeHtml(e.timestamp_unknown?e.local_date+' 実施時刻不明（旧日次記録）':e.timestamp)}：${statusLabels[e.status]}／${e.reported_reps===null?'回数不明':e.reported_reps} ${e.supersedes_event_id?'（訂正）':''}</p>${!events.some(n=>n.supersedes_event_id===e.event_id)?`<button class="btn btn-out" onclick="correctPatientRecord('${e.event_id}')">この実施回を訂正</button>`:''}`).join('')}</details>`:''}<p id="session-error" role="alert"></p></div>`);
+  const recorded=s.saved||status&&!s.started&&!s.fresh,next=nextPatientSessionIndex();
+  const individual=!!(ex.note||ex.diseaseNote||ex.clinicalV02?.constraints||ex.clinicalV02?.sportPlan||ex.prescription?.load||ex.prescription?.support||S?.restartInstructions);
+  modal('patientSession',escapeHtml(ex.name),`<div data-patient-session>
+    <p role="status" id="session-status">${recorded?'記録済み：'+(statusLabels[status]||status):s.started?'実施中（完了は未記録）':'未開始'}</p>
+    ${sessionDoseHtml(ex)}
+    ${problems.length?`<p class="notice">開始できません：${escapeHtml(problems.join('、'))}</p>`:''}
+    ${exerciseImageHtml(ex)}
+    <ol class="session-steps">${(CR.patientSteps(ex,m).length?CR.patientSteps(ex,m):['院内で説明された手順を確認してください。']).map(step=>`<li>${escapeHtml(step)}</li>`).join('')}</ol>
+    <p class="session-stop">痛み・しびれが増したら中止してください。</p>
+    <details class="session-instructions"><summary>${individual?'個別の注意あり・':' '}処方の詳細</summary>${exerciseNotices(ex,m)}${prescriptionHtml(ex)}${S?.restartInstructions?`<p>あなたへの対応指示：${escapeHtml(S.restartInstructions)}</p>`:''}</details>
+    <details><summary>困ったとき・相談先</summary><p>いつもと違う強い痛み、しびれ・力の入りにくさが出たら中止してください。</p><p>胸痛・強い息苦しさ・失神・急な麻痺は119など緊急対応を優先してください。新しい排尿困難・失禁、会陰部の感覚異常、急な強い両脚症状は速やかに救急受診してください。</p>${consultationHtml()}</details>
+    ${m?`<details><summary>目的・用具</summary><p>${escapeHtml(m.purpose)}／${escapeHtml(m.equipment)}</p></details>`:''}
+    <details class="session-inputs"><summary>実際の量・メモを入力（任意）</summary><label for="session-reps">実際の量（空欄は回数不明）</label><input id="session-reps" class="fld-inp" type="number" min="0" step="any"><label for="session-reason">理由・メモ</label><input id="session-reason" class="fld-inp" maxlength="500"></details>
+    ${events.length?`<details><summary>実施回・訂正履歴 ${events.length}件</summary>${events.map(e=>`<p>${escapeHtml(e.timestamp_unknown?e.local_date+' 実施時刻不明（旧日次記録）':e.timestamp)}：${statusLabels[e.status]}／${e.reported_reps===null?'回数不明':e.reported_reps} ${e.supersedes_event_id?'（訂正）':''}</p>${!events.some(n=>n.supersedes_event_id===e.event_id)?`<button class="btn btn-out" onclick="correctPatientRecord('${e.event_id}')">この実施回を訂正</button>`:''}`).join('')}</details>`:''}
+    <details class="session-video"><summary>動画を見る・保存する</summary><section id="patient-video"></section>${C.videoUrl(ex.videoUrl)?`<a class="btn btn-out" href="${escapeAttr(C.videoUrl(ex.videoUrl))}" target="_blank" rel="noopener noreferrer">担当者の動画を見る</a>`:''}</details>
+    <p id="session-error" role="alert"></p>
+    </div><div class="session-actions">
+    ${recorded?`${next>=0?'<button class="btn btn-pri" onclick="nextPatientSession()">次の運動へ</button>':''}<button class="btn btn-out" onclick="newPatientSession()">別の回を始める</button><button class="btn btn-out" onclick="correctPatientRecord('${last?.event_id||''}')">記録を訂正</button>`:s.started?`<button class="btn btn-pri" onclick="recordPatientSession('done')">できた</button><button class="btn btn-out" onclick="recordPatientSession('partial')">途中まで</button><button class="btn btn-out" onclick="recordPatientSession('pain')">痛みで中止</button>`:`<button data-start class="btn btn-pri" ${problems.length?'disabled':''} onclick="startPatientSession()">始める</button><button class="btn btn-out" onclick="recordPatientSession('rest')">今日は休む</button>`}
+    </div>`);
+  if(typeof PatientVideo!=='undefined')PatientVideo.mount(ex);
 }
 const drawPatientSessionContent=drawPatientSession;
-drawPatientSession=function(ex){drawPatientSessionContent(ex);const dialog=$('patientSession');dialog.querySelector('.t-modal').appendChild(dialog.querySelector('.session-actions'));dialog.querySelector('[data-patient-session]').insertAdjacentHTML('beforeend','<section id="patient-video"></section>');if(typeof PatientVideo!=='undefined')PatientVideo.mount(ex);if(C.videoUrl(ex.videoUrl))dialog.querySelector('[data-patient-session]').insertAdjacentHTML('beforeend',`<a class="btn btn-out" href="${escapeAttr(C.videoUrl(ex.videoUrl))}" target="_blank" rel="noopener noreferrer">担当者の動画を見る</a>`);};
 function currentSessionExercise(){const s=patientSession;if(!s||(!s.history&&s.day!==todayKey())||s.day>todayKey()||s.patientId!==S?.patientId)throw Error('日付または患者が変わりました。今日の画面から開き直してください。');const ex=(s.history?getLog(s.day).menuSnapshot||[]:patientItems()).find(e=>e.id===s.itemId);if(!ex||(ex.clinicalV02?.revision||'legacy')!==s.revision)throw Error('処方が変わりました。開き直してください。');return ex;}
 function sessionError(e){const node=$('session-error');if(node)node.textContent=e.message;else toast(e.message);}
-function startPatientSession(){try{if(patientSession?.history)throw Error('過去の記録から運動は開始できません。今日の画面へ戻ってください。');const ex=currentSessionExercise(),issues=patientAccessIssues(ex);if(issues.length)throw Error(issues.join('、'));const img=$('patientSession').querySelector('img');if((CR.isNew(ex)||legacyMediaFor(ex))&&!ex.mediaDisabled&&(!img?.complete||!img.naturalWidth))throw Error('画像が確認できません。読み込み後に開始してください。');patientSession.started=true;drawPatientSession(ex);}catch(e){sessionError(e);}}
-function newPatientSession(){try{if(patientSession?.history)throw Error('過去の記録では新しい実施回を開始できません。');const ex=currentSessionExercise();patientSession={...patientSession,id:uid(),started:false,saved:false};drawPatientSession(ex);const node=$('patientSession').querySelector('.session-actions');node.innerHTML=`<button data-start class="btn btn-pri" onclick="startPatientSession()">運動を始める</button><button class="btn btn-out" onclick="recordPatientSession('rest')">今日は休む</button>`;}catch(e){sessionError(e);}}
+function startPatientSession(){try{if(patientSession?.history)throw Error('過去の記録から運動は開始できません。今日の画面へ戻ってください。');const ex=currentSessionExercise(),issues=patientAccessIssues(ex);if(issues.length)throw Error(issues.join('、'));const img=$('patientSession').querySelector('img');if((CR.isNew(ex)||legacyMediaFor(ex))&&!ex.mediaDisabled&&(!img?.complete||!img.naturalWidth))throw Error('画像が確認できません。読み込み後に開始してください。');const reps=$('session-reps')?.value||'',reason=$('session-reason')?.value||'';patientSession.started=true;drawPatientSession(ex);$('session-reps').value=reps;$('session-reason').value=reason;}catch(e){sessionError(e);}}
+function newPatientSession(){try{if(patientSession?.history)throw Error('過去の記録では新しい実施回を開始できません。');const ex=currentSessionExercise();patientSession={...patientSession,id:uid(),started:false,saved:false,fresh:true};drawPatientSession(ex);}catch(e){sessionError(e);}}
 function recordPatientSession(status,supersedes=null){
   try{
     const ex=currentSessionExercise(),s=patientSession;if(s.saved&&!supersedes)return;

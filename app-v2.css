@@ -162,3 +162,21 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 /* Prescription correction targets */
 [aria-invalid="true"]{outline:2px solid #b42318;outline-offset:2px}
 .clinical-field-error{color:#b42318;font-weight:700;margin:8px 0;overflow-wrap:anywhere}
+
+/* TASK-018: compact daily exercise, with a single prominent action. */
+#patientSession .session-actions .btn-pri {flex-basis:100%;font-weight:700;}
+#patientSession .session-actions .btn-out {min-height:44px;padding:8px 4px;flex-basis:100px;}
+#patientSession .session-dose {margin:4px 0 8px;overflow-wrap:anywhere;}
+#patientSession #session-status {margin:4px 0;color:var(--teal);font-weight:700;}
+#patientSession .session-steps {padding-left:1.4em;margin:8px 0;}
+#patientSession .session-steps li {margin:4px 0;overflow-wrap:anywhere;}
+#patientSession .session-stop {font-weight:700;font-size:16px;margin:8px 0;}
+#patientSession details {border-top:1px solid #ddd;padding:6px 0;}
+#patientSession summary {cursor:pointer;min-height:44px;display:list-item;padding:8px 0;overflow-wrap:anywhere;}
+#patientSession .session-instructions p {white-space:pre-wrap;}
+#patientSession .guide-image {max-height:240px;}
+#patientSession figcaption {font-size:14px;line-height:1.4;}
+@media (max-height:500px) {
+  #patientSession .guide-image {max-height:140px;}
+  #patientSession .session-actions .btn-pri {flex-basis:140px;}
+}

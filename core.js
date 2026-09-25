@@ -32,6 +32,33 @@
         exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), prescription:clinical?.isNew(m)?clinical.prescription(m.clinicalV02):prescription(m.prescription), scheduleConfirmed:m.scheduleConfirmed===true, ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}), ...(clinical?.isNew(m)?{clinicalV02:clinical.normalize(m.clinicalV02)}:{}) };
     });
   }
+  // Share v3 omits only structural empty defaults, never catalog/dose defaults.
+  // Clinical prescription text is derived by menu() on receipt. Keep this codec
+  // independent of authoring presets so edited values survive catalog updates.
+  function encodeShare(raw) {
+    const sparse = value => {
+      if (!record(value)) return value;
+      return Object.fromEntries(Object.entries(value).flatMap(([key,v]) => {
+        if (v === '' || v === null || (v === false && key !== 'postoperative')) return [];
+        const next = sparse(v);
+        return record(next) && !Object.keys(next).length ? [] : [[key,next]];
+      }));
+    };
+    const items = menu(raw.menu).map(ex => {
+      const next = clone(ex);
+      if (clinical?.isNew(ex)) delete next.prescription;
+      return sparse(next);
+    });
+    return {version:3,patientId:raw.patientId,startDate:raw.startDate,
+      nextVisit:raw.nextVisit,painContext:raw.painContext,consultContact:raw.consultContact,
+      restartInstructions:raw.restartInstructions,menu:items};
+  }
+  function decodeShare(raw) {
+    if (!record(raw)) throw Error('設定データが不正です');
+    if (raw.version !== undefined && ![1,2,3].includes(raw.version)) throw Error('未対応の共有データ版です');
+    if (raw.version !== 3) return raw;
+    return {...raw,version:2,menu:menu(raw.menu)};
+  }
   function videoUrl(s) {
     if (!s) return '';
     try { const u = new URL(s); return u.protocol === 'https:' ? u.href : ''; } catch { return ''; }
@@ -140,5 +167,5 @@
     s.plans.push({from:today,menu:clone(next)});
     return today;
   }
-  return {clone,text,id,record,validDate,prescription,prescriptionLabels,prescriptionIssues,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,applyMenuToday,videoUrl};
+  return {encodeShare,decodeShare,clone,text,id,record,validDate,prescription,prescriptionLabels,prescriptionIssues,menu,settings,logs,migrate,scheduled,menuAt,completion,changeMenu,applyMenuToday,videoUrl};
 });

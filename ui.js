@@ -226,8 +226,12 @@ function showShareQR() {
     catch{level='L';qr=qrcode(0,level);qr.addData(url);qr.make();}
     document.getElementById('qrBox').innerHTML = qr.createSvgTag({ scalable:true, margin:4 })+(level==='L'?'<p class="hint">指示が多いため、明るい場所で画面全体を読み取ってください。読み取りにくい場合は下のURLをコピーして渡せます。</p>':'');
   } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
+    const reason = /overflow|too long/i.test(detail)
+      ? '個別指示などの情報量がQRコードの容量を超えています。'
+      : 'QRコードを生成できませんでした：'+detail;
     document.getElementById('qrBox').innerHTML =
-      `<div style="color:var(--orange);font-size:12px;padding:20px">QR生成失敗：${escapeHtml(e.message)}<br>URLコピーをお使いください</div>`;
+      `<div style="color:var(--orange);font-size:12px;padding:20px">${escapeHtml(reason)}<br>内容は省略していません。下のURLを全文コピーして患者さんへ渡してください。</div>`;
   }
 }
 

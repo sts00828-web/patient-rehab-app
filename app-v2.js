@@ -504,7 +504,7 @@ function buildShareUrl(){
   const incomplete=S.menu.filter(ex=>C.prescriptionIssues(ex).length);
   if(incomplete.length){alert(`個別指示を確認してから共有してください。従来の指示・記録は保持されています。\n${incomplete.map(ex=>`${ex.name}：${C.prescriptionIssues(ex).join('・')}`).join('\n')}`);return null;}
   if(typeof LZString==='undefined'){alert('共有ライブラリを読み込めませんでした。');return null;}
-  return `${location.origin}${location.pathname}#d=${encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(buildSharePayload())))}`;
+  return `${location.origin}${location.pathname}#d=${encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(C.encodeShare(buildSharePayload()))))}`;
 }
 function handleImportFromHash(){
   if(storageBlocked)return false;const compressed=extractImportData();if(!compressed)return false;
@@ -513,7 +513,7 @@ function handleImportFromHash(){
     if(typeof LZString==='undefined')throw Error('読込ライブラリを読み込めませんでした。再読み込みしてください。');
     const json=LZString.decompressFromEncodedURIComponent(compressed.replace(/ /g,'+'))||LZString.decompressFromBase64(compressed);
     if(!json||json.length>150000)throw Error('設定データが不正です');
-    const raw=JSON.parse(json),data=C.settings({...raw,plans:[],knownSince:todayKey()},uid(),todayKey());
+    const raw=C.decodeShare(JSON.parse(json)),data=C.settings({...raw,plans:[],knownSince:todayKey()},uid(),todayKey());
     const same=!!(S&&C.id(raw.patientId)&&raw.patientId===S.patientId);
     const message=same?'同じ患者のメニューを更新します。過去の記録は保持します。':S?'別の患者または旧形式の設定です。現在の記録を退避し、新しい記録として読み込みます。':'新しいメニューを読み込みます。';
     if(!confirm(`${message}\n${data.menu.length}種目 ／ 開始日 ${data.startDate}\n担当PTから受け取った設定であることを確認してください。`)){history.replaceState(null,'',location.pathname);return false;}
