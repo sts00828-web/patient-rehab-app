@@ -29,7 +29,7 @@ function clinicalCategoryCards(){
 }
 function clinicalCatalogHtml(){
   const state=clinicalSelectionState();
-  return `<section id="clinical-catalog" class="t-sec"><div class="t-sec-ttl">疾患別メニューから選ぶ</div><div class="clinical-switch" role="group" aria-label="一般・競技の切替">${[['G','一般向け'],['A','競技向け']].map(([key,label])=>`<button type="button" class="btn btn-out" data-clinical-audience="${key}" aria-pressed="${state.audience===key}" onclick="setClinicalAudience('${key}')">${label}</button>`).join('')}</div><label for="clinical-search">疾患名で検索</label><input id="clinical-search" class="fld-inp" type="search" value="${escapeAttr(state.query)}" oninput="filterClinicalCategories(this.value)"><div id="clinical-categories" class="tpl-grid">${clinicalCategoryCards()}</div></section>`;
+  return `<section id="clinical-catalog" class="t-sec"><div class="t-sec-ttl">疾患別メニューから選ぶ</div><p class="hint">利用対象109運動。疾患・段階ごとの候補数は実数を表示します。</p><div class="clinical-switch" role="group" aria-label="一般・競技の切替">${[['G','一般向け'],['A','競技向け']].map(([key,label])=>`<button type="button" class="btn btn-out" data-clinical-audience="${key}" aria-pressed="${state.audience===key}" onclick="setClinicalAudience('${key}')">${label}</button>`).join('')}</div><label for="clinical-search">疾患名で検索</label><input id="clinical-search" class="fld-inp" type="search" value="${escapeAttr(state.query)}" oninput="filterClinicalCategories(this.value)"><div id="clinical-categories" class="tpl-grid">${clinicalCategoryCards()}</div></section>`;
 }
 function setClinicalAudience(audience){
   if(!requireStaff()||!['G','A'].includes(audience))return;
@@ -50,6 +50,7 @@ let clinicalBatch=null;
 const clinicalNumberKeys=['reps','sets','holdSeconds','restSeconds','sessionsPerDay','daysPerWeek'];
 const clinicalTapValues={reps:[2,3,5,8,10,20],sets:[1,2,3],holdSeconds:[2,3,5,10,20],restSeconds:[30,60,90],sessionsPerDay:[1,2],daysPerWeek:[2,3,5,7]};
 function newClinicalCandidate(id,categoryId){
+  if(!CR.isSelectable(id))throw Error('削除済み・未対応の運動は新規処方できません');
   const d=CC.definitions[id],existing=S.menu.find(ex=>ex.exerciseKey===d.key),saved=standardPrescription({exerciseKey:d.key});
   const ex=existing?C.clone(existing):{id:uid(),name:d.name,exerciseKey:d.key,dows:[],scheduleConfirmed:false};
   const r=CR.normalize(existing?.clinicalV02||{...CR.doseDraft(id),...(saved?.clinicalV02||{}),categoryId});
@@ -95,6 +96,7 @@ function openClinicalShelf(categoryId='G03',level){
   if(!requireStaff())return;const state=clinicalSelectionState(),c=CC.categories[categoryId];if(!c)return;
   level=level||(state.categoryId===categoryId?state.level:'beginner');if(!c.levels[level])return;
   if(!clinicalBatch||clinicalBatch.patientId!==S.patientId)clinicalBatch={patientId:S.patientId,items:{},query:'',only:false,common:{clinicalDate:todayKey(),patientDate:todayKey(),confirmed:false}};
+  for(const id of Object.keys(clinicalBatch.items))if(!CR.isSelectable(id))delete clinicalBatch.items[id];
   Object.assign(state,{categoryId,level});
   for(const id of Object.values(c.levels).flat()){
     const item=clinicalBatch.items[id],saved=S.menu.find(ex=>ex.exerciseKey===CC.definitions[id].key);
@@ -112,7 +114,7 @@ function openClinicalShelf(categoryId='G03',level){
 function filterClinicalBatch(){
   if(!clinicalBatch)return;const state=clinicalSelectionState(),draft=clinicalBatch;
   $('clinicalShelf').querySelectorAll('[data-clinical-exercise]').forEach(row=>{const id=row.dataset.clinicalExercise;row.hidden=draft.only?!draft.items[id].selected:!CC.categories[state.categoryId].levels[state.level].includes(id)||!(CC.definitions[id].name+' '+CC.definitions[id].purpose).toLowerCase().includes(draft.query.toLowerCase());});
-  $('clinical-batch-count').textContent=`選択 ${Object.values(draft.items).filter(i=>i.selected).length}種目（非表示の段階の選択も保持）`;
+  $('clinical-batch-count').textContent=`この段階 ${CC.categories[state.categoryId].levels[state.level].length}種目 ／ 表示 ${[...$('clinicalShelf').querySelectorAll('[data-clinical-exercise]')].filter(row=>!row.hidden).length}種目 ／ 選択 ${Object.values(draft.items).filter(i=>i.selected).length}種目（非表示の段階の選択も保持）`;
 }
 function setClinicalBatchValue(id,key,value){if(!requireStaff())return;const input=$('cb-'+id+'-'+key);input.value=value;updateClinicalBatch({target:input});}
 function selectClinicalEveryday(id){
@@ -173,6 +175,7 @@ function saveClinicalBatch(share=false){
 let clinicalDraft=null;
 function openClinicalPrescription(id,categoryId,index=-1){
   if(!requireStaff())return;const d=CC.definitions[id];if(!d||!Object.hasOwn(CC.categories,categoryId))return;
+  if(!CR.isSelectable(id)){toast('削除済みの運動です。過去の処方・記録は保持しています。');return;}
   clinicalSelectionState();
   if(index<0)index=S.menu.findIndex(ex=>ex.exerciseKey===d.key);
   if(index>=0&&S.menu[index]?.exerciseKey!==d.key)return;

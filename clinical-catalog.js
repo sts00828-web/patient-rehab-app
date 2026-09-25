@@ -121,7 +121,8 @@ const data={
       "assetStatus": "未解決・画像採用保留",
       "assetNotes": "右手背外側への左手抵抗位置が示されない。",
       "clinicalStatus": "pending_review",
-      "sha256": null
+      "sha256": null,
+      "status": "retired"
     },
     "S07": {
       "id": "S07",
@@ -2109,7 +2110,8 @@ const data={
       "assetStatus": "個別条件待ち",
       "assetNotes": "距離・球数・強度・休息、投球許可の個別条件待ち。画像生成しない。",
       "clinicalStatus": "pending_review",
-      "sha256": null
+      "sha256": null,
+      "status": "retired"
     },
     "P03": {
       "id": "P03",
@@ -2129,7 +2131,8 @@ const data={
       "assetStatus": "個別条件待ち",
       "assetNotes": "競技種別・利き手・速度・範囲の個別条件待ち。画像生成しない。",
       "clinicalStatus": "pending_review",
-      "sha256": null
+      "sha256": null,
+      "status": "retired"
     },
     "P04": {
       "id": "P04",
@@ -2269,7 +2272,8 @@ const data={
       "assetStatus": "個別条件待ち",
       "assetNotes": "方向・範囲・肢位の個別条件待ち。共通画像を生成しない。",
       "clinicalStatus": "pending_review",
-      "sha256": null
+      "sha256": null,
+      "status": "retired"
     }
   },
   "categories": {
@@ -2283,8 +2287,7 @@ const data={
           "S02",
           "S03",
           "S04",
-          "S05",
-          "S06"
+          "S05"
         ],
         "intermediate": [
           "S08",
@@ -2436,7 +2439,6 @@ const data={
         "beginner": [
           "S02",
           "S05",
-          "S06",
           "S07",
           "T15",
           "S11"
@@ -2531,7 +2533,6 @@ const data={
           "S05",
           "S02",
           "S04",
-          "S06",
           "S07"
         ],
         "intermediate": [
@@ -2562,7 +2563,6 @@ const data={
           "S05",
           "S02",
           "S04",
-          "S06",
           "S07"
         ],
         "intermediate": [
@@ -2715,7 +2715,6 @@ const data={
         "beginner": [
           "S02",
           "S05",
-          "S06",
           "S07",
           "S11",
           "T15"
@@ -2733,8 +2732,7 @@ const data={
           "S17",
           "S20",
           "S26",
-          "P01",
-          "P02"
+          "P01"
         ]
       }
     },
@@ -2764,8 +2762,7 @@ const data={
           "S20",
           "S25",
           "S26",
-          "P01",
-          "P02"
+          "P01"
         ]
       }
     },
@@ -2779,7 +2776,6 @@ const data={
           "S05",
           "S02",
           "S04",
-          "S06",
           "S07"
         ],
         "intermediate": [
@@ -2795,8 +2791,7 @@ const data={
           "S18",
           "S20",
           "S26",
-          "P01",
-          "P02"
+          "P01"
         ]
       }
     },
@@ -2810,7 +2805,6 @@ const data={
           "S05",
           "S02",
           "S04",
-          "S06",
           "S07"
         ],
         "intermediate": [
@@ -2826,8 +2820,7 @@ const data={
           "S17",
           "S20",
           "S24",
-          "P01",
-          "P02"
+          "P01"
         ]
       }
     },
@@ -2857,8 +2850,7 @@ const data={
           "E08",
           "E09",
           "S20",
-          "S21",
-          "P03"
+          "S21"
         ]
       }
     },
@@ -3043,8 +3035,7 @@ const data={
           "P04",
           "P06",
           "P07",
-          "P08",
-          "P10"
+          "P08"
         ]
       }
     }

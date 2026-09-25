@@ -21,7 +21,11 @@ function fmtJ(d) { return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate(
 
 function getMenu() { return (S && S.menu) ? S.menu : []; }
 
-function getAllTemplates() { return Object.assign({}, TEMPLATES, Object.fromEntries(Object.entries(T).filter(([key])=>!key.startsWith('doseDefault_')))); }
+function getAllTemplates() {
+  const templates=Object.assign({}, TEMPLATES, Object.fromEntries(Object.entries(T).filter(([key])=>!key.startsWith('doseDefault_'))));
+  // Filter the selection view only; stored templates and historical menus stay intact.
+  return Object.fromEntries(Object.entries(templates).map(([key,t])=>[key,{...t,menu:t.menu.filter(ex=>typeof ClinicalRules==='undefined'||!ClinicalRules.isNew(ex)||ClinicalRules.definition(ex)?.status!=='retired')}]));
+}
 
 function isExForDow(ex, dow) {
   if (!ex.dows || ex.dows.length === 0) return true;

@@ -5,6 +5,7 @@
   const num=v=>Number.isFinite(v)&&v>0?v:null;
   const date=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(Date.parse(v))&&new Date(v+'T12:00:00Z').toISOString().slice(0,10)===v?v:null;
   const definition=ex=>{const id=(ex.exerciseKey||'').replace(/^v02_/,'');return Object.hasOwn(catalog.definitions,id)?catalog.definitions[id]:undefined;};
+  const isSelectable=id=>Object.hasOwn(catalog.definitions,id)&&catalog.definitions[id].status!=='retired';
   const categoryById=id=>Object.hasOwn(catalog.categories,id)?catalog.categories[id]:undefined;
   const isNew=ex=>(ex.exerciseKey||'').startsWith('v02_');
   // Explicit authoring table: ranges use their lower endpoint as an editable proposal.
@@ -42,7 +43,7 @@
     P07:{reps:3,doseUnit:'本',sets:1},P08:{reps:3,doseUnit:'回',sets:1},P09:{reps:1.5,doseUnit:'分',sets:3},P10:{reps:3,doseUnit:'回',sets:1}
   };
   function doseDraft(id){
-    const d=catalog.definitions[id],preset=dosePresetById[id];if(!d||!preset)return null;
+    const d=catalog.definitions[id],preset=dosePresetById[id];if(!isSelectable(id)||!preset)return null;
     const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒'};
     return {...dosePresets[preset],...doseOverrides[id],support:d.equipment,doseDetail:details[id]||''};
   }
@@ -66,6 +67,7 @@
     if(!isNew(ex))return [];
     const d=definition(ex),r=normalize(ex.clinicalV02),out=[];
     if(!d)return ['未対応の運動ID'];
+    if(!isSelectable(d.id))return ['削除済みの運動は新規処方・再開できません'];
     if(!d.image)out.push(d.assetStatus);
     if(!r.clinical.approved||!r.clinical.reviewer||!r.clinical.date)out.push('本文・量の案・画像の臨床承認');
     if(!r.patient.confirmed||!r.patient.reviewer||!r.patient.date||!r.patient.patientId)out.push('担当PTの個別処方確認');
@@ -102,5 +104,5 @@
   }
   function imagePath(ex,preview=false){const d=definition(ex);return d&&d.image&&!ex.mediaDisabled&&(preview||issues(ex).length===0)?d.image:null;}
   function prescription(raw){const r=normalize(raw),basis={total:'合計',per_side:'指定側につき',each_side:'左右各',each_direction:`${r.doseDirections||'方向未指定'}の各方向`,round_trip:'往復'};return {side:({right:'右',left:'左',bilateral:'両側',alternating:'左右交互',none:'左右指定なし'})[r.side]||'',repetitions:r.reps&&r.doseUnit?(r.amountBasis==='round_trip'?`1セット＝片道${r.reps}${r.doseUnit}の往復（計${r.reps*2}${r.doseUnit}）`:`${r.reps}${r.doseUnit}（${basis[r.amountBasis]||'片側/合計未確認'}）`)+(r.doseDetail?'／'+r.doseDetail:''):'',sets:r.sets?`${r.sets}セット`:'',hold:r.holdSeconds?`${r.holdSeconds}秒`:r.holdNotApplicable?'保持なし（PT確認）':'',frequency:r.sessionsPerDay&&r.daysPerWeek?`1日${r.sessionsPerDay}回・週${r.daysPerWeek}日`:'',load:[r.load,r.rom].filter(Boolean).join('／'),support:r.support};}
-  return {normalize,definition,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,dosePresetById,doseOverrides};
+  return {normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,dosePresetById,doseOverrides};
 });
