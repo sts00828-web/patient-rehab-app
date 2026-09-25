@@ -14,6 +14,7 @@
   const prescriptionLabels = {side:'実施する側',repetitions:'回数',sets:'セット数',hold:'保持時間',frequency:'1日の実施回数',load:'負荷・強さ',support:'支え方'};
   function prescription(raw) { return Object.fromEntries(Object.keys(prescriptionLabels).map(k=>[k,text(record(raw)?raw[k]:'',120).trim()])); }
   function prescriptionIssues(ex) {
+    if(clinical?.isNew(ex)&&ex.clinicalV02?.mode==='simple')return clinical.issues(ex);
     const p=prescription(ex.prescription);
     return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(ex.scheduleConfirmed===true?[]:['実施曜日の確認']),...(clinical?.issues(ex)||[])];
   }
@@ -38,6 +39,7 @@
   function settings(raw, fallbackId, today) {
     if (!record(raw)) throw Error('設定データが不正です。');
     const result = { patientId: id(raw.patientId) ? raw.patientId : fallbackId,
+      affectedSide: ['right','left','bilateral','none'].includes(raw.affectedSide)?raw.affectedSide:'',
       patientName: text(raw.patientName, 80), chartId: text(raw.chartId, 80), age: text(raw.age, 3), diagnosis: text(raw.diagnosis, 120),
       therapistName: text(raw.therapistName, 80), painContext:text(raw.painContext), consultContact:text(raw.consultContact), restartInstructions:text(raw.restartInstructions), startDate: validDate(raw.startDate) ? raw.startDate : today,
       nextVisit: validDate(raw.nextVisit) ? raw.nextVisit : '', template: id(raw.template) ? raw.template : null,

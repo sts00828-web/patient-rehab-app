@@ -49,15 +49,35 @@
   }
   function normalize(raw){
     const r=raw&&typeof raw==='object'?raw:{},a=r.clinical||{},p=r.patient||{};
-    return {version:str(r.version)||'0.2',categoryId:str(r.categoryId),revision:str(r.revision),
+    const doseNum=v=>r.mode==='simple'&&typeof v==='number'?v:num(v);
+    return {...(r.mode==='simple'?{mode:'simple'}:{}),version:str(r.version)||'0.2',categoryId:str(r.categoryId),revision:str(r.revision),
       clinical:{approved:a.approved===true,reviewer:str(a.reviewer),date:date(a.date)},
       patient:{confirmed:p.confirmed===true,reviewer:str(p.reviewer),date:date(p.date),patientId:str(p.patientId)},
-      side:str(r.side),reps:num(r.reps),sets:num(r.sets),holdSeconds:num(r.holdSeconds),holdNotApplicable:r.holdNotApplicable===true,restSeconds:r.restSeconds===0?0:num(r.restSeconds),sessionsPerDay:num(r.sessionsPerDay),daysPerWeek:num(r.daysPerWeek),
+      side:str(r.side),reps:doseNum(r.reps),sets:doseNum(r.sets),holdSeconds:doseNum(r.holdSeconds),holdNotApplicable:r.holdNotApplicable===true,restSeconds:r.restSeconds===0?0:doseNum(r.restSeconds),sessionsPerDay:doseNum(r.sessionsPerDay),daysPerWeek:doseNum(r.daysPerWeek),
       doseUnit:str(r.doseUnit),doseDetail:str(r.doseDetail),doseDirections:str(r.doseDirections),amountBasis:str(r.amountBasis),load:str(r.load),rom:str(r.rom),support:str(r.support),constraints:str(r.constraints),
       imageCompatible:r.imageCompatible===true,imageId:str(r.imageId),imageSha256:str(r.imageSha256),supervised:r.supervised===true,
       sportPlan:str(r.sportPlan),extraReason:str(r.extraReason),postoperative:typeof r.postoperative==='boolean'?r.postoperative:null,
       surgery:Object.fromEntries(['name','date','site','prohibited','rom','weightBearing','resistance','confirmedDate','instructor','protocol'].map(k=>[k,str(r.surgery?.[k])])),
       gates:Object.fromEntries(Object.entries(r.gates||{}).filter(([k])=>/^G[1-8]$/.test(k)).map(([k,v])=>[k,{status:['allowed','not_applicable','denied'].includes(v?.status)?v.status:'pending',details:str(v?.details)}]))};
+  }
+  // Exceptions reflect explicit bilateral/alternating movements in the unchanged catalog text.
+  const sideExceptions={
+    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06',
+    alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10',
+    none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09'
+  };
+  function initialSide(id,affectedSide){return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
+  // Only these catalog procedures use the right side as a unilateral example.
+  // Bilateral/alternating procedures are deliberately excluded; source text stays intact.
+  const rightExampleIds=new Set('S01 S02 S03 S04 S06 S07 S09 S10 S11 S15 S16 S17 S18 S19 S21 S24 S25 S26 T04 K01 K02 K04 K05 K09 K11 K12 K13 K15 K16 K18 K19 E01 E04 E05 E07 A04 A06 A07 A08 P05'.split(' '));
+  function patientSteps(ex,legacyMedia){
+    const d=isNew(ex)?definition(ex):legacyMedia,steps=[...(d?.steps||[])];
+    if(!isNew(ex)||!rightExampleIds.has(d?.id))return steps;
+    const side=ex.clinicalV02?.side;
+    // One pass swaps both working and assisting sides, preserving words such as 左右.
+    if(side==='left')return steps.map(step=>step.replace(/左右|右左|[左右]/g,word=>word==='右'?'左':word==='左'?'右':word));
+    if(side!=='right'&&steps.length)steps[0]='手順は右側を例に説明しています。実施側は処方の指示に従ってください。'+steps[0];
+    return steps;
   }
   function requiredGates(ex){
     const d=definition(ex),r=normalize(ex.clinicalV02),c=categoryById(r.categoryId);
@@ -69,41 +89,43 @@
     if(!d)return ['未対応の運動ID'];
     if(!isSelectable(d.id))return ['削除済みの運動は新規処方・再開できません'];
     if(!d.image)out.push(d.assetStatus);
-    if(!r.clinical.approved||!r.clinical.reviewer||!r.clinical.date)out.push('本文・量の案・画像の臨床承認');
-    if(!r.patient.confirmed||!r.patient.reviewer||!r.patient.date||!r.patient.patientId)out.push('担当PTの個別処方確認');
+    if(r.mode!=='simple'&&(!r.clinical.approved||!r.clinical.reviewer||!r.clinical.date))out.push('本文・量の案・画像の臨床承認');
+    if(r.mode!=='simple'&&(!r.patient.confirmed||!r.patient.reviewer||!r.patient.date||!r.patient.patientId))out.push('担当PTの個別処方確認');
+    for(const k of ['reps','sets','holdSeconds','restSeconds','sessionsPerDay','daysPerWeek'])if(r[k]!==null&&(!Number.isFinite(r[k])||Math.abs(r[k])>Number.MAX_SAFE_INTEGER||(k==='restSeconds'?r[k]<0:r[k]<=0)))out.push('不正な数値：'+k);
     if(!r.revision)out.push('処方版');
     if(r.version!=='0.2')out.push('未対応の仕様版');
     const category=categoryById(r.categoryId);
     if(!category||!Object.values(category.levels).some(ids=>ids.includes(d.id)))out.push('疾患と運動の対応');
-    for(const k of ['side','reps','sets','sessionsPerDay','daysPerWeek','doseUnit','load','rom','support','constraints'])if(!r[k])out.push('個別値：'+k);
+    for(const k of (r.mode==='simple'?['side','reps','sets','sessionsPerDay','daysPerWeek','doseUnit']:['side','reps','sets','sessionsPerDay','daysPerWeek','doseUnit','load','rom','support','constraints']))if(!r[k])out.push('個別値：'+k);
     if(!['right','left','bilateral','alternating','none'].includes(r.side))out.push('指定側の形式');
     if(!['回','歩','秒','分','呼吸','本'].includes(r.doseUnit)||!['total','per_side','each_side','each_direction','round_trip'].includes(r.amountBasis))out.push('量の単位・片側/合計の指定');
     if(r.amountBasis==='each_direction'&&!r.doseDirections)out.push('各方向の指定');
     if(r.amountBasis==='round_trip'&&r.doseUnit!=='歩')out.push('往復量の単位は歩');
     if(r.amountBasis!=='each_direction'&&(r.doseDirections||/各方向/.test(r.doseDetail)))out.push('各方向と量の基準の不一致');
     if(/往復/.test(r.doseDetail))out.push('往復量は片道の歩数と往復の基準で指定');
-    if(!Array.isArray(ex.dows)||ex.dows.length!==r.daysPerWeek||ex.scheduleConfirmed!==true)out.push('実施曜日と週の頻度の確認');
     if(r.daysPerWeek>7||r.sessionsPerDay>24)out.push('頻度の範囲');
-    if(!r.holdSeconds&&!r.holdNotApplicable)out.push('保持時間、または保持なしの明示確認');
     if(!Number.isInteger(r.sets)||!Number.isInteger(r.daysPerWeek)||!Number.isInteger(r.sessionsPerDay))out.push('セット・頻度は整数で指定');
-    if(!r.imageCompatible||r.imageId!==d.image||r.imageSha256!==d.sha256||r.side==='left')out.push('指定側・支持・許可範囲と画像の整合（左専用画像未検証）');
+    if(!Array.isArray(ex.dows)||ex.dows.some(v=>!Number.isInteger(v)||v<0||v>6)||new Set(ex.dows).size!==ex.dows.length||ex.dows.length!==r.daysPerWeek||ex.scheduleConfirmed!==true)out.push('実施曜日と週の頻度の確認');
+    if(r.mode!=='simple'&&!r.holdSeconds&&!r.holdNotApplicable)out.push('保持時間、または保持なしの明示確認');
     if(ex.mediaDisabled)out.push('画像非表示：初回指導の確認が必要');
-    if(r.postoperative===null)out.push('保存療法／術後の確認');
-    if(r.postoperative)for(const [k,v] of Object.entries(r.surgery))if(!v)out.push('術後指示：'+k);
-    for(const g of requiredGates(ex)){
-      const v=r.gates[g];
-      const mandatory=(d.gates.split('+').includes(g))||(category?.notes.includes(g));
-      if(!v?.details||!(v.status==='allowed'||(!mandatory&&v.status==='not_applicable')))out.push(g+'：'+catalog.gates[g]);
+    if(r.mode!=='simple'){
+      if(!r.imageCompatible||r.imageId!==d.image||r.imageSha256!==d.sha256||r.side==='left')out.push('指定側・支持・許可範囲と画像の整合（左専用画像未検証）');
+      if(r.postoperative===null)out.push('保存療法／術後の確認');
+      if(r.postoperative)for(const [k,v] of Object.entries(r.surgery))if(!v)out.push('術後指示：'+k);
+      for(const g of requiredGates(ex)){
+        const v=r.gates[g];
+        const mandatory=(d.gates.split('+').includes(g))||(category?.notes.includes(g));
+        if(!v?.details||!(v.status==='allowed'||(!mandatory&&v.status==='not_applicable')))out.push(g+'：'+catalog.gates[g]);
+      }
+      if(d.gates.includes('G7')&&(!r.supervised||!r.sportPlan||!r.restSeconds))out.push('監督下動作確認・競技量/速度/場所/休息の個別計画');
     }
-    if(d.gates.includes('G7')&&(!r.supervised||!r.sportPlan||!r.restSeconds))out.push('監督下動作確認・競技量/速度/場所/休息の個別計画');
     return out;
   }
   function assertPrescribable(items,patientId){
     for(const ex of items){const errors=issues(ex);if(isNew(ex)&&patientId&&normalize(ex.clinicalV02).patient.patientId!==patientId)errors.push('別患者への処方確認は流用できません');if(errors.length)throw Error(ex.name+'：'+errors.join('、'));}
-    if(items.length>6&&items.some(isNew)&&!items.filter(isNew).every(ex=>normalize(ex.clinicalV02).extraReason))throw Error('6種を超える処方の理由を入力してください。');
   }
   function imagePath(ex,preview=false){const d=definition(ex);return d&&d.image&&!ex.mediaDisabled&&(preview||issues(ex).length===0)?d.image:null;}
-  function prescription(raw){const r=normalize(raw),basis={total:'合計',per_side:'指定側につき',each_side:'左右各',each_direction:`${r.doseDirections||'方向未指定'}の各方向`,round_trip:'往復'};return {side:({right:'右',left:'左',bilateral:'両側',alternating:'左右交互',none:'左右指定なし'})[r.side]||'',repetitions:r.reps&&r.doseUnit?(r.amountBasis==='round_trip'?`1セット＝片道${r.reps}${r.doseUnit}の往復（計${r.reps*2}${r.doseUnit}）`:`${r.reps}${r.doseUnit}（${basis[r.amountBasis]||'片側/合計未確認'}）`)+(r.doseDetail?'／'+r.doseDetail:''):'',sets:r.sets?`${r.sets}セット`:'',hold:r.holdSeconds?`${r.holdSeconds}秒`:r.holdNotApplicable?'保持なし（PT確認）':'',frequency:r.sessionsPerDay&&r.daysPerWeek?`1日${r.sessionsPerDay}回・週${r.daysPerWeek}日`:'',load:[r.load,r.rom].filter(Boolean).join('／'),support:r.support};}
+  function prescription(raw){const r=normalize(raw),basis={total:'合計',per_side:'指定側につき',each_side:'左右各',each_direction:`${r.doseDirections||'方向未指定'}の各方向`,round_trip:'往復'};return {side:({right:'右',left:'左',bilateral:'両側',alternating:'左右交互',none:'左右指定なし'})[r.side]||'',repetitions:r.reps&&r.doseUnit?(r.amountBasis==='round_trip'?`1セット＝片道${r.reps}${r.doseUnit}の往復（計${r.reps*2}${r.doseUnit}）`:`${r.reps}${r.doseUnit}（${basis[r.amountBasis]||'片側/合計未確認'}）`)+(r.doseDetail?'／'+r.doseDetail:''):'',sets:r.sets?`${r.sets}セット`:'',hold:r.holdSeconds?`${r.holdSeconds}秒`:r.mode==='simple'?'保持設定なし':r.holdNotApplicable?'保持なし（PT確認）':'',frequency:r.sessionsPerDay&&r.daysPerWeek?`1日${r.sessionsPerDay}回・週${r.daysPerWeek}日`:'',load:[r.load,r.rom].filter(Boolean).join('／'),support:r.support};}
   function weekdayDraft(days){return [...({1:[1],2:[1,4],3:[1,3,5],4:[1,2,4,6],5:[1,2,3,4,5],6:[1,2,3,4,5,6],7:[0,1,2,3,4,5,6]}[days]||[])];}
   function initialDose(id,saved){
     const draft=doseDraft(id);if(!draft)return null;
@@ -119,5 +141,5 @@
     const days=saved?.dows,valid=Array.isArray(days)&&days.length>0&&days.every(d=>Number.isInteger(d)&&d>=0&&d<7)&&new Set(days).size===days.length;
     return {clinicalV02:draft,dows:valid?[...days]:weekdayDraft(draft.daysPerWeek)};
   }
-  return {normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
+  return {patientSteps,initialSide,normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
 });
