@@ -117,3 +117,21 @@ fieldset input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(
 .evidence-content a{display:inline-block;padding:8px 0;text-decoration:underline}
 
 .tpl-card[hidden]{display:none!important}
+/* Clinical v0.2: text reflows; primary and stop controls remain in the dialog. */
+#patientSession .t-modal {display:flex;flex-direction:column;overflow:hidden;min-height:0;height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);padding-bottom:env(safe-area-inset-bottom, 0px);font-size:18px;line-height:1.6;}
+#patientSession .t-hd {flex-shrink:0;}
+#patientSession [data-patient-session] {overflow-y:auto;min-height:0;padding:0 4px 16px;}
+#patientSession .session-actions {flex-shrink:0;background:white;border-top:2px solid var(--teal);padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:8px;z-index:2;}
+#patientSession .session-actions .btn {flex:1 1 140px;white-space:normal;min-height:56px;margin:0;font-size:1em;}
+#patientSession .btn-stop {background:#9c2626;color:white;}
+#patientSession figure {margin:12px 0;}
+#patientSession figcaption {font-size:1em;}
+#patientSession .guide-image,#clinicalPreview .guide-image {width:100%;height:auto;max-height:360px;object-fit:contain;transform:none;}
+#patientSession .notice,#patientSession p,#clinicalShelf p,#clinicalPrescription p {overflow-wrap:anywhere;}
+#clinicalPrescription .pick-label {padding:12px 0;min-height:44px;}
+#clinicalPrescription fieldset {padding:12px;margin:16px 0;min-width:0;}
+#cr-errors,#session-error {color:#9c2626;white-space:pre-wrap;}
+.btn:disabled {opacity:.55;cursor:not-allowed;}
+button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid #ba6600;outline-offset:3px;}
+@media (max-height:500px) {#patientSession .guide-image {max-height:160px;}#patientSession .t-hd {padding:6px;}#patientSession .session-actions {padding:4px 0;}}
+@media (prefers-reduced-motion:reduce) {*,*::before,*::after {animation:none!important;scroll-behavior:auto!important;}}

@@ -5,6 +5,7 @@
   else root.RehabCore = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
+  const clinical = typeof module !== 'undefined' && module.exports ? require('./clinical-rules.js') : globalThis.ClinicalRules;
   const clone = x => JSON.parse(JSON.stringify(x));
   const text = (x, n = 500) => typeof x === 'string' ? x.slice(0, n) : '';
   const validDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s)) && new Date(s + 'T12:00:00Z').toISOString().slice(0, 10) === s;
@@ -14,7 +15,7 @@
   function prescription(raw) { return Object.fromEntries(Object.keys(prescriptionLabels).map(k=>[k,text(record(raw)?raw[k]:'',120).trim()])); }
   function prescriptionIssues(ex) {
     const p=prescription(ex.prescription);
-    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(ex.scheduleConfirmed===true?[]:['実施曜日の確認'])];
+    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(ex.scheduleConfirmed===true?[]:['実施曜日の確認']),...(clinical?.issues(ex)||[])];
   }
   function menu(input) {
     if (!Array.isArray(input) || input.length > 60) throw Error('メニューは60種目以内にしてください。');
@@ -27,7 +28,7 @@
       const dows = m.dows === undefined ? [] : m.dows;
       if (!Array.isArray(dows) || dows.some(x => !Number.isInteger(x) || x < 0 || x > 6)) throw Error('実施曜日が不正です。');
       return { id: mid, name: text(m.name, 120), params: text(m.params, 100), note: text(m.note), ...(text(m.diseaseNote)?{diseaseNote:text(m.diseaseNote)}:{}), dows: [...new Set(dows)],
-        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), prescription:prescription(m.prescription), scheduleConfirmed:m.scheduleConfirmed===true, ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}) };
+        exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), prescription:clinical?.isNew(m)?clinical.prescription(m.clinicalV02):prescription(m.prescription), scheduleConfirmed:m.scheduleConfirmed===true, ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}), ...(clinical?.isNew(m)?{clinicalV02:clinical.normalize(m.clinicalV02)}:{}) };
     });
   }
   function videoUrl(s) {
@@ -69,8 +70,15 @@
       if (!validDate(key) || !record(l)) throw Error('記録の日付または形式が不正です。');
       const done = {}, status = {};
       if (record(l.done)) for (const [k,v] of Object.entries(l.done)) if (id(k) && typeof v === 'boolean') done[k] = v;
-      if (record(l.status)) for (const [k,v] of Object.entries(l.status)) if (id(k) && ['done','partial','pain','forgot'].includes(v)) status[k] = v;
+      if (record(l.status)) for (const [k,v] of Object.entries(l.status)) if (id(k) && ['done','partial','pain','forgot','rest','cancelled'].includes(v)) status[k] = v;
       out[key] = {done,status,vas:Number.isInteger(l.vas) && l.vas >= 0 && l.vas <= 10 ? l.vas : null, note:text(l.note,2000)};
+      if(l.events!==undefined){
+        if(!Array.isArray(l.events)||l.events.length>10000)throw Error('実施回記録が不正です。');
+        const seen=new Set();out[key].events=l.events.map(e=>{
+          if(!record(e)||!id(e.event_id)||!id(e.session_id)||!id(e.prescription_item_id)||seen.has(e.event_id)||e.local_date!==key||!['done','partial','pain','forgot','rest','cancelled'].includes(e.status)||(e.timestamp_unknown===true?e.timestamp!==null||!Number.isFinite(Date.parse(e.imported_at)):!Number.isFinite(Date.parse(e.timestamp))))throw Error('実施回記録の識別子・日時・状態が不正です。');
+          seen.add(e.event_id);return {event_id:e.event_id,session_id:e.session_id,prescription_item_id:e.prescription_item_id,prescription_version:text(e.prescription_version,100),local_date:key,time_zone:text(e.time_zone,50),timestamp:e.timestamp_unknown===true?null:text(e.timestamp,40),...(e.timestamp_unknown===true?{timestamp_unknown:true,imported_at:text(e.imported_at,40)}:{}),status:e.status,reported_reps:Number.isFinite(e.reported_reps)&&e.reported_reps>=0?e.reported_reps:null,reason_optional:text(e.reason_optional),supersedes_event_id:id(e.supersedes_event_id)?e.supersedes_event_id:null};
+        });
+      }
       if (Array.isArray(l.menuSnapshot)) out[key].menuSnapshot = menu(l.menuSnapshot);
       if (l.menuRevisions !== undefined) {
         if (!Array.isArray(l.menuRevisions) || l.menuRevisions.length > 100) throw Error('当日のメニュー変更履歴が多すぎます。');
@@ -99,6 +107,7 @@
     return {settings:s,logs:l};
   }
   function changeMenu(s, l, next, today, tomorrow) {
+    clinical?.assertPrescribable(next,s.patientId);
     const date = l[today]?.menuSnapshot ? tomorrow : today;
     s.menu = menu(next);
     s.plans = (s.plans || []).filter(p => p.from !== date);
@@ -106,6 +115,7 @@
     return date;
   }
   function applyMenuToday(s, l, today, dow) {
+    clinical?.assertPrescribable(s.menu,s.patientId);
     if (today < s.startDate) throw Error('開始日より前には反映できません。');
     const next = menu(s.menu), current = l[today], items = scheduled(next,dow);
     if (current?.menuSnapshot && JSON.stringify(current.menuSnapshot) !== JSON.stringify(items)) {

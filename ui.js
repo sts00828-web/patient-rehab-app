@@ -11,7 +11,7 @@ function dk(d) {
   return `${y}-${m}-${dd}`;
 }
 
-function todayKey() { return dk(new Date()); }
+function todayKey() { return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
 
 function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); }
 
