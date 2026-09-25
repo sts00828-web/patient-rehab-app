@@ -1,7 +1,7 @@
 /* v0.2 review shelf and explicit patient sessions. Legacy keys stay untouched. */
 const CR=ClinicalRules, CC=ClinicalCatalog;
 const legacyPrescriptionHtml=prescriptionHtml;
-prescriptionHtml=function(ex){const r=ex.clinicalV02;return legacyPrescriptionHtml(ex)+(r?`<p class="notice">個別制限：${escapeHtml(r.constraints)}</p>${r.restSeconds?`<p>セット間休息：${r.restSeconds}秒</p>`:''}${r.sportPlan?`<p class="notice">競技準備の個別計画：${escapeHtml(r.sportPlan)}</p>`:''}`:'');};
+prescriptionHtml=function(ex){const r=ex.clinicalV02;return legacyPrescriptionHtml(ex)+(r?`${r.constraints?.trim()?`<p class="notice">個別制限：${escapeHtml(r.constraints)}</p>`:''}${r.restSeconds?`<p>セット間休息：${r.restSeconds}秒</p>`:''}${r.sportPlan?`<p class="notice">競技準備の個別計画：${escapeHtml(r.sportPlan)}</p>`:''}`:'');};
 const legacyMediaFor=mediaFor;
 mediaFor=function(ex){const d=CR.definition(ex);return CR.isNew(ex)?(CR.imagePath(ex)&&(!S||ex.clinicalV02?.patient?.patientId===S.patientId)?{...d,imagePath:d.image}:null):legacyMediaFor(ex);};
 function exerciseImageHtml(ex,preview=false){

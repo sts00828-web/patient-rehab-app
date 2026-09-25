@@ -128,7 +128,8 @@ function renderToday(){
   for(const [i,ex] of items.entries()){
     const media=mediaFor(ex),st=log.status?.[ex.id]||(log.done?.[ex.id]?'done':'');
     h+=`<article class="card exercise-card"><div class="exercise-top"><div><span class="eyebrow">運動 ${i+1}</span><h2>${escapeHtml(ex.name)}</h2><div class="dose">${escapeHtml(doseSummary(ex))}</div></div>${media?`<button class="image-button" onclick="showExercise(${i})" aria-label="${escapeAttr(ex.name)}のイラストと手順"><img src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}" loading="lazy"></button>`:''}</div><button class="btn btn-out guide-button" onclick="showExercise(${i})">${media?'イラスト・手順・自分の動画':'やり方・注意点・自分の動画'}</button>`;
-    h+=`<div class="notice">指定側：${escapeHtml(ex.prescription?.side||'担当者に確認')} ／ 制限：${escapeHtml(ex.clinicalV02?.constraints||ex.prescription?.load||'担当者の指示を確認')}</div><details class="home-prescription"><summary>あなたの回数・曜日を確認</summary>${prescriptionHtml(ex)}</details>${exerciseNotices(ex,media)}`;
+    const restriction=[ex.clinicalV02?.constraints,ex.prescription?.load].find(value=>value?.trim());
+    h+=`<div class="notice">指定側：${escapeHtml(ex.prescription?.side||'担当者に確認')}${restriction?` ／ 制限：${escapeHtml(restriction)}`:''}</div><details class="home-prescription"><summary>あなたの回数・曜日を確認</summary>${prescriptionHtml(ex)}</details>${exerciseNotices(ex,media)}`;
     h+=`<p role="status">${st?(statusLabels[st]||st):'未開始・未記録'}</p><button class="btn btn-pri" onclick="showExercise(${i})">${st?'記録を確認・訂正する':'運動を始める'}</button></article>`;
   }
   h+=summary.html;
