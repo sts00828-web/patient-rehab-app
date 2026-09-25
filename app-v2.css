@@ -180,3 +180,10 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
   #patientSession .guide-image {max-height:140px;}
   #patientSession .session-actions .btn-pri {flex-basis:140px;}
 }
+
+/* Staff bug report: readable and selectable on narrow screens. */
+#bugReportModal textarea{display:block;width:100%;min-width:0;resize:vertical;font-size:16px}
+#bugReportModal p{overflow-wrap:anywhere;margin:10px 0}
+#bugReportModal .btn{margin-top:10px}
+#setupOverlay{overflow-y:auto}
+#setupOverlay .setup-card{margin:auto}

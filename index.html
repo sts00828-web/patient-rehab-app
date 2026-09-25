@@ -309,6 +309,7 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
       ※ セラピスト操作用：ヘッダー（緑色の上部）を <strong>2秒長押し</strong>（指は動かさない）でセラピストモード起動<br>
       ※ うまく押せない場合は URL末尾に <code>#staff</code> を付けてアクセス
     </p>
+    <button class="btn btn-out" onclick="openBugReport()">不具合を報告</button>
     <button class="btn btn-out" style="margin-top:6px" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
   </div>
 </div>
@@ -341,6 +342,7 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
 <script src="ui.js"></script>
 
 <script src="app-v2.js"></script>
+<script src="bug-report.js"></script>
 <script src="exercise-print.js"></script>
 <script src="exercise-video.js"></script>
 <script src="patient-video.js"></script>
