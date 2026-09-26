@@ -254,6 +254,7 @@ function openPatientSession(i){
   drawPatientSession(ex);
 }
 function beginPatientSession(i){
+  if(getLog(todayKey()).vas===null){renderToday();toast('先に運動前の痛みを選んでください');return;}
   openPatientSession(i);
   const sessionId=patientSession?.id,node=$('patientSession');if(!sessionId||!node)return;
   const start=()=>{if(patientSession?.id===sessionId&&!patientSession.started&&!patientSession.saved)startPatientSession();};
@@ -283,6 +284,10 @@ function nextPatientSessionIndex(){
 function nextPatientSession(){
   try{currentSessionExercise();const i=nextPatientSessionIndex();if(i>=0){patientSession=null;openPatientSession(i);}}catch(e){sessionError(e);}
 }
+function recordedSessionActions(next,lastEventId){
+  if(next>=0)return `<button class="btn btn-pri" onclick="nextPatientSession()">次の運動へ</button><button class="btn btn-out" onclick="newPatientSession()">別の回を始める</button><button class="btn btn-out" onclick="correctPatientRecord('${lastEventId}')">記録を訂正</button>`;
+  return `<p class="session-day-complete">✓ 今日の運動はすべて記録できました</p><button class="btn btn-pri" onclick="closeModal('patientSession')">今日の運動を終了</button><button class="btn btn-out" onclick="correctPatientRecord('${lastEventId}')">記録を訂正</button>`;
+}
 function drawPatientSession(ex){
   const s=patientSession,m=CR.isNew(ex)?CR.definition(ex):legacyMediaFor(ex),problems=patientAccessIssues(ex),log=getLog(s.day),events=(log.events||[]).filter(e=>e.prescription_item_id===ex.id&&e.prescription_version===s.revision),last=events.at(-1),status=log.status?.[ex.id]||(log.done?.[ex.id]?'done':'');
   const recorded=s.saved||status&&!s.started&&!s.fresh,next=nextPatientSessionIndex();
@@ -303,14 +308,14 @@ function drawPatientSession(ex){
     <details class="session-video"><summary>動画を見る・保存する</summary><section id="patient-video"></section>${C.videoUrl(ex.videoUrl)?`<a class="btn btn-out" href="${escapeAttr(C.videoUrl(ex.videoUrl))}" target="_blank" rel="noopener noreferrer">担当者の動画を見る</a>`:''}</details>
     <p id="session-error" role="alert"></p>
     </div><div class="session-actions">
-    ${recorded?`${next>=0?'<button class="btn btn-pri" onclick="nextPatientSession()">次の運動へ</button>':''}<button class="btn btn-out" onclick="newPatientSession()">別の回を始める</button><button class="btn btn-out" onclick="correctPatientRecord('${last?.event_id||''}')">記録を訂正</button>`:s.started?`<button class="btn btn-pri" onclick="recordPatientSession('done')">できた</button><button class="btn btn-out" onclick="recordPatientSession('partial')">途中まで</button><button class="btn btn-out" onclick="recordPatientSession('pain')">痛みで中止</button>`:`<button data-start class="btn btn-pri" ${problems.length?'disabled':''} onclick="startPatientSession()">始める</button><button class="btn btn-out" onclick="recordPatientSession('rest')">今日は休む</button>`}
+    ${recorded?recordedSessionActions(next,last?.event_id||''):s.started?`<button class="btn btn-pri" onclick="recordPatientSession('done')">できた</button><button class="btn btn-out" onclick="recordPatientSession('partial')">途中まで</button><button class="btn btn-out" onclick="recordPatientSession('pain')">痛みで中止</button>`:`<button data-start class="btn btn-pri" ${problems.length?'disabled':''} onclick="startPatientSession()">始める</button><button class="btn btn-out" onclick="recordPatientSession('rest')">今日は休む</button>`}
     </div>`);
   if(typeof PatientVideo!=='undefined')PatientVideo.mount(ex);
 }
 const drawPatientSessionContent=drawPatientSession;
 function currentSessionExercise(){const s=patientSession;if(!s||(!s.history&&s.day!==todayKey())||s.day>todayKey()||s.patientId!==S?.patientId)throw Error('日付または患者が変わりました。今日の画面から開き直してください。');const ex=(s.history?getLog(s.day).menuSnapshot||[]:patientItems()).find(e=>e.id===s.itemId);if(!ex||(ex.clinicalV02?.revision||'legacy')!==s.revision)throw Error('処方が変わりました。開き直してください。');return ex;}
 function sessionError(e){const node=$('session-error');if(node)node.textContent=e.message;else toast(e.message);}
-function startPatientSession(){try{if(patientSession?.history)throw Error('過去の記録から運動は開始できません。今日の画面へ戻ってください。');const ex=currentSessionExercise(),issues=patientAccessIssues(ex);if(issues.length)throw Error(issues.join('、'));const img=$('patientSession').querySelector('img');if((CR.isNew(ex)||legacyMediaFor(ex))&&!ex.mediaDisabled&&(!img?.complete||!img.naturalWidth))throw Error('画像が確認できません。読み込み後に開始してください。');const reps=$('session-reps')?.value||'',reason=$('session-reason')?.value||'';patientSession.started=true;drawPatientSession(ex);$('session-reps').value=reps;$('session-reason').value=reason;}catch(e){sessionError(e);}}
+function startPatientSession(){try{if(patientSession?.history)throw Error('過去の記録から運動は開始できません。今日の画面へ戻ってください。');if(getLog(todayKey()).vas===null)throw Error('先に運動前の痛みを選んでください。');const ex=currentSessionExercise(),issues=patientAccessIssues(ex);if(issues.length)throw Error(issues.join('、'));const img=$('patientSession').querySelector('img');if((CR.isNew(ex)||legacyMediaFor(ex))&&!ex.mediaDisabled&&(!img?.complete||!img.naturalWidth))throw Error('画像が確認できません。読み込み後に開始してください。');const reps=$('session-reps')?.value||'',reason=$('session-reason')?.value||'';patientSession.started=true;drawPatientSession(ex);$('session-reps').value=reps;$('session-reason').value=reason;}catch(e){sessionError(e);}}
 function newPatientSession(){try{if(patientSession?.history)throw Error('過去の記録では新しい実施回を開始できません。');const ex=currentSessionExercise();patientSession={...patientSession,id:uid(),started:false,saved:false,fresh:true};drawPatientSession(ex);}catch(e){sessionError(e);}}
 function recordPatientSession(status,supersedes=null){
   try{
@@ -320,7 +325,7 @@ function recordPatientSession(status,supersedes=null){
     if(!supersedes&&status!=='rest'&&!s.started)throw Error('先に運動を始めてください。');
     if(['done','partial'].includes(status)){const errors=patientAccessIssues(ex);if(errors.length)throw Error(errors.join('、'));}
     const value=$('session-reps')?.value,reported=value===''||value===undefined?null:Number(value);if(reported!==null&&(!Number.isFinite(reported)||reported<0))throw Error('実際の量を確認してください。');
-    const log=s.history?L[s.day]:writableLog();log.events=log.events||[];
+    const log=s.history?L[s.day]:writableLog();if(!s.history&&log.vas===null)throw Error('先に運動前の痛みを選んでください。');log.events=log.events||[];
     if(!supersedes&&log.events.some(e=>e.session_id===s.id))return;
     const prior=supersedes&&log.events.find(e=>e.event_id===supersedes);
     if(supersedes&&supersedes!=='legacy'&&(!prior||prior.prescription_item_id!==ex.id||log.events.some(e=>e.supersedes_event_id===supersedes)))throw Error('訂正対象が更新されました。開き直してください。');

@@ -123,10 +123,14 @@ function exerciseNotices(ex,media){
   return `${note?`<div class="notice individual-note"><strong>あなたへの指示・引き継いだ注意</strong><p>${escapeHtml(note)}</p></div>`:''}${caution||diseaseNote?`<div class="notice"><strong>始める前の注意</strong>${caution?`<p>${escapeHtml(caution)}</p>`:''}${diseaseNote?`<p>${escapeHtml(diseaseNote)}</p>`:''}</div>`:''}`;
 }
 function recordSummary(items,log){
-  const counts={done:0,partial:0,pain:0,forgot:0,rest:0,cancelled:0};
+  const counts={done:0,partial:0,pain:0,forgot:0,rest:0};
   for(const ex of items){const status=log.status?.[ex.id]||(log.done?.[ex.id]?'done':'');if(status in counts)counts[status]++;}
   const recorded=Object.values(counts).reduce((a,b)=>a+b,0);
-  return {recorded,counts,html:`<div class="card record-summary" id="daily-record-summary" role="status"><h2>${items.length&&recorded===items.length?'今日の運動の様子を記録しました':'今日の記録'}</h2><p>${items.length}種目中 ${recorded}種目を記録${recorded<items.length?`（未記録 ${items.length-recorded}種目）`:''}</p><p>${Object.entries(counts).filter(([,n])=>n).map(([key,n])=>`${statusLabels[key]} ${n}種目`).join(' ／ ')||'運動開始と実施後の記録は別の操作です。'}</p>${items.length&&recorded===items.length?'<p>記録は保存済みです。ここで閉じて大丈夫です。</p>':''}<p class="hint">痛みとメモは任意です。休んだ日も、そのまま記録してください。</p></div>`};
+  const complete=items.length>0&&recorded===items.length;
+  return {recorded,counts,complete,html:`<div class="card record-summary" id="daily-record-summary" role="status"><h2>${complete?'今日の運動は終了です':'今日の記録'}</h2><p>${items.length}種目中 ${recorded}種目を記録${recorded<items.length?`（未記録 ${items.length-recorded}種目）`:''}</p><p>${Object.entries(counts).filter(([,n])=>n).map(([key,n])=>`${statusLabels[key]} ${n}種目`).join(' ／ ')||'運動開始と実施後の記録は別の操作です。'}</p>${complete?'<p>できた運動も、できなかった運動も保存しました。今日はこれで終了して大丈夫です。</p>':''}<p class="hint">運動前の痛みは必須です。メモは任意です。</p></div>`};
+}
+function painGateHtml(){
+  return `<section class="card pain-gate" aria-labelledby="pain-gate-title"><div class="pain-step">運動を始める前に</div><h1 id="pain-gate-title" tabindex="-1">今の痛みを選んでください</h1><p>今日の運動前の痛みを、0〜10から必ず1つ選びます。</p><p class="hint">0＝痛みなし、10＝想像できる最も強い痛み</p><p class="hint">記録する場面：${escapeHtml(S.painContext||'安静時・歩く時など、担当者と決めた場面')}</p><div class="pain-options pain-gate-options" role="group" aria-label="運動前の痛み">${Array.from({length:11},(_,v)=>`<button type="button" class="pain-choice" onclick="saveVas(${v})" aria-label="痛み ${v}">${v}</button>`).join('')}</div><p class="pain-required">選択すると、今日の運動が表示されます。</p></section>`;
 }
 let todayExerciseIndex=0,todaySwipeStart=null;
 function moveTodayExercise(delta){
@@ -148,6 +152,11 @@ function renderToday(){
   todayExerciseIndex=Math.max(0,Math.min(items.length-1,todayExerciseIndex));
   let h='';
   if(S.plans.some(p=>p.from>key))h+=`<div class="notice">現在の設定は${S.menu.length}種目です。本日は記録済みの${items.length}種目を表示し、更新は明日から反映します。今日から変更する場合は、担当者にご相談ください。</div>`;
+  if(items.length&&!before&&log.vas===null){
+    $('today-content').innerHTML=h+painGateHtml()+safetyHtml(true)+'<details class="card"><summary>メニュー更新・データ保存</summary><p class="hint">記録はこの端末に保存されます。院内への自動送信はありません。</p><button class="btn btn-out" onclick="showReceiveSettings()">メニュー更新・QR読込</button><button class="btn btn-out" onclick="exportPatientData()">自分の記録をバックアップ</button></details>';
+    const painTitle=$('pain-gate-title');if(typeof painTitle?.focus==='function')painTitle.focus({preventScroll:true});return;
+  }
+  if(summary.complete)h+=`<section class="card day-complete" role="status"><div class="day-complete-mark" aria-hidden="true">✓</div><h1>今日の運動は終了です</h1><p>できた運動も、できなかった運動も、すべて記録しました。</p><p>${Object.entries(summary.counts).filter(([,n])=>n).map(([key,n])=>`${statusLabels[key]} ${n}種目`).join(' ／ ')}</p></section>`;
   if(items.length){
     const i=todayExerciseIndex,ex=items[i],media=mediaFor(ex),st=log.status?.[ex.id]||(log.done?.[ex.id]?'done':''),restriction=[ex.clinicalV02?.constraints,ex.prescription?.load].find(value=>value?.trim());
     const image=media?`<img class="today-exercise-image" src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}の姿勢">`:'<div class="today-image-missing">イラストは担当者と確認してください</div>';
@@ -166,7 +175,7 @@ function renderToday(){
     </section>`;
   }else h+=`<div class="card empty"><h2>${before?'開始日は '+escapeHtml(S.startDate):'今日は休養日です'}</h2><p>痛みで休んだことも、大切な記録です。</p></div>`;
   if(!before){
-    h+=`<details class="card optional-record"><summary>痛み・メモを残す（任意）${log.vas!==null?` ／ 痛み ${log.vas}`:''}</summary><div class="card-ttl">今日の痛み（0〜10）</div><p class="hint">0＝痛みなし、10＝想像できる最も強い痛み。毎回、担当の理学療法士と決めた同じ場面で記録してください。</p><p class="hint">記録する場面：${escapeHtml(S.painContext||'未設定。安静時・歩く時など、どの場面を記録するか担当者に確認してください')}</p><div class="pain-value" id="pain-value">${log.vas===null?'未記録':log.vas+' / 10'}</div><div class="pain-options" role="group" aria-label="痛みの強さ">${Array.from({length:11},(_,v)=>`<button type="button" aria-pressed="${log.vas===v}" class="pain-choice ${log.vas===v?'selected':''}" onclick="saveVas(${v})">${v}</button>`).join('')}</div><button class="text-button" onclick="clearPain()">痛みを未記録に戻す</button><label class="card-ttl" for="note-ta">メモ</label><textarea class="note-ta" id="note-ta" maxlength="2000" placeholder="気づいたことや、休んだ理由など" oninput="saveNote(this.value)">${escapeHtml(log.note||'')}</textarea><div class="hint">入力すると自動で保存します。</div></details>`;
+    h+=`<details class="card optional-record"><summary>運動前の痛みを変更・メモを残す${log.vas!==null?` ／ 痛み ${log.vas}`:''}</summary><div class="card-ttl">運動前の痛み（必須・0〜10）</div><p class="hint">0＝痛みなし、10＝想像できる最も強い痛み。毎回、担当の理学療法士と決めた同じ場面で記録してください。</p><p class="hint">記録する場面：${escapeHtml(S.painContext||'未設定。安静時・歩く時など、どの場面を記録するか担当者に確認してください')}</p><div class="pain-value" id="pain-value">${log.vas===null?'未記録':log.vas+' / 10'}</div><div class="pain-options" role="group" aria-label="痛みの強さ">${Array.from({length:11},(_,v)=>`<button type="button" aria-pressed="${log.vas===v}" class="pain-choice ${log.vas===v?'selected':''}" onclick="saveVas(${v})">${v}</button>`).join('')}</div><button class="text-button" onclick="clearPain()">選び直す</button><label class="card-ttl" for="note-ta">メモ（任意）</label><textarea class="note-ta" id="note-ta" maxlength="2000" placeholder="気づいたことや、休んだ理由など" oninput="saveNote(this.value)">${escapeHtml(log.note||'')}</textarea><div class="hint">入力すると自動で保存します。</div></details>`;
   }
   h+=safetyHtml(true);
   h+='<details class="card"><summary>メニュー更新・データ保存</summary><p class="hint">記録はこの端末に保存されます。院内への自動送信はありません。</p><button class="btn btn-out" onclick="showReceiveSettings()">メニュー更新・QR読込</button><button class="btn btn-out" onclick="exportPatientData()">自分の記録をバックアップ</button></details>';
@@ -176,6 +185,7 @@ function renderToday(){
 }
 function setExerciseStatus(i,value){
   if(activeDay!==todayKey()){refreshDay();toast('日付が変わりました。内容を確認して記録してください');return;}
+  if(getLog(todayKey()).vas===null){renderToday();toast('先に運動前の痛みを選んでください');return;}
   if(value&&!statusLabels[value])return;
   const ex=todayExercises(todayDow())[i];if(!ex)return;
   const log=writableLog();log.status[ex.id]=value;log.done[ex.id]=value==='done';saveLogs();renderToday();toast('記録しました');

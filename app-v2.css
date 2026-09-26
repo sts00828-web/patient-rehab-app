@@ -208,6 +208,8 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 .session-essential p{margin:6px 0}
 .optional-record>summary{font-weight:700;cursor:pointer}
 .optional-record[open]>summary{margin-bottom:16px}
+.pain-gate{text-align:center;padding:24px 18px}.pain-gate h1{font-size:25px;line-height:1.35;margin:8px 0 12px}.pain-step{font-weight:800;color:var(--teal);letter-spacing:.08em}.pain-gate-options{grid-template-columns:repeat(4,1fr);margin:22px 0 14px}.pain-gate-options .pain-choice{min-height:52px;font-size:20px;font-weight:800}.pain-required{font-weight:700;color:var(--teal)}
+.day-complete{text-align:center;background:#eef9f3;border:2px solid var(--green)}.day-complete-mark{width:58px;height:58px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:white;font-size:34px;font-weight:800}.day-complete h1{font-size:25px;margin:4px 0 10px}.session-day-complete{flex-basis:100%;text-align:center;font-weight:800;color:#246446;background:#eef9f3;border-radius:10px;padding:12px;margin:0}
 
 /* One-screen patient flow: one exercise is visible at a time. */
 .today-carousel{max-width:520px;margin:0 auto;padding-bottom:142px;touch-action:pan-y}

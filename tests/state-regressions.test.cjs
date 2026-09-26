@@ -25,9 +25,12 @@ test('optional chart number survives local backup and archives but never enters 
   a.run("S=C.settings({menu:[]},'new_prescription',todayKey())");
   assert.equal(a.run('S.chartId'),'');assert.equal(a.run('S.patientName'),'');
 });
-test('deleting last future exercise retains today snapshot and pain controls',()=>{
+test('deleting last future exercise retains today snapshot behind the required pain screen',()=>{
   const a=tab();a.run(setup+`writableLog().status.one='done';C.changeMenu(S,L,[],todayKey(),dk(addDays(new Date(),1)));renderToday();`);
   assert.equal(a.run('todayExercises(new Date().getDay()).length'),1);
+  assert.ok(a.nodes.get('today-content').innerHTML.includes('pain-gate'));
+  assert.ok(!a.nodes.get('today-content').innerHTML.includes('exercise-card'));
+  a.run('saveVas(0)');
   assert.ok(a.nodes.get('today-content').innerHTML.includes('exercise-card'));
   assert.ok(a.nodes.get('today-content').innerHTML.includes('note-ta'));
   a.run('C.applyMenuToday(S,L,todayKey(),new Date().getDay());renderToday()');
