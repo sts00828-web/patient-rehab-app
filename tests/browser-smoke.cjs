@@ -51,6 +51,7 @@ async function main(){
   })()`);
   await evaluate('closeTherapist()');
   await check('first launch and local vendor dependencies',"typeof LZString==='object' && typeof qrcode==='function' && typeof Html5Qrcode==='function' && !storageBlocked");
+  await check('rapid double taps do not trigger page zoom while pinch zoom remains available',"getComputedStyle(document.documentElement).touchAction==='manipulation'&&!document.querySelector('meta[name=viewport]').content.includes('maximum-scale')");
   await check('cancel pending camera startup stops it before reopening',`(async()=>{
     const Original=Html5Qrcode;let resolveStart,created=0,stopped=0,cleared=0;
     Html5Qrcode=class {constructor(){created++}start(){return new Promise(r=>resolveStart=r)}stop(){stopped++;return Promise.resolve()}clear(){cleared++}};
