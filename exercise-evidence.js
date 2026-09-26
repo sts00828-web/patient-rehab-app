@@ -15,6 +15,7 @@ const ExerciseEvidence = (() => {
     return `<p><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a></p>`;
   };
   function html(ex,disease){
+    if(typeof ex?.exerciseKey==='string'&&ex.exerciseKey.startsWith('v02_'))return clinicalHtml(ex,disease);
     const e=EXERCISE_LIBRARY[ex?.exerciseKey];
     const matches=e&&DISEASE_LIBRARY[disease]&&getDiseaseExerciseKeys(disease).includes(ex.exerciseKey);
     const g=matches&&(guidelines[disease]||guidelines[DISEASE_LIBRARY[disease]?.baseDisease]);
@@ -26,6 +27,24 @@ const ExerciseEvidence = (() => {
       <h3>処方量について</h3><p>アプリの標準回数・セット数・保持時間は入力補助用の初期値です。この数値自体を研究で検証した処方量として提示しているわけではありません。個々の患者の状態に合わせて調整してください。</p>
       <p class="hint">文献情報の登録日：2026-09-19。リンク先の閲覧にはインターネット接続が必要です。資料によっては英語・PDF・有料本文です。</p></div>`;
   }
+  function clinicalHtml(ex,disease){
+    const result=typeof ClinicalEvidence==='undefined'?null:ClinicalEvidence.lookup(ex);
+    if(!result)return '<div class="evidence-content"><p>この新版運動の参考資料を読み込めません。オンラインでアプリを開き直してください。</p></div>';
+    const {definition:d,entry,source}=result,c=ClinicalEvidence.category(ex,disease);
+    const g=c?guidelines[ClinicalEvidence.categoryGuidelines[c.id]]:null;
+    const method=entry?.kind==='method';
+    return `<div class="evidence-content"><h3>${esc(d.name)}：参考文献・資料</h3>
+      <p class="hint">セラピスト向け。運動方法の解説資料と、有効性を検証する研究は別のものです。</p>
+      <h3>${method?'運動方法の参考資料（類似動作）':'関連分野の参考資料'}</h3>
+      ${!method?'<p class="notice">この種目そのものの手順・有効性を直接裏付ける文献は未確認です。下記は関連分野の資料です。</p>':''}
+      ${source?`<p><strong>${esc(source.title)}</strong><br>${esc(source.publisher)}${source.year?' ／ '+esc(source.year)+'年':''}</p><p>参照箇所・対応範囲：${esc(entry.section)}</p>${link(source.url,'参考資料の原文を開く')}`:'<p>参考資料は未登録です。エビデンスがないという意味ではありません。</p>'}
+      ${method?'<p class="hint">姿勢・用具・可動範囲などに違いがあります。本アプリの種目単独の効果や、説明・イラストとの完全一致を保証する資料ではありません。</p>':''}
+      <h3>疾患・介入全体のガイドライン</h3>
+      ${c?`<p>処方区分：${esc(c.name)}</p>`:'<p>処方区分を確認できないため、疾患別ガイドラインは表示していません。</p>'}
+      ${g?`<p><strong>${esc(g.title)}</strong><br>${esc(g.publisher)} ／ ${esc(g.year)}年</p><p>${esc(g.scope)}</p>${link(g.url,'ガイドライン原文・掲載ページを開く')}`:c?'<p>この処方区分に対応するガイドラインは未登録です。エビデンスがないという意味ではありません。</p>':''}
+      <h3>処方量について</h3><p>標準回数・セット数・保持時間は入力補助用の初期値です。参考資料の用量をそのまま採用したものではありません。病期・術後条件・個々の患者の状態に合わせて調整してください。</p>
+      <p class="hint">運動資料の確認日：${esc(ClinicalEvidence.checked)}。資料は主に英語です。原文を開くにはインターネット接続が必要です。既存ガイドライン一覧は網羅的な検索・最新版の保証ではありません。</p></div>`;
+  }
   return {html,guidelines};
 })();
 function showExerciseEvidence(ex,disease){
@@ -36,4 +55,9 @@ function showTemplateEvidence(i){
   if(!requireStaff())return;
   const template=getAllTemplates()[selectedTemplate];
   if(template?.menu[i])showExerciseEvidence(template.menu[i],selectedTemplate);
+}
+function showClinicalEvidence(id,categoryId){
+  if(!requireStaff())return;
+  if(typeof ClinicalCatalog==='undefined'||!Object.hasOwn(ClinicalCatalog.definitions,id))return;
+  showExerciseEvidence({exerciseKey:ClinicalCatalog.definitions[id].key,clinicalV02:{categoryId}},categoryId);
 }
