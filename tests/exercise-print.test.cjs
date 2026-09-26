@@ -11,6 +11,9 @@ test('hold time is prominent only when it is prescribed',()=>{
   const html=vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.png',steps:['姿勢を整える']})),'https://example.test/app/')",ctx);
   assert.equal((html.match(/<span>保持時間<\/span>/g)||[]).length,1);assert.ok(html.includes('<strong>10秒</strong>'));assert.ok(!html.includes('<strong>該当なし</strong>'));
 });
+test('print layout gives more room to the illustration and keeps quantity type moderate',()=>{
+  const html=render(1);assert.ok(html.includes('grid-template-columns:78mm 1fr'));assert.ok(html.includes('width:78mm;height:58mm'));assert.ok(html.includes('font-size:12.5pt'));
+});
 test('patient identity and unrelated prescription details are omitted',()=>{
   const html=render(1,{patientName:'印刷しない患者名',chartId:'SECRET-ID',diagnosis:'印刷しない診断名'});
   for(const text of ['印刷しない患者名','SECRET-ID','印刷しない診断名','開始日','患者ID'])assert.ok(!html.includes(text));

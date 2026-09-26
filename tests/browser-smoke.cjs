@@ -34,7 +34,8 @@ async function main(){
     const patient=one()&&!document.querySelector('[data-therapist-step="patient"]').hidden;
     setTherapistStep('menu',false);const menu=one()&&!$('clinical-catalog').closest('[data-therapist-step]').hidden;
     setTherapistStep('share',false);const share=one()&&document.querySelector('[data-therapist-step="share"] .t-sec-ttl').textContent.includes('患者さんへ渡す');
-    setTherapistStep('patient',false);return patient&&menu&&share;
+    const noDuplicateAdd=!$('therapist-content').textContent.includes('＋ 運動を選んで追加');
+    setTherapistStep('patient',false);return patient&&menu&&share&&noDuplicateAdd;
   })()`);
   for(const step of ['patient','menu','share']){
     await evaluate(`setTherapistStep('${step}',false)`);
