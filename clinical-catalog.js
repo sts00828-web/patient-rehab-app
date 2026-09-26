@@ -1,7 +1,7 @@
-/* Generated review catalog. Source: supplied v0.2 and latest image review. */
+/* Existing v0.2 definitions plus selected v0.3 additions. Clinical approval is not inferred from AI review. */
 (function(root){
 const data={
-  "version": "0.2",
+  "version": "0.3-selected",
   "definitions": {
     "S01": {
       "id": "S01",
@@ -2274,6 +2274,301 @@ const data={
       "clinicalStatus": "pending_review",
       "sha256": null,
       "status": "retired"
+    },
+    "S30": {
+      "id": "S30",
+      "key": "v02_S30",
+      "name": "ゴムで肩を内に回す",
+      "purpose": "肩を内に回す筋力",
+      "steps": [
+        "右横の安全な固定点のゴムを右手で持ちます。右肘を体側で曲げ、右手をお腹の前へ引いて、ゆっくり戻します。"
+      ],
+      "doseProposal": "M：8回×1セット（個別調整用の開始案）",
+      "caution": "肘を体から離さず、痛みのない範囲で。肩の抵抗運動の許可を確認します。",
+      "equipment": "軽いゴム、専用固定点",
+      "gates": "G1+G8",
+      "pose": "正面。右肘体側90°、固定点は右側方腰高、前腕が腹側へ",
+      "image": "images/S30.png",
+      "imageCaption": "肘を体の横で保ち、前腕をお腹側へ回します。ゴムの固定点と抵抗の強さは担当者と確認してください。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "fecdd92336d87089f3005dd3755b4a55f31e2f4051eaa155f298e70ff87e9181",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R5",
+        "R6"
+      ]
+    },
+    "S37": {
+      "id": "S37",
+      "key": "v02_S37",
+      "name": "膝つき腕立てで肩甲骨を押し出す",
+      "purpose": "肩甲骨まわりの筋力と腕の支持",
+      "steps": [
+        "両手と両膝で支え、頭から膝まで一直線に近づけます。肘を伸ばしたまま床を軽く押して、肩甲骨を前へ動かし戻します。"
+      ],
+      "doseProposal": "M：5回×1セット（個別調整用の開始案）",
+      "caution": "壁押しが安定してから。肩や手首が痛む場合は壁押しに戻します。腰を落とさないでください。",
+      "equipment": "マット",
+      "gates": "G1",
+      "pose": "側面。膝つき腕立て、肘伸展一定、肩甲骨の小さな前方突出",
+      "image": "images/S37.png",
+      "imageCaption": "両手と両膝で支えます。肘を曲げる腕立てではなく、肘を伸ばしたまま肩甲骨を動かします。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "1b34a9b5987b371c1f0d36b2a73cbc9dcbdbc10e18b988ca312a8c7b219f1306",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R5",
+        "R16"
+      ]
+    },
+    "N12": {
+      "id": "N12",
+      "key": "v02_N12",
+      "name": "首を前後に軽く押す",
+      "purpose": "首の前後の筋力",
+      "steps": [
+        "額に手を当て、頭を動かさず軽く押し合い、力を抜きます。後頭部でも同じように行います。息を止めないでください。"
+      ],
+      "doseProposal": "I：5秒保持×5回×1セット（個別調整用の開始案）",
+      "caution": "強く押しすぎず、めまい・腕のしびれ・痛みが増える場合は中止します。",
+      "equipment": "なし",
+      "gates": "G5該当時",
+      "pose": "正面と側面。手掌が額／後頭部、頭部静止",
+      "image": "images/N12.png",
+      "imageCaption": "額と後頭部で、それぞれ手と頭を軽く押し合います。頭は動かさず、息を止めません。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "2908dfb6eb0cdc16ccf600456a61816a2bc5cf5c14d545ffeadc849a7a4ae750",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R9"
+      ]
+    },
+    "T25": {
+      "id": "T25",
+      "key": "v02_T25",
+      "name": "膝つきプランク",
+      "purpose": "体幹の前面を支える持久力",
+      "steps": [
+        "前腕と膝で体を支え、頭から膝まで一直線に近づけます。そのまま自然に呼吸します。"
+      ],
+      "doseProposal": "C：10秒保持×3回×1セット（個別調整用の開始案）",
+      "caution": "腰を反らさず、息を止めないでください。肩・膝・腰が痛む場合は中止します。",
+      "equipment": "マット",
+      "gates": "G5該当時+G6該当時",
+      "pose": "側面。前腕・膝支持、体幹一直線",
+      "image": "images/T25.png",
+      "imageCaption": "前腕と膝で支え、腰を反らさず自然に呼吸します。保持時間は処方の指示に従ってください。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "d98a629857e6ea68f6b1a2940665c094d95c3cecc539049d8ea914a0fac5d94a",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R3"
+      ]
+    },
+    "T26": {
+      "id": "T26",
+      "key": "v02_T26",
+      "name": "プランク",
+      "purpose": "体幹の前面を支える持久力",
+      "steps": [
+        "前腕とつま先で体を支え、頭からかかとまで一直線に近づけます。そのまま自然に呼吸します。"
+      ],
+      "doseProposal": "C：10秒保持×3回×1セット（個別調整用の開始案）",
+      "caution": "膝つきプランクが安定してから。腰が反る・息が止まる場合は膝つきに戻します。",
+      "equipment": "マット",
+      "gates": "G5該当時+G6該当時",
+      "pose": "側面。前腕・つま先支持、体幹一直線",
+      "image": "images/T26.png",
+      "imageCaption": "前腕とつま先で支えます。腰が落ちる前に終え、難しい場合は膝つきに戻します。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "79b4dc21c1fc3bb8c03ed0eb2b4e005737ba009330ea864ecd98343ac93fab51",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R3"
+      ]
+    },
+    "K26": {
+      "id": "K26",
+      "key": "v02_K26",
+      "name": "横向きで脚を上げる",
+      "purpose": "股関節の横の筋力",
+      "steps": [
+        "左を下に寝て、下側の膝を軽く曲げます。上の右脚を伸ばしたまま少し持ち上げ、ゆっくり戻します。つま先を正面に向けます。"
+      ],
+      "doseProposal": "M：8回×1セット（個別調整用の開始案）",
+      "caution": "骨盤を後ろへ倒さず、腰を反らさないでください。手術後は運動の許可を確認します。",
+      "equipment": "マット",
+      "gates": "G4該当時+G6該当時",
+      "pose": "正面。側臥位、上側脚の外転、骨盤垂直",
+      "image": "images/K26.png",
+      "imageCaption": "図は右脚の例です。下側の膝を曲げ、上の脚は伸ばして少し上げます。骨盤を後ろに倒さないでください。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "dcb0bf5190066d9918c9d794c77b5be397799e5919258410c3fd8c84d3f1efc4",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R4",
+        "R8"
+      ]
+    },
+    "K38": {
+      "id": "K38",
+      "key": "v02_K38",
+      "name": "早歩きと普通歩きのくり返し",
+      "purpose": "歩く持久力",
+      "steps": [
+        "安全な平地で、会話ができる程度に少し速く1分歩きます。その後、楽な速さで2分歩きます。これをくり返します。"
+      ],
+      "doseProposal": "W：3分×2セット（個別調整用の開始案）",
+      "caution": "短い歩行が安定してから。脚の症状が増えたら休み、翌日まで悪化が残る場合は量を減らします。",
+      "equipment": "安全な歩行路",
+      "gates": "G4該当時",
+      "pose": "側面。早歩きのストライドと腕振り",
+      "image": "images/K38.png",
+      "imageCaption": "左は少し速い歩行、右は楽な歩行の例です。走らず、時間とセット数は処方の指示に従ってください。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "e8bd1236b179eedbe7b27d17c83708f181844002b2aad493275a88121fbddbc6",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R4",
+        "R18"
+      ]
+    },
+    "A11": {
+      "id": "A11",
+      "key": "v02_A11",
+      "name": "ゴムでつま先を上げる",
+      "purpose": "足首を上げる筋力",
+      "steps": [
+        "座ってかかとを支え、右足先のゴムを前方の安全な固定点に固定します。右つま先を手前に引き、ゆっくり戻します。"
+      ],
+      "doseProposal": "M：8回×1セット（個別調整用の開始案）",
+      "caution": "脚全体を引かず、痛みのない範囲で。ゴムが外れないことを確認します。",
+      "equipment": "ゴム、前方の固定点",
+      "gates": "G4該当時+G8",
+      "pose": "側面。座位、右足背にゴム、足関節背屈",
+      "image": "images/A11.png",
+      "imageCaption": "図は右足の例です。かかとを支えたまま、つま先を手前へ引きます。ゴムの固定を確認してください。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "b56d43a767337408b4200bce538dcc9c1c45f61ea3a4a8617bb4038f752a4030",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R14"
+      ]
+    },
+    "A13": {
+      "id": "A13",
+      "key": "v02_A13",
+      "name": "ゴムでつま先を下げる",
+      "purpose": "足首を下げる筋力",
+      "steps": [
+        "座って右足裏にゴムをかけ、両手で持ちます。膝の位置を保ち、右つま先を前へ押してゆっくり戻します。"
+      ],
+      "doseProposal": "M：8回×1セット（個別調整用の開始案）",
+      "caution": "足首を内へ倒さず、ゴムが外れないように持ちます。抵抗運動の許可範囲で行います。",
+      "equipment": "ゴム",
+      "gates": "G4該当時",
+      "pose": "側面。長座、足底にゴム、底屈",
+      "image": "images/A13.png",
+      "imageCaption": "図は右足の例です。ゴムを両手で保ち、足首を内へ倒さずつま先を前へ押します。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "1b212d5dece207bea331983a2ee2e025fa0fcc2935005e3b1e62be3dfb7a10ce",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R14"
+      ]
+    },
+    "A15": {
+      "id": "A15",
+      "key": "v02_A15",
+      "name": "支えなしで片脚リーチ",
+      "purpose": "動きながらのバランス",
+      "steps": [
+        "すぐ手が届く台の横で右脚に立ちます。左つま先を前・横・後ろへ、姿勢を保てる範囲で触れて戻します。"
+      ],
+      "doseProposal": "B：3回×1セット（個別調整用の開始案）",
+      "caution": "支え付きリーチが安定してから。ふらついたら台につかまり、無理に遠くへ伸ばさないでください。",
+      "equipment": "床の印、近くの支持台",
+      "gates": "G4",
+      "pose": "上方。右脚支持、左つま先3方向、手は腰",
+      "image": "images/A15.png",
+      "imageCaption": "図は右脚で支える例です。動かす足は前・横・後ろへ。ふらついたらすぐ台につかまります。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "d317eab603b7dee2368aea43ef2a824c8c7b36bfd4f6b20d8a12799c021d29d0",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R14",
+        "R15"
+      ]
+    },
+    "P12": {
+      "id": "P12",
+      "key": "v02_P12",
+      "name": "左右に小さく跳ぶ",
+      "purpose": "横方向の両脚着地",
+      "steps": [
+        "床の線をはさんで、両足で左右に小さく跳び、静かに着地します。不安定な場合は毎回止まります。"
+      ],
+      "doseProposal": "P：6回×2セット（個別調整用の開始案）",
+      "caution": "初回は担当者と確認し、両脚ジャンプが安定してから。痛み・腫れ・不安定感があれば中止します。",
+      "equipment": "床の線",
+      "gates": "G4+G7",
+      "pose": "正面。両足で線の左右へ跳躍",
+      "image": "images/P12.png",
+      "imageCaption": "左右への小さな両脚跳びです。片道の着地で1回と数えます。着地が不安定なら毎回止まります。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "0d3cddf550c3b8e3bbf3615639c543e501523830c1f4c8c515161d50273a8fa0",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R23",
+        "R24"
+      ]
+    },
+    "P13": {
+      "id": "P13",
+      "key": "v02_P13",
+      "name": "横に跳んで片脚で止まる",
+      "purpose": "横方向の片脚着地と減速",
+      "steps": [
+        "左脚から短い距離を右へ跳び、右脚で着地して2秒止まります。反対側も同じように行います。"
+      ],
+      "doseProposal": "P：2秒保持×3回×2セット（個別調整用の開始案）",
+      "caution": "初回は担当者と確認。片脚ホップと両脚横跳びが安定してから。止まれない距離へ跳ばないでください。",
+      "equipment": "平地",
+      "gates": "G4+G7",
+      "pose": "正面。左→右の横跳び、右脚片脚着地・股膝屈曲",
+      "image": "images/P13.png",
+      "imageCaption": "左右それぞれ、片脚で着地して2秒止まります。距離は担当者と確認し、止まれる短い距離から始めます。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "clinicalStatus": "pending_review",
+      "sha256": "d268a5e5ef109f5cf21791ea6f33f50bfb89ec2c1e4e2f26571396d01bb2803d",
+      "addedIn": "0.3",
+      "evidenceRefs": [
+        "R14",
+        "R23"
+      ]
     }
   },
   "categories": {
@@ -2326,7 +2621,9 @@ const data={
           "T08",
           "T09",
           "T10",
-          "K07"
+          "K07",
+          "T25",
+          "K38"
         ],
         "advanced": [
           "T11",
@@ -2334,7 +2631,8 @@ const data={
           "T13",
           "T14",
           "K14",
-          "K18"
+          "K18",
+          "T26"
         ]
       }
     },
@@ -2357,7 +2655,8 @@ const data={
           "K08",
           "K09",
           "K10",
-          "K11"
+          "K11",
+          "K26"
         ],
         "advanced": [
           "K12",
@@ -2365,7 +2664,8 @@ const data={
           "K14",
           "K15",
           "K16",
-          "K17"
+          "K17",
+          "K38"
         ]
       }
     },
@@ -2419,7 +2719,8 @@ const data={
           "N07",
           "N08",
           "S12",
-          "S13"
+          "S13",
+          "N12"
         ],
         "advanced": [
           "N09",
@@ -2449,7 +2750,8 @@ const data={
           "S10",
           "S12",
           "S13",
-          "S15"
+          "S15",
+          "S30"
         ],
         "advanced": [
           "S14",
@@ -2457,7 +2759,8 @@ const data={
           "S17",
           "S18",
           "S20",
-          "S21"
+          "S21",
+          "S37"
         ]
       }
     },
@@ -2480,7 +2783,8 @@ const data={
           "S10",
           "S11",
           "S12",
-          "S15"
+          "S15",
+          "S30"
         ],
         "advanced": [
           "S14",
@@ -2488,7 +2792,8 @@ const data={
           "S17",
           "S18",
           "S19",
-          "S21"
+          "S21",
+          "S37"
         ]
       }
     },
@@ -2511,7 +2816,8 @@ const data={
           "N07",
           "N08",
           "S12",
-          "S13"
+          "S13",
+          "N12"
         ],
         "advanced": [
           "N09",
@@ -2541,7 +2847,8 @@ const data={
           "S10",
           "S11",
           "S12",
-          "S13"
+          "S13",
+          "S30"
         ],
         "advanced": [
           "S14",
@@ -2549,7 +2856,8 @@ const data={
           "S18",
           "S20",
           "S21",
-          "S22"
+          "S22",
+          "S37"
         ]
       }
     },
@@ -2571,7 +2879,8 @@ const data={
           "S10",
           "S11",
           "S12",
-          "S13"
+          "S13",
+          "S30"
         ],
         "advanced": [
           "S14",
@@ -2602,7 +2911,8 @@ const data={
           "K06",
           "K08",
           "K09",
-          "K19"
+          "K19",
+          "K26"
         ],
         "advanced": [
           "T09",
@@ -2610,7 +2920,8 @@ const data={
           "K10",
           "K11",
           "K13",
-          "K22"
+          "K22",
+          "K38"
         ]
       }
     },
@@ -2641,7 +2952,8 @@ const data={
           "T14",
           "K14",
           "K18",
-          "T19"
+          "T19",
+          "T26"
         ]
       }
     },
@@ -2656,7 +2968,8 @@ const data={
           "A03",
           "A04",
           "A05",
-          "K23"
+          "K23",
+          "A11"
         ],
         "intermediate": [
           "A06",
@@ -2664,7 +2977,8 @@ const data={
           "K08",
           "K11",
           "K09",
-          "K24"
+          "K24",
+          "A13"
         ],
         "advanced": [
           "K16",
@@ -2672,7 +2986,8 @@ const data={
           "K14",
           "A08",
           "A09",
-          "A10"
+          "A10",
+          "A15"
         ]
       }
     },
@@ -2695,7 +3010,8 @@ const data={
           "K08",
           "K09",
           "K10",
-          "K11"
+          "K11",
+          "K26"
         ],
         "advanced": [
           "K12",
@@ -2725,14 +3041,16 @@ const data={
           "S10",
           "S12",
           "S14",
-          "S15"
+          "S15",
+          "S30"
         ],
         "advanced": [
           "S25",
           "S17",
           "S20",
           "S26",
-          "P01"
+          "P01",
+          "S37"
         ]
       }
     },
@@ -2755,14 +3073,16 @@ const data={
           "S10",
           "S11",
           "S12",
-          "S15"
+          "S15",
+          "S30"
         ],
         "advanced": [
           "S17",
           "S20",
           "S25",
           "S26",
-          "P01"
+          "P01",
+          "S37"
         ]
       }
     },
@@ -2784,14 +3104,16 @@ const data={
           "S10",
           "S11",
           "S12",
-          "S14"
+          "S14",
+          "S30"
         ],
         "advanced": [
           "S25",
           "S18",
           "S20",
           "S26",
-          "P01"
+          "P01",
+          "S37"
         ]
       }
     },
@@ -2813,7 +3135,8 @@ const data={
           "S10",
           "S11",
           "S12",
-          "S24"
+          "S24",
+          "S30"
         ],
         "advanced": [
           "S25",
@@ -2865,7 +3188,8 @@ const data={
           "A03",
           "A04",
           "A05",
-          "K23"
+          "K23",
+          "A11"
         ],
         "intermediate": [
           "A06",
@@ -2873,7 +3197,9 @@ const data={
           "K08",
           "K11",
           "K09",
-          "A08"
+          "A08",
+          "A13",
+          "A15"
         ],
         "advanced": [
           "K16",
@@ -2881,7 +3207,9 @@ const data={
           "P05",
           "P06",
           "P07",
-          "P08"
+          "P08",
+          "P12",
+          "P13"
         ]
       }
     },
@@ -2904,7 +3232,8 @@ const data={
           "K10",
           "K11",
           "K14",
-          "K18"
+          "K18",
+          "K26"
         ],
         "advanced": [
           "K15",
@@ -2935,7 +3264,8 @@ const data={
           "T08",
           "T09",
           "K07",
-          "T19"
+          "T19",
+          "T25"
         ],
         "advanced": [
           "T11",
@@ -2943,7 +3273,8 @@ const data={
           "T14",
           "K18",
           "T20",
-          "P07"
+          "P07",
+          "T26"
         ]
       }
     },
@@ -2966,7 +3297,8 @@ const data={
           "T08",
           "T09",
           "K07",
-          "T19"
+          "T19",
+          "T25"
         ],
         "advanced": [
           "T11",
@@ -2974,7 +3306,8 @@ const data={
           "T14",
           "K18",
           "T20",
-          "P07"
+          "P07",
+          "T26"
         ]
       }
     },
@@ -2997,7 +3330,9 @@ const data={
           "T09",
           "T08",
           "K06",
-          "T10"
+          "T10",
+          "T25",
+          "K26"
         ],
         "advanced": [
           "T07",
@@ -3005,7 +3340,8 @@ const data={
           "T12",
           "K14",
           "K18",
-          "K21"
+          "K21",
+          "T26"
         ]
       }
     },
@@ -3020,7 +3356,8 @@ const data={
           "T08",
           "T09",
           "K07",
-          "T10"
+          "T10",
+          "T25"
         ],
         "intermediate": [
           "T11",
@@ -3028,7 +3365,8 @@ const data={
           "K14",
           "K18",
           "T19",
-          "T20"
+          "T20",
+          "T26"
         ],
         "advanced": [
           "P09",
@@ -3060,6 +3398,38 @@ const data={
     "G6": "腰椎分離症の現在の活動許可・装具・伸展/回旋/衝撃制限を記録",
     "G7": "競技準備の該当動作をPT監督下で確認し、回数・速度・場所・休息を具体的に処方",
     "G8": "家庭に安全な器具・固定点・歩行空間がある。無ければ代替運動を選ぶ"
+  },
+  "selectionReview": {
+    "date": "2026-09-26",
+    "kind": "AI evidence-informed design review; individual prescribing remains with the treating clinician",
+    "added": [
+      "S30",
+      "S37",
+      "N12",
+      "T25",
+      "T26",
+      "K26",
+      "K38",
+      "A11",
+      "A13",
+      "A15",
+      "P12",
+      "P13"
+    ]
+  },
+  "references": {
+    "R5": "Desmeules F, et al. Rotator cuff tendinopathy diagnosis, non-surgical medical care and rehabilitation: a clinical practice guideline. J Orthop Sports Phys Ther. 2025. doi:10.2519/jospt.2025.13182",
+    "R6": "Kuhn JE, et al; MOON Shoulder Group. Effectiveness of physical therapy in treating atraumatic full-thickness rotator cuff tears. J Shoulder Elbow Surg. 2013;22(10):1371-1379.",
+    "R16": "Wilk KE, et al. The Advanced Throwers Ten Exercise Program: a new exercise series for enhanced dynamic shoulder control in the overhead throwing athlete. Phys Sportsmed. 2011;39(4):90-97.",
+    "R9": "Blanpied PR, et al. Neck pain: revision 2017. J Orthop Sports Phys Ther. 2017;47(7):A1-A83.",
+    "R3": "George SZ, et al. Interventions for the management of acute and chronic low back pain: revision 2021. J Orthop Sports Phys Ther. 2021;51(11):CPG1-CPG60.",
+    "R4": "Bannuru RR, et al. OARSI guidelines for the non-surgical management of knee, hip, and polyarticular osteoarthritis. Osteoarthritis Cartilage. 2019;27(11):1578-1589.",
+    "R8": "Logerstedt DS, et al. Knee pain and mobility impairments: meniscal and articular cartilage lesions revision 2018. J Orthop Sports Phys Ther. 2018;48(2):A1-A50.",
+    "R18": "Kolasinski SL, et al. 2019 American College of Rheumatology/Arthritis Foundation guideline for the management of osteoarthritis of the hand, hip, and knee. Arthritis Rheumatol. 2020;72(2):220-233.",
+    "R14": "Martin RL, et al. Ankle stability and movement coordination impairments: lateral ankle ligament sprains revision 2021. J Orthop Sports Phys Ther. 2021;51(4):CPG1-CPG80.",
+    "R15": "Hupperets MDW, Verhagen EALM, van Mechelen W. Effect of unsupervised home based proprioceptive training on recurrences of ankle sprain: randomised controlled trial. BMJ. 2009;339:b2684.",
+    "R23": "Ardern CL, et al. 2016 Consensus statement on return to sport from the First World Congress in Sports Physical Therapy, Bern. Br J Sports Med. 2016;50(14):853-864.",
+    "R24": "Soligard T, et al. Comprehensive warm-up programme to prevent injuries in young female footballers: cluster randomised controlled trial. BMJ. 2008;337:a2469."
   }
 };
 if(typeof module!=="undefined"&&module.exports)module.exports=data;else root.ClinicalCatalog=data;

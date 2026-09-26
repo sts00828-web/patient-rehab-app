@@ -7,7 +7,7 @@ function tab(storage=new Map()) {
     setInterval(){},setTimeout(){},clearTimeout(){},MutationObserver:class {observe(){}},alert(){},confirm(){return true},prompt(){return '架空患者'},
     navigator:{},location:{pathname:'/',hash:'',search:'',origin:'https://example.test'},
     addEventListener(name,fn){listeners[name]=fn},
-    document:{addEventListener(){},getElementById(id){if(id==='paste-url'||id==='update-url')return null;if(!nodes.has(id))nodes.set(id,{innerHTML:'',classList:{add(){},remove(){},contains(){return false}}});return nodes.get(id)}},
+    document:{querySelector(){return null},addEventListener(){},getElementById(id){if(id==='paste-url'||id==='update-url')return null;if(!nodes.has(id))nodes.set(id,{innerHTML:'',classList:{add(){},remove(){},contains(){return false}}});return nodes.get(id)}},
     localStorage:{getItem(k){return storage.get(k)||null},setItem(k,v){storage.set(k,v)}}});
   ctx.window=ctx;
   for(const file of ['ui.js','exercises.js','disease-library.js','app-v2.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});

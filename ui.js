@@ -354,7 +354,7 @@ function startQrScan() {
   }).then(() => {
     if (session.cancelled) return;
     const s = document.getElementById('qr-reader-status');
-    if (s) s.textContent = '🔍 QRコードに向けてください';
+    if (s) s.textContent = 'QR全体を画面内に入れてください。読み取りにくいときは、少し離す・角度を変えるか、URLから読み込めます。';
   }).catch(err => {
     if (session.cancelled) return;
     const s = document.getElementById('qr-reader-status');

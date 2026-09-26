@@ -187,3 +187,10 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 #bugReportModal .btn{margin-top:10px}
 #setupOverlay{overflow-y:auto}
 #setupOverlay .setup-card{margin:auto}
+
+/* Focus the home on the next action, keeping individual safety instructions visible. */
+.home-exercise-image{width:100px;max-width:28%;height:80px;object-fit:contain;border-radius:10px;flex-shrink:0}
+.session-essential{border-left:3px solid var(--primary,#287e87);padding-left:10px;margin-bottom:12px;white-space:pre-line}
+.session-essential p{margin:6px 0}
+.optional-record>summary{font-weight:700;cursor:pointer}
+.optional-record[open]>summary{margin-bottom:16px}

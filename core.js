@@ -16,7 +16,8 @@
   function prescriptionIssues(ex) {
     if(clinical?.isNew(ex)&&ex.clinicalV02?.mode==='simple')return clinical.issues(ex);
     const p=prescription(ex.prescription);
-    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(ex.scheduleConfirmed===true?[]:['実施曜日の確認']),...(clinical?.issues(ex)||[])];
+    const weekly=/毎日|隔日|週(?:に)?\s*[1-7１-７](?:\s*[〜～-]\s*[1-7１-７])?\s*[日回]/.test(p.frequency);
+    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(!clinical?.isNew(ex)&&ex.scheduleMode==='flexible'&&p.frequency&&!weekly?['週の実施日数（例：週2日）']:[]),...(ex.scheduleMode==='flexible'||ex.scheduleConfirmed===true?[]:['実施曜日の確認']),...(clinical?.issues(ex)||[])];
   }
   function menu(input) {
     if (!Array.isArray(input) || input.length > 60) throw Error('メニューは60種目以内にしてください。');
@@ -28,7 +29,10 @@
       seen.add(mid);
       const dows = m.dows === undefined ? [] : m.dows;
       if (!Array.isArray(dows) || dows.some(x => !Number.isInteger(x) || x < 0 || x > 6)) throw Error('実施曜日が不正です。');
+      if (m.scheduleMode !== undefined && m.scheduleMode !== 'flexible') throw Error('実施頻度の形式が不正です。');
+      if (m.scheduleMode === 'flexible' && dows.length) throw Error('曜日を指定しない運動に固定曜日は設定できません。');
       return { id: mid, name: text(m.name, 120), params: text(m.params, 100), note: text(m.note), ...(text(m.diseaseNote)?{diseaseNote:text(m.diseaseNote)}:{}), dows: [...new Set(dows)],
+        ...(m.scheduleMode==='flexible'?{scheduleMode:'flexible'}:{}),
         exerciseKey: id(m.exerciseKey) ? m.exerciseKey : '', videoUrl: videoUrl(m.videoUrl), prescription:clinical?.isNew(m)?clinical.prescription(m.clinicalV02):prescription(m.prescription), scheduleConfirmed:m.scheduleConfirmed===true, ...(m.mediaDisabled === true ? {mediaDisabled:true} : {}), ...(clinical?.isNew(m)?{clinicalV02:clinical.normalize(m.clinicalV02)}:{}) };
     });
   }
@@ -75,7 +79,7 @@
     if (!result.plans.length) result.plans = [{from:result.knownSince, menu:clone(result.menu)}];
     return result;
   }
-  function scheduled(items, dow) { return items.filter(x => !x.dows.length || x.dows.includes(dow)); }
+  function scheduled(items, dow) { return items.filter(x => x.scheduleMode==='flexible' || !x.dows.length || x.dows.includes(dow)); }
   function menuAt(s, logs, key, dow) {
     if (!s || key < s.startDate) return [];
     const log = logs[key];

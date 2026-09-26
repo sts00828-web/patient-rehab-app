@@ -1,6 +1,6 @@
   await evaluate(`(async()=>{window.confirm=()=>true;window.prompt=()=> '架空端末';window.alert=m=>window.lastAlert=m;
     openPinModal();newPatient();updS('affectedSide','left');openClinicalShelf('G03');
-    for(const id of CC.categories.G03.levels.beginner)$('cb-'+id+'-selected').click();
+    for(const id of CC.categories.G03.levels.beginner.slice(0,6))$('cb-'+id+'-selected').click();
     saveClinicalBatch(true);window.sentMenu=JSON.stringify(S.menu);window.sentUrl=$('qrUrl').value;closeQR();closeTherapist();
     window.waitFor=async f=>{for(let i=0;i<200&&!f();i++)await new Promise(r=>setTimeout(r,50));return !!f()};
     window.originalGetUserMedia=navigator.mediaDevices.getUserMedia;
@@ -8,13 +8,22 @@
     delete window.BarcodeDetector;
     window.frame=document.createElement('canvas');frame.width=1920;frame.height=1080;
     window.qr=qrcode(0,'M');qr.addData(sentUrl);try{qr.make()}catch{qr=qrcode(0,'L');qr.addData(sentUrl);qr.make()}
-    const ctx=frame.getContext('2d'),modules=qr.getModuleCount(),unit=Math.floor(1020/(modules+8)),size=(modules+8)*unit;
-    ctx.fillStyle='#fff';ctx.fillRect(0,0,1920,1080);ctx.fillStyle='#000';
-    for(let y=0;y<modules;y++)for(let x=0;x<modules;x++)if(qr.isDark(y,x))ctx.fillRect(Math.floor((1920-size)/2)+(x+4)*unit,Math.floor((1080-size)/2)+(y+4)*unit,unit,unit);
-    window.frameTimer=setInterval(()=>{ctx.fillStyle="#fff";ctx.fillRect(0,0,1,1)},100);window.streams=[];window.cameraTracks=[];window.constraints=[];
+    const ctx=frame.getContext('2d'),modules=qr.getModuleCount();
+    // A phone naturally changes distance/angle. A perfectly frozen, axis-aligned
+    // high-version matrix can confuse ZXing's finder search for particular masks.
+    // Keep the real matrix and decoder: vary only the synthetic camera pose.
+    let frameIndex=0;
+    const poses=[[1020,0],[920,0.12],[1000,-0.08],[840,0.3],[920,-0.16],[1020,Math.PI/2]];
+    const drawFrame=()=>{const [edge,angle]=poses[frameIndex++%poses.length],unit=Math.floor(edge/(modules+8)),size=(modules+8)*unit;
+      ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,0,1920,1080);
+      ctx.translate(960,540);ctx.rotate(angle);ctx.fillStyle='#000';
+      for(let y=0;y<modules;y++)for(let x=0;x<modules;x++)if(qr.isDark(y,x))ctx.fillRect(-Math.floor(size/2)+(x+4)*unit,-Math.floor(size/2)+(y+4)*unit,unit,unit);
+    };drawFrame();
+    window.frameTimer=setInterval(drawFrame,300);window.streams=[];window.cameraTracks=[];window.constraints=[];
     navigator.mediaDevices.getUserMedia=async c=>{constraints.push(c);const stream=frame.captureStream(5);streams.push(stream);cameraTracks.push(stream.getTracks());return stream};
   })()`);
   console.log('QR fixture',await evaluate('({exercises:S.menu.length,urlLength:sentUrl.length,modules:qr.getModuleCount()})'));
+  console.log('Static frame decode',await evaluate(`(async()=>{const root=document.createElement('div');root.id='static-diagnostic';document.body.appendChild(root);const scanner=new Html5Qrcode(root.id,{formatsToSupport:[Html5QrcodeSupportedFormats.QR_CODE],useBarCodeDetectorIfSupported:false});try{return (await scanner.qrcode.decodeAsync(frame)).text===sentUrl}catch(e){return String(e)}finally{root.remove()}})()`));
   await check('real six exercise fixture', 'S.menu.length===6&&qr.getModuleCount()>80');
   // Same full-resolution synthetic video with previous scanner settings.
   await evaluate(`(async()=>{window.legacyRoot=document.createElement('div');legacyRoot.id='legacy-reader';legacyRoot.style.width='300px';document.body.appendChild(legacyRoot);
@@ -30,6 +39,7 @@
       S=null;L={};persist();startQrScan();await __qrScanner.ready;})()`);
     await check('actual ZXing camera decode and exact six prescription import at '+width,`(async()=>{
       const read=await waitFor(()=>importCount===1&&__qrScanner===null);
+      if(!read||receivedText!==sentUrl||JSON.stringify(S?.menu)!==sentMenu)throw Error('QR debug '+JSON.stringify({read,importCount,received:window.receivedText===sentUrl,menuMatch:JSON.stringify(S?.menu)===sentMenu,error:$('qr-reader-status')?.textContent,alert:window.lastAlert,scanner:!!__qrScanner,canvasWidth:__qrScanner?.scanner?.canvasElement?.width}));
       return read&&receivedText===sentUrl&&JSON.stringify(S.menu)===sentMenu&&cameraTracks.at(-1).every(t=>t.readyState==='ended')&&!$('qrScanModal');
     })()`);
     await evaluate('manualImport=originalImport');

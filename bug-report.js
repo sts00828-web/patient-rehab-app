@@ -10,7 +10,7 @@ function bugReportEnvironment(nav){
   return `端末：${device}\nOS：${os}\nブラウザ：${browser}`;
 }
 function buildBugReport(intent,actual,nav,date){
-  return `【不具合報告】\nやろうとしたこと：\n${intent}\n\n実際に起きたこと：\n${actual}\n\nアプリ版：v55\n日時：${date.toISOString()}（UTC）\n${bugReportEnvironment(nav)}`;
+  return `【不具合報告】\nやろうとしたこと：\n${intent}\n\n実際に起きたこと：\n${actual}\n\nアプリ版：v56\n日時：${date.toISOString()}（UTC）\n${bugReportEnvironment(nav)}`;
 }
 function openBugReport(){
   modal('bugReportModal','不具合を報告',`
@@ -20,7 +20,7 @@ function openBugReport(){
     <textarea id="bug-intent" class="fld-inp" rows="3"></textarea>
     <label class="fld-lbl" for="bug-actual">実際に起きたこと</label>
     <textarea id="bug-actual" class="fld-inp" rows="3"></textarea>
-    <p class="hint">アプリ版v55・日時・端末/OS/ブラウザの種類だけを自動付記します。</p>
+    <p class="hint">アプリ版v56・日時・端末/OS/ブラウザの種類だけを自動付記します。</p>
     <button id="bug-copy" class="btn btn-pri" type="button">報告文をコピー</button>
     <p id="bug-status" role="status" aria-live="polite"></p>
     <div id="bug-fallback" hidden>

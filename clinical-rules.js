@@ -22,10 +22,10 @@
   };
   const doseGroups={
     R:'S01 S02 S03 S04 S08 S19 S23 T02 T03 T04 T05 T15 T16 T17 T18 N02 N03 K02 E02 E03 A01 A02 A06',
-    S:'S16 K01 E04', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04',
-    M:'S09 S10 S11 S12 S13 S14 S15 S17 S20 S21 S22 S24 S25 T08 T13 T14 T19 K04 K05 K06 K07 K08 K09 K10 K12 K13 K14 K15 K16 K17 K18 K19 E06 E07 E08 E10 A05 A07',
-    B:'K11 K24 A08 A09', C:'S18 S26 T01 T06 T07 T09 T10 T11 T12 T20 T21 T22 T23 N01 N04 N05 N08 N09 N10 K23 E09 A10',
-    W:'K20 K21 K22',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10'
+    S:'S16 K01 E04', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04 N12',
+    M:'S09 S10 S11 S12 S13 S14 S15 S17 S20 S21 S22 S24 S25 T08 T13 T14 T19 K04 K05 K06 K07 K08 K09 K10 K12 K13 K14 K15 K16 K17 K18 K19 E06 E07 E08 E10 A05 A07 S30 S37 K26 A11 A13',
+    B:'K11 K24 A08 A09 A15', C:'S18 S26 T01 T06 T07 T09 T10 T11 T12 T20 T21 T22 T23 N01 N04 N05 N08 N09 N10 K23 E09 A10 T25 T26',
+    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13'
   };
   const dosePresetById=Object.fromEntries(Object.entries(doseGroups).flatMap(([preset,ids])=>ids.split(' ').map(id=>[id,preset])));
   const doseOverrides={
@@ -40,11 +40,19 @@
     E07:{reps:5},E08:{reps:5},A08:{reps:3,holdSeconds:null,amountBasis:'each_direction',doseDirections:'前・横・後ろ'},A09:{reps:5,holdSeconds:null},A10:{reps:10,holdSeconds:null},
     P01:{reps:5,doseUnit:'回',sets:2,restSeconds:60},P03:{reps:5,doseUnit:'回',sets:2,restSeconds:60},P04:{reps:5,doseUnit:'回',sets:2,restSeconds:60},
     P05:{reps:3,doseUnit:'回',sets:2,restSeconds:60},P06:{reps:3,doseUnit:'回',sets:2,holdSeconds:2,restSeconds:60},
-    P07:{reps:3,doseUnit:'本',sets:1},P08:{reps:3,doseUnit:'回',sets:1},P09:{reps:1.5,doseUnit:'分',sets:3},P10:{reps:3,doseUnit:'回',sets:1}
+    P07:{reps:3,doseUnit:'本',sets:1},P08:{reps:3,doseUnit:'回',sets:1},P09:{reps:1.5,doseUnit:'分',sets:3},P10:{reps:3,doseUnit:'回',sets:1},
+    // Selected additions are editable starting proposals, not clinical approvals.
+    S30:{amountBasis:'per_side'},S37:{reps:5,amountBasis:'total'},
+    N12:{daysPerWeek:5,restSeconds:10,amountBasis:'each_direction',doseDirections:'前・後ろ'},
+    T25:{reps:3,holdSeconds:10,restSeconds:30,amountBasis:'total'},T26:{reps:3,holdSeconds:10,restSeconds:30,amountBasis:'total'},
+    K26:{amountBasis:'per_side'},K38:{reps:3,sets:2,doseUnit:'分',restSeconds:0,amountBasis:'total'},
+    A11:{amountBasis:'per_side'},A13:{amountBasis:'per_side'},A15:{reps:3,holdSeconds:null,restSeconds:30,amountBasis:'each_direction',doseDirections:'前・横・後ろ'},
+    P12:{reps:6,sets:2,doseUnit:'回',restSeconds:60,amountBasis:'total'},
+    P13:{reps:3,sets:2,doseUnit:'回',holdSeconds:2,restSeconds:60,amountBasis:'each_side'}
   };
   function doseDraft(id){
     const d=catalog.definitions[id],preset=dosePresetById[id];if(!isSelectable(id)||!preset)return null;
-    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒'};
+    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算'};
     return {...dosePresets[preset],...doseOverrides[id],support:d.equipment,doseDetail:details[id]||''};
   }
   function normalize(raw){
@@ -62,14 +70,14 @@
   }
   // Exceptions reflect explicit bilateral/alternating movements in the unchanged catalog text.
   const sideExceptions={
-    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06',
-    alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10',
-    none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09'
+    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06 S37 P12',
+    alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10 P13',
+    none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09 N12 T25 T26 K38'
   };
   function initialSide(id,affectedSide){return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
   // Only these catalog procedures use the right side as a unilateral example.
   // Bilateral/alternating procedures are deliberately excluded; source text stays intact.
-  const rightExampleIds=new Set('S01 S02 S03 S04 S06 S07 S09 S10 S11 S15 S16 S17 S18 S19 S21 S24 S25 S26 T04 K01 K02 K04 K05 K09 K11 K12 K13 K15 K16 K18 K19 E01 E04 E05 E07 A04 A06 A07 A08 P05'.split(' '));
+  const rightExampleIds=new Set('S01 S02 S03 S04 S06 S07 S09 S10 S11 S15 S16 S17 S18 S19 S21 S24 S25 S26 T04 K01 K02 K04 K05 K09 K11 K12 K13 K15 K16 K18 K19 E01 E04 E05 E07 A04 A06 A07 A08 P05 S30 K26 A11 A13 A15'.split(' '));
   function patientSteps(ex,legacyMedia){
     const d=isNew(ex)?definition(ex):legacyMedia,steps=[...(d?.steps||[])];
     if(!isNew(ex)||!rightExampleIds.has(d?.id))return steps;
@@ -105,7 +113,9 @@
     if(/往復/.test(r.doseDetail))out.push('往復量は片道の歩数と往復の基準で指定');
     if(r.daysPerWeek>7||r.sessionsPerDay>24)out.push('頻度の範囲');
     if(!Number.isInteger(r.sets)||!Number.isInteger(r.daysPerWeek)||!Number.isInteger(r.sessionsPerDay))out.push('セット・頻度は整数で指定');
-    if(!Array.isArray(ex.dows)||ex.dows.some(v=>!Number.isInteger(v)||v<0||v>6)||new Set(ex.dows).size!==ex.dows.length||ex.dows.length!==r.daysPerWeek||ex.scheduleConfirmed!==true)out.push('実施曜日と週の頻度の確認');
+    if(ex.scheduleMode==='flexible'){
+      if(!Array.isArray(ex.dows)||ex.dows.length)out.push('曜日を指定しない運動に固定曜日は設定できません');
+    }else if(!Array.isArray(ex.dows)||ex.dows.some(v=>!Number.isInteger(v)||v<0||v>6)||new Set(ex.dows).size!==ex.dows.length||ex.dows.length!==r.daysPerWeek||ex.scheduleConfirmed!==true)out.push('実施曜日と週の頻度の確認');
     if(r.mode!=='simple'&&!r.holdSeconds&&!r.holdNotApplicable)out.push('保持時間、または保持なしの明示確認');
     if(ex.mediaDisabled)out.push('画像非表示：初回指導の確認が必要');
     if(r.mode!=='simple'){

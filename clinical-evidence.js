@@ -5,6 +5,12 @@
 const ClinicalEvidence = (() => {
   const checked = '2026-09-26';
   const sources = {
+    rcGuideline:{title:'Rotator Cuff Tendinopathy: Clinical Practice Guideline',publisher:'JOSPT / Desmeules et al.',year:'2025',url:'https://doi.org/10.2519/jospt.2025.13182'},
+    neckGuideline:{title:'Neck Pain: Revision 2017',publisher:'JOSPT / APTA Orthopedics',year:'2017',url:'https://doi.org/10.2519/jospt.2017.0302'},
+    lumbarGuideline:{title:'Interventions for Acute and Chronic Low Back Pain: Revision 2021',publisher:'JOSPT / APTA Orthopedics',year:'2021',url:'https://doi.org/10.2519/jospt.2021.0304'},
+    oaGuideline:{title:'Osteoarthritis in over 16s: diagnosis and management (NG226)',publisher:'NICE',year:'2022',url:'https://www.nice.org.uk/guidance/ng226/chapter/recommendations'},
+    ankleGuideline:{title:'Lateral Ankle Ligament Sprains: Revision 2021',publisher:'JOSPT / APTA Orthopedics',year:'2021',url:'https://doi.org/10.2519/jospt.2021.0302'},
+    paass:{title:'Return to sport after acute lateral ankle sprain: PAASS framework',publisher:'British Journal of Sports Medicine',year:'2021',url:'https://bjsm.bmj.com/content/55/22/1270'},
     shoulder:{title:'Rotator Cuff and Shoulder Conditioning Program',publisher:'AAOS / OrthoInfo',url:'https://www.orthoinfo.org/recovery/rotator-cuff-and-shoulder-conditioning-program/'},
     frozen:{title:'Frozen Shoulder',publisher:'AAOS / OrthoInfo',url:'https://www.orthoinfo.org/diseases--conditions/frozen-shoulder'},
     spine:{title:'Spine Conditioning Program',publisher:'AAOS / OrthoInfo',url:'https://www.orthoinfo.org/recovery/spine-conditioning-program/'},
@@ -25,6 +31,14 @@ const ClinicalEvidence = (() => {
   function add(ids,source,kind,section){
     for(const id of ids.split(' '))entries[id]={source,kind,section};
   }
+  // The twelve additions were selected for progression and accessibility. These
+  // guidelines support intervention classes, not each illustrated dose or superiority.
+  add('S30 S37','rcGuideline','background','腱板腱症に対する抵抗運動・運動制御。全層断裂・術後の許可や、この種目固有の効果を保証する資料ではありません。');
+  add('N12','neckGuideline','background','頚肩部の筋力・持久力を含む個別の運動療法。前後5秒の用量そのものを検証した資料ではありません。');
+  add('T25 T26','lumbarGuideline','background','体幹筋力・持久力・運動制御の推奨。プランクの優越性や分離症の実施許可を意味しません。');
+  add('K26 K38','oaGuideline','background','個別に調整した筋力運動と有酸素運動。横向き脚上げや1分/2分の歩行間隔の優越性・処方量を直接検証していません。');
+  add('A11 A13 A15','ankleGuideline','background','足関節の構造化された運動療法・筋力・バランス練習。固定方法・支持条件・用量は個別に確認します。');
+  add('P12 P13','paass','background','競技復帰判断の痛み・機能・自信・感覚運動・競技能力に関する合意。この跳躍自体の治療効果や復帰許可を保証しません。');
   // Background only: these sources do not establish the exact app movement.
   add('S02 S05 S06 S07 S08 S11 S13 S14 S15 S18 S19 S20 S22 S26','shoulder','background','肩周囲の可動性・筋力運動の一般資料。この種目と同じ姿勢・用具・動作の掲載は未確認です。');
   add('T04 T06 T10 T11 T13 T14 T19 T20 T22 T23','spine','background','体幹の筋力・安定性運動の一般資料。この種目そのものの手順・有効性は未確認です。');
