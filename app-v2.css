@@ -194,3 +194,29 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 .session-essential p{margin:6px 0}
 .optional-record>summary{font-weight:700;cursor:pointer}
 .optional-record[open]>summary{margin-bottom:16px}
+
+/* One-screen patient flow: one exercise is visible at a time. */
+.today-carousel{max-width:520px;margin:0 auto;padding-bottom:142px;touch-action:pan-y}
+.today-carousel-header{background:#fff;padding:4px 4px 12px;margin-bottom:10px}
+.today-carousel-header>div:first-child{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.today-carousel-header strong{font-size:21px}.today-carousel-header span{color:var(--text2);font-size:13px;white-space:nowrap}
+.today-progress{height:5px;background:#e5edef;border-radius:99px;overflow:hidden;margin-top:10px}.today-progress i{display:block;height:100%;background:var(--teal);border-radius:inherit}
+.today-exercise-card{text-align:center;padding:16px 16px 18px;border:0;box-shadow:0 5px 22px rgba(30,76,84,.08)}
+.today-count{font-size:14px;font-weight:800;letter-spacing:.05em;color:var(--teal);margin-bottom:4px}
+.today-exercise-card h1{font-size:27px;line-height:1.3;margin:4px 0 12px;color:var(--text)}
+.today-exercise-image{display:block;width:100%;height:min(34dvh,300px);min-height:210px;object-fit:contain;background:#f8faf9;border-radius:18px}
+.today-image-missing{height:210px;display:grid;place-items:center;background:#f8faf9;border-radius:18px;color:var(--text2)}
+.today-exercise-card .dose{font-size:22px;line-height:1.35;margin:14px 0 4px;color:var(--text);font-weight:800}
+.today-side{font-size:17px;color:var(--teal-d);font-weight:750}.today-restriction{font-size:14px;color:var(--text2);margin:8px auto 0;max-width:36em}
+.today-exercise-card .home-prescription{text-align:left;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:18px 0 10px}
+.today-exercise-card .home-prescription summary{min-height:54px;display:flex;align-items:center;font-weight:750;cursor:pointer;list-style:none}
+.today-exercise-card .home-prescription summary::after{content:'＋';margin-left:auto;color:var(--teal);font-size:23px}.today-exercise-card .home-prescription[open] summary::after{content:'−'}
+.today-steps{padding-left:24px}.today-steps li{margin:9px 0;line-height:1.65}.today-status{font-size:14px;color:var(--text2);margin:8px 0}
+.today-fixed-actions{position:fixed;left:50%;bottom:calc(66px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:18;width:min(100%,640px);background:rgba(255,255,255,.98);border-top:1px solid var(--border);box-shadow:0 -8px 22px rgba(30,76,84,.08);padding:9px 14px 12px}
+.today-fixed-actions>.btn-pri{min-height:56px;font-size:18px;border-radius:13px;margin:0}
+.today-carousel-actions{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:10px 0 0}
+.today-carousel-actions .btn{margin:0;min-height:48px;padding:8px 6px}.today-carousel-actions .btn:disabled{opacity:.35}
+.today-dots{display:flex;justify-content:center;gap:6px}.today-dots i{display:block;width:7px;height:7px;border-radius:99px;background:#cbd7da}.today-dots i.on{width:21px;background:var(--teal)}
+.today-swipe-hint{text-align:center;color:var(--text2);font-size:13px;margin:8px 0 18px}
+@media(max-width:360px){.today-exercise-card{padding:13px}.today-exercise-card h1{font-size:24px}.today-exercise-image{min-height:180px;height:29dvh}.today-carousel-header strong{font-size:19px}.today-carousel-header span{font-size:12px}.today-carousel-actions .btn{font-size:13px}}
+@media(max-height:680px){.today-exercise-image{min-height:170px;height:28dvh}.today-exercise-card h1{font-size:23px;margin-bottom:6px}.today-exercise-card .dose{font-size:19px;margin-top:8px}.today-exercise-card .home-prescription{margin-top:10px}}

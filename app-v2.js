@@ -71,7 +71,7 @@ function validateArchives(raw) {
   return raw.map(a=>({settings:C.settings(a.settings,uid(),todayKey()),logs:C.logs(a.logs||{}),savedAt:C.text(a.savedAt,50)}));
 }
 function getCompletion(key,dow){return C.completion(S,L,key,dow);}
-function todayExercises(dow){return C.menuAt(S,L,todayKey(),dow);}
+function todayExercises(dow){const items=C.menuAt(S,L,todayKey(),dow);return typeof ExerciseSelection==='undefined'?items:ExerciseSelection.ordered(items);}
 function getLog(key){return L[key]||{done:{},status:{},vas:null,note:''};}
 function writableLog() {
   if(activeDay!==todayKey()){refreshDay();throw Error('日付が変わりました。新しい日の画面で入力してください。');}
@@ -121,29 +121,50 @@ function recordSummary(items,log){
   const recorded=Object.values(counts).reduce((a,b)=>a+b,0);
   return {recorded,counts,html:`<div class="card record-summary" id="daily-record-summary" role="status"><h2>${items.length&&recorded===items.length?'今日の運動の様子を記録しました':'今日の記録'}</h2><p>${items.length}種目中 ${recorded}種目を記録${recorded<items.length?`（未記録 ${items.length-recorded}種目）`:''}</p><p>${Object.entries(counts).filter(([,n])=>n).map(([key,n])=>`${statusLabels[key]} ${n}種目`).join(' ／ ')||'運動開始と実施後の記録は別の操作です。'}</p>${items.length&&recorded===items.length?'<p>記録は保存済みです。ここで閉じて大丈夫です。</p>':''}<p class="hint">痛みとメモは任意です。休んだ日も、そのまま記録してください。</p></div>`};
 }
+let todayExerciseIndex=0,todaySwipeStart=null;
+function moveTodayExercise(delta){
+  const items=todayExercises(todayDow());if(!items.length)return;
+  todayExerciseIndex=Math.max(0,Math.min(items.length-1,todayExerciseIndex+delta));renderToday();
+  requestAnimationFrame(()=>$('today-exercise-title')?.focus({preventScroll:true}));
+}
+function wireTodaySwipe(){
+  const node=$('today-exercise-view');if(!node?.addEventListener)return;
+  node.addEventListener('pointerdown',event=>{todaySwipeStart=event.clientX;});
+  node.addEventListener('pointercancel',()=>{todaySwipeStart=null;});
+  node.addEventListener('pointerup',event=>{if(todaySwipeStart===null)return;const distance=event.clientX-todaySwipeStart;todaySwipeStart=null;if(Math.abs(distance)>=55)moveTodayExercise(distance<0?1:-1);});
+}
 function renderToday(){
   const optionalRecordOpen=!!document.querySelector('.optional-record[open]');
   if(storageBlocked){$('today-content').innerHTML=storageConflict?'<div class="card">別の画面で更新されています。<button class="btn btn-pri" onclick="location.reload()">最新の保存内容を読み直す</button></div>':'<div class="card">保存データの確認が必要です。元データは保持されています。</div>';return;}
   if(!S){$('today-content').innerHTML='<div class="card empty"><div class="welcome-icon">🌱</div><h2>毎日のリハビリを、少しずつ。</h2><p>担当の理学療法士からメニューを受け取りましょう。</p><button class="btn btn-pri" onclick="startQrScan()">設定QRを読み取る</button><button class="btn btn-out" onclick="openPinModal()">スタッフ：メニューを設定</button></div>';return;}
   const key=todayKey(),dow=todayDow(),log=getLog(key),items=todayExercises(dow),c=getCompletion(key,dow),before=key<S.startDate,summary=recordSummary(items,log),flexible=items.some(ex=>ex.scheduleMode==='flexible');
-  let h=`<div class="banner"><div class="banner-d">${fmtJ(new Date())}</div><div class="banner-msg">${escapeHtml(S.patientName||'患者')}さんのペースで、続けましょう。</div></div>`;
+  todayExerciseIndex=Math.max(0,Math.min(items.length-1,todayExerciseIndex));
+  let h='';
   if(S.plans.some(p=>p.from>key))h+=`<div class="notice">現在の設定は${S.menu.length}種目です。本日は記録済みの${items.length}種目を表示し、更新は明日から反映します。今日から変更する場合は、セラピストモードの「今日から反映」を選んでください。</div>`;
-  h+=flexible?`<div class="card"><h2>今日の記録 ${summary.recorded}種目</h2><p>休む日も大切です。週の頻度に合わせて、ご自分のペースで。</p></div>`:`<div class="card"><div class="comp-bar"><div class="comp-pct record-count">${summary.recorded}<small> / ${items.length} 記録</small></div><div class="comp-d"><div class="comp-lbl">${before?'開始日は '+escapeHtml(S.startDate):!c.total?'今日は休養日です':`今日のできた種目 ${c.done} / ${c.total}`}</div><div class="bar-bg"><div class="bar-fg" style="width:${c.pct}%"></div></div></div></div><div class="hint">痛みで休んだことも、大切な記録です。</div></div>`;
-  if(items.some(ex=>ex.scheduleMode==='flexible'))h+='<p class="hint">曜日は選びません。それぞれの週の頻度・休息に合わせて実施してください。毎日すべて行う必要はありません。</p>';
-  for(const [i,ex] of items.entries()){
-    const media=mediaFor(ex),st=log.status?.[ex.id]||(log.done?.[ex.id]?'done':'');
-    h+=`<article class="card exercise-card"><div class="exercise-top"><div><span class="eyebrow">運動 ${i+1}</span><h2>${escapeHtml(ex.name)}</h2><div class="dose">${escapeHtml([ex.prescription?.repetitions,ex.prescription?.sets,ex.prescription?.frequency].filter(Boolean).join(' ／ ')||ex.params||'回数は担当者に確認してください')}</div></div>${media?`<img class="home-exercise-image" src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}" loading="lazy">`:''}</div>`;
-    const restriction=[ex.clinicalV02?.constraints,ex.prescription?.load].find(value=>value?.trim());
-    h+=`<div class="notice">指定側：${escapeHtml(ex.prescription?.side||'担当者に確認')}${restriction?` ／ 制限：${escapeHtml(restriction)}`:''}</div><details class="home-prescription"><summary>回数・頻度の詳細</summary>${prescriptionHtml(ex)}${exerciseNotices(ex,media)}</details>`;
-    h+=`<p role="status">${st?(statusLabels[st]||st):'未開始・未記録'}</p><button class="btn btn-pri" onclick="showExercise(${i})">${st?'記録を確認・訂正する':'運動を始める'}</button></article>`;
-  }
-  h+=flexible?`<div class="card record-summary" id="daily-record-summary" role="status"><p>${summary.recorded}種目を記録</p><p>${summary.recorded?'今日の記録は保存済みです。ここで閉じて大丈夫です。':'今日は休む日でも大丈夫です。'}</p><p>痛みとメモは任意です。</p></div>`:summary.html;
+  if(items.length){
+    const i=todayExerciseIndex,ex=items[i],media=mediaFor(ex),st=log.status?.[ex.id]||(log.done?.[ex.id]?'done':''),restriction=[ex.clinicalV02?.constraints,ex.prescription?.load].find(value=>value?.trim());
+    const image=media?`<img class="today-exercise-image" src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}の姿勢">`:'<div class="today-image-missing">イラストは担当者と確認してください</div>';
+    h+=`<section class="today-carousel" aria-label="今日の運動">
+      <header class="today-carousel-header"><div><strong>今日の運動</strong><span>${items.length}種目・${summary.recorded}種目を記録</span></div><div class="today-progress" aria-hidden="true"><i style="width:${(i+1)/items.length*100}%"></i></div></header>
+      <article class="card exercise-card today-exercise-card" id="today-exercise-view" aria-label="運動 ${i+1}/${items.length}">
+        <div class="today-count">運動 ${i+1} / ${items.length}</div><h1 id="today-exercise-title" tabindex="-1">${escapeHtml(ex.name)}</h1>${image}
+        <div class="dose">${escapeHtml([ex.prescription?.repetitions,ex.prescription?.sets,ex.prescription?.frequency].filter(Boolean).join(' × ')||ex.params||'回数は担当者に確認してください')}</div>
+        <div class="today-side">${escapeHtml(ex.prescription?.side||'実施側は担当者に確認')}</div>
+        ${restriction?`<p class="today-restriction">${escapeHtml(restriction)}</p>`:''}
+        <details class="home-prescription"><summary>やり方・注意点を見る</summary>${prescriptionHtml(ex)}${exerciseNotices(ex,media)}${media?.steps?.length?`<ol class="today-steps">${media.steps.map(step=>`<li>${escapeHtml(step)}</li>`).join('')}</ol>`:''}</details>
+        <p class="today-status" role="status">${st?'記録済み：'+(statusLabels[st]||st):'未記録'}</p>
+      </article>
+      <div class="today-fixed-actions"><button id="today-start" class="btn btn-pri" onclick="showExercise(${i})">${st?'記録を確認・もう一度行う':'▶ この運動をはじめる'}</button><div class="today-carousel-actions"><button class="btn btn-out" ${i===0?'disabled':''} onclick="moveTodayExercise(-1)">← 前の運動</button><div class="today-dots" aria-label="${i+1}番目／全${items.length}種目">${items.map((_,n)=>`<i class="${n===i?'on':''}"></i>`).join('')}</div><button class="btn btn-out" ${i===items.length-1?'disabled':''} onclick="moveTodayExercise(1)">次の運動 →</button></div></div>
+      <p class="today-swipe-hint">左右にフリック、またはボタンで移動できます。毎日すべて行う必要はありません。</p>
+    </section>`;
+  }else h+=`<div class="card empty"><h2>${before?'開始日は '+escapeHtml(S.startDate):'今日は休養日です'}</h2><p>痛みで休んだことも、大切な記録です。</p></div>`;
   if(!before){
     h+=`<details class="card optional-record"><summary>痛み・メモを残す（任意）${log.vas!==null?` ／ 痛み ${log.vas}`:''}</summary><div class="card-ttl">今日の痛み（0〜10）</div><p class="hint">0＝痛みなし、10＝想像できる最も強い痛み。毎回、担当の理学療法士と決めた同じ場面で記録してください。</p><p class="hint">記録する場面：${escapeHtml(S.painContext||'未設定。安静時・歩く時など、どの場面を記録するか担当者に確認してください')}</p><div class="pain-value" id="pain-value">${log.vas===null?'未記録':log.vas+' / 10'}</div><div class="pain-options" role="group" aria-label="痛みの強さ">${Array.from({length:11},(_,v)=>`<button type="button" aria-pressed="${log.vas===v}" class="pain-choice ${log.vas===v?'selected':''}" onclick="saveVas(${v})">${v}</button>`).join('')}</div><button class="text-button" onclick="clearPain()">痛みを未記録に戻す</button><label class="card-ttl" for="note-ta">メモ</label><textarea class="note-ta" id="note-ta" maxlength="2000" placeholder="気づいたことや、休んだ理由など" oninput="saveNote(this.value)">${escapeHtml(log.note||'')}</textarea><div class="hint">入力すると自動で保存します。</div></details>`;
   }
   h+=safetyHtml(true);
   h+='<details class="card"><summary>メニュー更新・データ保存</summary><p class="hint">記録はこの端末に保存されます。院内への自動送信はありません。</p><button class="btn btn-out" onclick="showReceiveSettings()">メニュー更新・QR読込</button><button class="btn btn-out" onclick="exportPatientData()">自分の記録をバックアップ</button></details>';
   $('today-content').innerHTML=h;
+  wireTodaySwipe();
   if(optionalRecordOpen&&document.querySelector('.optional-record'))document.querySelector('.optional-record').open=true;
 }
 function setExerciseStatus(i,value){
@@ -484,7 +505,7 @@ function filterTemplateExercises(){
   $('template-results').textContent=visible?`${visible}種目を表示中`:'該当する種目がありません。絞り込みを変更してください。';
   updateTemplateSelection();
 }
-function commitMenu(next){const from=C.changeMenu(S,L,next,todayKey(),dk(addDays(new Date(),1)));persist();renderTherapist();return from;}
+function commitMenu(next){next=typeof ExerciseSelection==='undefined'?next:ExerciseSelection.ordered(next);const from=C.changeMenu(S,L,next,todayKey(),dk(addDays(new Date(),1)));persist();renderTherapist();return from;}
 function applySelectedTemplate(share=false){
   if(!requireStaff())return;const tpl=getAllTemplates()[selectedTemplate],selected=[];
   for(const [i,m] of tpl.menu.entries())if($('pick-'+i).checked){const dose=readPrescription('dose-'+i,true),issues=C.prescriptionIssues(dose);if(issues.length){toast(`${m.name}：${issues.join('・')}を確認してください`);showPrescriptionErrors('dose-'+i,m.name);return;}selected.push({...m,id:'ex_'+uid(),params:$('dose-'+i).value.trim(),...dose});}
