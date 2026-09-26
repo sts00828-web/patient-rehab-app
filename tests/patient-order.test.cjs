@@ -20,6 +20,13 @@ test('related plank progressions remain adjacent in a predictable order',()=>{
   assert.equal(keys.indexOf('single-leg-plank'),keys.indexOf('side-plank')+1);
 });
 
+test('clinical side planks follow their matching planks',()=>{
+  const s=selection(),input=['v02_T12','v02_T26','v02_T09','v02_T25'].map(exerciseKey=>({exerciseKey}));
+  assert.deepEqual(Array.from(s.ordered(input),item=>item.exerciseKey),['v02_T25','v02_T09','v02_T26','v02_T12']);
+  const catalog=require('../clinical-catalog.js');
+  assert.equal(catalog.definitions.T09.name,'膝つきサイドプランク');assert.equal(catalog.definitions.T12.name,'サイドプランク');
+});
+
 test('ordering is stable for custom exercises with no catalogue position',()=>{
   const s=selection(),input=[{exerciseKey:'custom-a',id:'a'},{exerciseKey:'custom-b',id:'b'}];
   assert.deepEqual(Array.from(s.ordered(input),item=>item.id),['a','b']);

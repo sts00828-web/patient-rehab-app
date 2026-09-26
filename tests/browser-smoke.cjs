@@ -26,9 +26,21 @@ async function main(){
   await send('Page.navigate',{url:origin+'/'});
   for(let i=0;i<100;i++){if(await evaluate("typeof RehabCore !== 'undefined' && typeof activeDay !== 'undefined' && document.readyState === 'complete'"))break;await delay(100);}
   await evaluate("window.fillTestPrescription=prefix=>{const values={side:'両側',repetitions:'5回',sets:'1セット',hold:'該当なし',frequency:'1日1回',load:'重りなし',support:'椅子で支える'};for(const [key,value] of Object.entries(values))$(prefix+'-'+key).value=value;$(prefix+'-schedule-confirmed').checked=true;};");
-  await check('first staff entry requires PIN setup and optional identity fields remain blank',`(()=>{
-    openPinModal();if($('pin-confirm-wrap').hidden||staffUnlocked)return false;$('pin-input').value='1234';$('pin-confirm').value='1234';checkPin();return localPin==='1234'&&staffUnlocked&&!$('pinModal').classList.contains('on')&&$('patient-chart-id').value===''&&$('patient-name').value==='';
+  await check('demo staff entry works without PIN and optional identity fields remain blank',`(()=>{
+    openPinModal();const opened=localPin===''&&staffUnlocked&&!$('pinModal').classList.contains('on')&&$('therapistModal').classList.contains('on')&&$('patient-chart-id').value===''&&$('patient-name').value==='';updS('passcode','1234');return opened&&localPin==='1234';
   })()`);
+  await check('therapist mode presents one task step at a time',`(()=>{
+    const one=()=>document.querySelectorAll('.therapist-step:not([hidden])').length===1;
+    const patient=one()&&!document.querySelector('[data-therapist-step="patient"]').hidden;
+    setTherapistStep('menu',false);const menu=one()&&!$('clinical-catalog').closest('[data-therapist-step]').hidden;
+    setTherapistStep('share',false);const share=one()&&document.querySelector('[data-therapist-step="share"] .t-sec-ttl').textContent.includes('患者さんへ渡す');
+    setTherapistStep('patient',false);return patient&&menu&&share;
+  })()`);
+  for(const step of ['patient','menu','share']){
+    await evaluate(`setTherapistStep('${step}',false)`);
+    const staffShot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'therapist-'+step+'-mobile.png'),Buffer.from(staffShot.data,'base64'));
+  }
+  await evaluate("setTherapistStep('patient',false)");
   await check('optional chart ID round trips through storage without changing internal ID',`(()=>{
     const id=S.patientId;updS('chartId','00001234');updS('patientName','架空テスト');
     const stored=JSON.parse(localStorage.getItem(STORE_KEY)).settings;
@@ -154,6 +166,10 @@ async function main(){
   await check('save confirms a complete prescription without an extra checkbox',"!$('chooseTemplate')&&S.menu.length===3&&S.menu.every(ex=>ex.scheduleConfirmed)");
   await evaluate("closeTherapist();");
   await check('one illustrated exercise is visible with three-item progress',"document.querySelectorAll('.exercise-card').length===1&&$('today-content').textContent.includes('運動 1 / 3')&&S.menu.every(x=>x.exerciseKey)");
+  await check('illustration and repetitions are both visible on the first phone screen',"(()=>{const image=document.querySelector('.today-exercise-image'),dose=document.querySelector('.today-exercise-card .dose'),actions=document.querySelector('.today-fixed-actions');return image&&dose&&image.getBoundingClientRect().top>=0&&dose.getBoundingClientRect().bottom<=actions.getBoundingClientRect().top})()");
+  await evaluate("(async()=>{$('today-start').click();for(let i=0;i<100&&!patientSession?.started;i++)await new Promise(r=>setTimeout(r,50));})()");
+  await check('one home tap starts the session and the next main action is done',"patientSession?.started&&!patientSession.saved&&document.querySelector('#patientSession .session-actions .btn-pri')?.textContent.includes('できた')");
+  await evaluate("closeModal('patientSession')");
   await check('horizontal swipe changes one exercise without exposing multiple cards',"(()=>{const view=$('today-exercise-view');view.dispatchEvent(new PointerEvent('pointerdown',{clientX:300}));view.dispatchEvent(new PointerEvent('pointerup',{clientX:120}));const moved=todayExerciseIndex===1&&$('today-content').textContent.includes('運動 2 / 3')&&document.querySelectorAll('.exercise-card').length===1;moveTodayExercise(-1);return moved&&todayExerciseIndex===0})()");
   await check('newly saved prescription matches displayed category order',"S.menu.map(ex=>ex.exerciseKey).join(',')==='crossover,pendulum,supine-flexion'");
   await check('catalog append preserves existing prescription IDs and values',`(()=>{

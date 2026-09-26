@@ -144,14 +144,17 @@ function openClinicalShelf(categoryId='G03',level){
   if(!clinicalBatch||clinicalBatch.patientId!==S.patientId)clinicalBatch={patientId:S.patientId,items:{},query:'',only:false};
   for(const id of Object.keys(clinicalBatch.items))if(!CR.isSelectable(id))delete clinicalBatch.items[id];
   Object.assign(state,{categoryId,level});
-  for(const id of Object.values(c.levels).flat()){
+  const familyOrder=['T25','T09','T26','T12'];
+  const orderLevel=ids=>{const next=ids.filter(id=>!familyOrder.includes(id)),family=familyOrder.filter(id=>ids.includes(id));if(!family.length)return next;const first=Math.min(...ids.map((id,index)=>familyOrder.includes(id)?index:ids.length));next.splice(first,0,...family);return next;};
+  const candidateIds=Object.values(c.levels).flatMap(orderLevel);
+  for(const id of candidateIds){
     const item=clinicalBatch.items[id],saved=S.menu.find(ex=>ex.exerciseKey===CC.definitions[id].key);
     if(!item||(!item.selected&&(saved?JSON.stringify(saved):null)!==item.base))clinicalBatch.items[id]=newClinicalCandidate(id,categoryId);
   }
   // modal() replaces the DOM. Event handlers have already copied each edit into this draft.
   const draft=clinicalBatch;
   modal('clinicalShelf',escapeHtml(clinicalCategoryName(c)),`<p class="hint">チェックで複数選択 → 必要な指示だけ変更・確認 → 一括保存。閉じると未保存の選択を取り消します。</p><div id="clinical-level" class="clinical-switch">${Object.entries({beginner:'初級',intermediate:'中級',advanced:'上級'}).map(([key,label])=>`<button class="btn btn-out" data-clinical-level="${key}" aria-pressed="${key===level}" onclick="openClinicalShelf('${categoryId}','${key}')">${label}</button>`).join('')}</div><div class="notice"><strong>疾患の注意・処方条件</strong><p>${escapeHtml(c.notes)}</p></div><label>運動名で検索<input id="clinical-exercise-search" class="fld-inp" value="${escapeAttr(draft.query)}" oninput="clinicalBatch.query=this.value;filterClinicalBatch()"></label><label class="pick-label"><input id="clinical-selected-only" type="checkbox" ${draft.only?'checked':''} onchange="clinicalBatch.only=this.checked;filterClinicalBatch()">選択済みだけ表示（段階を横断）</label><p id="clinical-batch-count" role="status"></p>
-  ${Object.entries(draft.items).map(([id,item])=>{const d=CC.definitions[id],r=item.ex.clinicalV02;return `<article class="clinical-candidate" data-clinical-exercise="${id}"><div class="clinical-candidate-heading"><label class="pick-label"><input type="checkbox" id="cb-${id}-selected" data-batch-key="selected" ${item.selected?'checked':''} ${!d.image?'disabled':''}>${escapeHtml(d.name)}</label>${d.image?`<button type="button" class="candidate-image" onclick="previewClinical('${id}')"><img src="${escapeAttr(d.image)}" alt="${escapeAttr(d.name)}の姿勢" loading="lazy"></button>`:'<span>画像保留・選択不可</span>'}</div><p class="hint">${escapeHtml(d.purpose)}${item.base?' ／ 追加済み・編集':''}</p><button type="button" class="evidence-button" onclick="showClinicalEvidence('${id}','${r.categoryId}')">参考文献・資料</button><div id="cb-${id}-selected-fields" ${!item.selected?'hidden':''}><details id="cb-${id}-details"><summary>回数・頻度を確認・変更</summary><p id="cb-${id}-overview">${escapeHtml(clinicalBatchOverview(item))}</p>${clinicalBatchFields(id,item)}</details></div></article>`;}).join('')}
+  ${candidateIds.map(id=>[id,draft.items[id]]).map(([id,item])=>{const d=CC.definitions[id],r=item.ex.clinicalV02;return `<article class="clinical-candidate" data-clinical-exercise="${id}"><div class="clinical-candidate-heading"><label class="pick-label"><input type="checkbox" id="cb-${id}-selected" data-batch-key="selected" ${item.selected?'checked':''} ${!d.image?'disabled':''}>${escapeHtml(d.name)}</label>${d.image?`<button type="button" class="candidate-image" onclick="previewClinical('${id}')"><img src="${escapeAttr(d.image)}" alt="${escapeAttr(d.name)}の姿勢" loading="lazy"></button>`:'<span>画像保留・選択不可</span>'}</div><p class="hint">${escapeHtml(d.purpose)}${item.base?' ／ 追加済み・編集':''}</p><button type="button" class="evidence-button" onclick="showClinicalEvidence('${id}','${r.categoryId}')">参考文献・資料</button><div id="cb-${id}-selected-fields" ${!item.selected?'hidden':''}><details id="cb-${id}-details"><summary>回数・頻度を確認・変更</summary><p id="cb-${id}-overview">${escapeHtml(clinicalBatchOverview(item))}</p>${clinicalBatchFields(id,item)}</details></div></article>`;}).join('')}
   <p id="clinical-batch-errors" role="alert"></p><button class="btn btn-out" onclick="clinicalBatch.only=true;$('clinical-selected-only').checked=true;clinicalBatch.query='';$('clinical-exercise-search').value='';filterClinicalBatch()">選択分を一括確認</button><button class="btn btn-pri" onclick="saveClinicalBatch(false)">選択種目を一括保存</button><button class="btn btn-pri" onclick="saveClinicalBatch(true)">一括保存してQR</button>`);
   clinicalBatch=draft;
   for(const type of ['input','change'])$('clinicalShelf').addEventListener(type,updateClinicalBatch);
@@ -249,6 +252,14 @@ function openPatientSession(i){
   const ex=patientItems()[i];if(!ex)return;
   if(!patientSession||patientSession.itemId!==ex.id||patientSession.day!==todayKey()||patientSession.patientId!==S.patientId)patientSession={id:uid(),itemId:ex.id,day:todayKey(),patientId:S.patientId,started:false,saved:false,revision:ex.clinicalV02?.revision||'legacy',index:i};
   drawPatientSession(ex);
+}
+function beginPatientSession(i){
+  openPatientSession(i);
+  const sessionId=patientSession?.id,node=$('patientSession');if(!sessionId||!node)return;
+  const start=()=>{if(patientSession?.id===sessionId&&!patientSession.started&&!patientSession.saved)startPatientSession();};
+  const img=node.querySelector('img');
+  if(img&&!img.complete){$('session-status').textContent='イラストを確認しています…';img.addEventListener('load',start,{once:true});return;}
+  start();
 }
 showExercise=openPatientSession;
 function sessionDoseHtml(ex){

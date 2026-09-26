@@ -159,6 +159,20 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 @media (max-height:500px) {#patientSession .guide-image {max-height:160px;}#patientSession .t-hd {padding:6px;}#patientSession .session-actions {padding:4px 0;}}
 @media (prefers-reduced-motion:reduce) {*,*::before,*::after {animation:none!important;scroll-behavior:auto!important;}}
 
+/* Therapist mode: one task per screen. */
+#therapistModal{overflow:hidden;padding:calc(8px + var(--top-inset)) max(8px,env(safe-area-inset-right,0px)) 8px max(8px,env(safe-area-inset-left,0px))}
+#therapistModal>.t-modal{display:flex;flex-direction:column;height:calc(100dvh - 16px - var(--top-inset));max-height:calc(100dvh - 16px - var(--top-inset));margin:0;overflow:hidden;padding-bottom:0}
+#therapistModal .t-hd{flex:0 0 auto}
+#therapist-content{display:flex;flex:1 1 auto;min-height:0;flex-direction:column}
+.staff-step-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:0 0 auto;margin-bottom:8px}
+.staff-step-nav button{min-height:48px;border:1.5px solid var(--border);border-radius:10px;background:#f5f7f7;color:var(--text2);font:700 13px/1.25 inherit;padding:7px 4px;cursor:pointer}
+.staff-step-nav button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal);color:#fff}
+.therapist-step{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 4px calc(84px + env(safe-area-inset-bottom,0px))}
+.therapist-step[hidden]{display:none!important}
+.therapist-step-footer{position:sticky;bottom:calc(-84px - env(safe-area-inset-bottom,0px));display:flex;gap:8px;background:#fff;border-top:2px solid var(--teal-l);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));margin-top:20px;z-index:2}
+.therapist-step-footer .btn{flex:1;margin:0;white-space:normal}
+@media(max-width:360px){.staff-step-nav button{font-size:12px;padding-inline:2px}}
+
 /* Prescription correction targets */
 [aria-invalid="true"]{outline:2px solid #b42318;outline-offset:2px}
 .clinical-field-error{color:#b42318;font-weight:700;margin:8px 0;overflow-wrap:anywhere}
@@ -204,7 +218,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 .today-exercise-card{text-align:center;padding:16px 16px 18px;border:0;box-shadow:0 5px 22px rgba(30,76,84,.08)}
 .today-count{font-size:14px;font-weight:800;letter-spacing:.05em;color:var(--teal);margin-bottom:4px}
 .today-exercise-card h1{font-size:27px;line-height:1.3;margin:4px 0 12px;color:var(--text)}
-.today-exercise-image{display:block;width:100%;height:min(34dvh,300px);min-height:210px;object-fit:contain;background:#f8faf9;border-radius:18px}
+.today-exercise-image{display:block;width:100%;height:min(24dvh,210px);min-height:150px;object-fit:contain;background:#f8faf9;border-radius:18px}
 .today-image-missing{height:210px;display:grid;place-items:center;background:#f8faf9;border-radius:18px;color:var(--text2)}
 .today-exercise-card .dose{font-size:22px;line-height:1.35;margin:14px 0 4px;color:var(--text);font-weight:800}
 .today-side{font-size:17px;color:var(--teal-d);font-weight:750}.today-restriction{font-size:14px;color:var(--text2);margin:8px auto 0;max-width:36em}
@@ -218,5 +232,5 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 .today-carousel-actions .btn{margin:0;min-height:48px;padding:8px 6px}.today-carousel-actions .btn:disabled{opacity:.35}
 .today-dots{display:flex;justify-content:center;gap:6px}.today-dots i{display:block;width:7px;height:7px;border-radius:99px;background:#cbd7da}.today-dots i.on{width:21px;background:var(--teal)}
 .today-swipe-hint{text-align:center;color:var(--text2);font-size:13px;margin:8px 0 18px}
-@media(max-width:360px){.today-exercise-card{padding:13px}.today-exercise-card h1{font-size:24px}.today-exercise-image{min-height:180px;height:29dvh}.today-carousel-header strong{font-size:19px}.today-carousel-header span{font-size:12px}.today-carousel-actions .btn{font-size:13px}}
-@media(max-height:680px){.today-exercise-image{min-height:170px;height:28dvh}.today-exercise-card h1{font-size:23px;margin-bottom:6px}.today-exercise-card .dose{font-size:19px;margin-top:8px}.today-exercise-card .home-prescription{margin-top:10px}}
+@media(max-width:360px){.today-exercise-card{padding:13px}.today-exercise-card h1{font-size:24px}.today-exercise-image{min-height:140px;height:22dvh}.today-carousel-header strong{font-size:19px}.today-carousel-header span{font-size:12px}.today-carousel-actions .btn{font-size:13px}}
+@media(max-height:680px){.today-exercise-image{min-height:130px;height:21dvh}.today-exercise-card h1{font-size:23px;margin-bottom:6px}.today-exercise-card .dose{font-size:19px;margin-top:8px}.today-exercise-card .home-prescription{margin-top:10px}}

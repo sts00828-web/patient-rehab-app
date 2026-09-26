@@ -8,6 +8,7 @@ const ExerciseSelection = (()=>{
   // position in the catalogue; the remaining items follow it in progression order.
   const relatedFamilies=[
     ['kneeling-plank','forearm-plank','side-plank','single-leg-plank','side-plank-leg-lift','plank-shoulder-tap'],
+    ['v02_T25','v02_T09','v02_T26','v02_T12'],
     ['abdominal-brace','pelvic-tilt','bridge','bird-dog'],
     ['shoulder-isometric-external','shoulder-band-external','shoulder-isometric-internal','band-row'],
     ['wrist-active-extension','wrist-isometric-extension','wrist-eccentric-extension','wrist-resisted-extension','wrist-extensor-stretch'],

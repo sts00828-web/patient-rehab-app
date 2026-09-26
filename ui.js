@@ -105,12 +105,19 @@ function bindTitleLongPress() {
 }
 
 function openPinModal() {
+  // During the demo, an unset PIN means staff access is intentionally open.
+  // Once a PIN is saved, the existing verification flow is used.
+  if (!localPin) {
+    staffUnlocked = true;
+    openTherapist();
+    return;
+  }
   document.getElementById('pin-input').value = '';
   document.getElementById('pin-confirm').value = '';
-  document.getElementById('pin-confirm-wrap').hidden = !!localPin;
-  document.getElementById('pin-help').textContent = localPin ? 'PINを入力してください。' : '初回のスタッフ用PINを設定してください。';
-  document.getElementById('pin-submit').textContent = localPin ? '確認' : 'PINを設定して開く';
-  document.getElementById('pin-note').textContent = localPin ? 'この端末だけの誤操作防止PINです。' : '4〜6桁の数字。患者さんが誤ってメニューを変更するのを防ぎます。';
+  document.getElementById('pin-confirm-wrap').hidden = true;
+  document.getElementById('pin-help').textContent = 'PINを入力してください。';
+  document.getElementById('pin-submit').textContent = '確認';
+  document.getElementById('pin-note').textContent = 'この端末だけの誤操作防止PINです。';
   document.getElementById('pinModal').classList.add('on');
   setTimeout(() => document.getElementById('pin-input').focus(), 100);
 }
