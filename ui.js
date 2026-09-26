@@ -105,8 +105,12 @@ function bindTitleLongPress() {
 }
 
 function openPinModal() {
-  if(!localPin){staffUnlocked=true;openTherapist();return;}
   document.getElementById('pin-input').value = '';
+  document.getElementById('pin-confirm').value = '';
+  document.getElementById('pin-confirm-wrap').hidden = !!localPin;
+  document.getElementById('pin-help').textContent = localPin ? 'PINを入力してください。' : '初回のスタッフ用PINを設定してください。';
+  document.getElementById('pin-submit').textContent = localPin ? '確認' : 'PINを設定して開く';
+  document.getElementById('pin-note').textContent = localPin ? 'この端末だけの誤操作防止PINです。' : '4〜6桁の数字。患者さんが誤ってメニューを変更するのを防ぎます。';
   document.getElementById('pinModal').classList.add('on');
   setTimeout(() => document.getElementById('pin-input').focus(), 100);
 }
@@ -186,6 +190,43 @@ function exportTemplates() {
   URL.revokeObjectURL(url);
 }
 
+let shareQrParts=[];
+let splitQrInbox={};
+function splitTransferId(){
+  const bytes=new Uint8Array(4);crypto.getRandomValues(bytes);
+  return [...bytes].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+function splitShareUrl(url,size=900){
+  const marker='#d=',at=url.indexOf(marker);if(at<0)throw Error('共有URLの形式が不正です');
+  const base=url.slice(0,at),data=url.slice(at+marker.length),id=splitTransferId();
+  const chunks=[];for(let i=0;i<data.length;i+=size)chunks.push(data.slice(i,i+size));
+  if(chunks.length<2||chunks.length>20)throw Error('分割QRの枚数が範囲外です');
+  return chunks.map((chunk,i)=>`${base}#p=${id}.${i+1}.${chunks.length}.${chunk}`);
+}
+function renderShareQrPart(index){
+  if(!shareQrParts.length)return;
+  index=Math.max(0,Math.min(index,shareQrParts.length-1));
+  const qr=qrcode(0,'M');qr.addData(shareQrParts[index]);qr.make();
+  const host=document.getElementById('qrBox');if(!host)return;
+  host.innerHTML=`<p><strong>分割QR ${index+1} / ${shareQrParts.length}</strong></p>${qr.createSvgTag({scalable:true,margin:4})}<div class="row-sp" style="gap:8px"><button class="btn btn-out" ${index===0?'disabled':''} onclick="renderShareQrPart(${index-1})">前へ</button><button class="btn btn-pri" ${index===shareQrParts.length-1?'disabled':''} onclick="renderShareQrPart(${index+1})">次へ</button></div><p class="hint">患者さんは1から順にすべて読み取ってください。最後のQRを読むとメニューを取り込みます。</p>`;
+}
+function showSplitShareQr(url){shareQrParts=splitShareUrl(url);renderShareQrPart(0);}
+function collectSplitQrPart(text){
+  const match=String(text).match(/[#?&]p=([a-f0-9]{8})\.(\d{1,2})\.(\d{1,2})\.([^&\s]+)/i);if(!match)return null;
+  const [,id,indexText,totalText,chunk]=match,index=Number(indexText),total=Number(totalText);
+  if(total<2||total>20||index<1||index>total)throw Error('分割QRの番号が不正です');
+  const key='rehab_qr_parts_'+id;let row=splitQrInbox[key];
+  try{row=JSON.parse(sessionStorage.getItem(key)||'null')||row;}catch{}
+  if(!row||row.total!==total)row={total,parts:{}};
+  row.parts[index]=chunk;splitQrInbox[key]=row;
+  try{sessionStorage.setItem(key,JSON.stringify(row));}catch{}
+  const count=Object.keys(row.parts).length;
+  if(count<total)return {complete:false,count,total};
+  const value=Array.from({length:total},(_,i)=>row.parts[i+1]).join('');
+  delete splitQrInbox[key];try{sessionStorage.removeItem(key);}catch{}
+  return {complete:true,count,total,value};
+}
+
 function showShareQR() {
   if (!requireStaff()) return;
   if (!S || !S.menu || S.menu.length === 0) {
@@ -227,15 +268,15 @@ function showShareQR() {
     document.getElementById('qrBox').innerHTML = qr.createSvgTag({ scalable:true, margin:4 })+(level==='L'?'<p class="hint">指示が多いため、明るい場所で画面全体を読み取ってください。読み取りにくい場合は下のURLをコピーして渡せます。</p>':'');
   } catch (e) {
     const detail = e instanceof Error ? e.message : String(e);
-    const reason = /overflow|too long/i.test(detail)
-      ? '個別指示などの情報量がQRコードの容量を超えています。'
-      : 'QRコードを生成できませんでした：'+detail;
-    document.getElementById('qrBox').innerHTML =
-      `<div style="color:var(--orange);font-size:12px;padding:20px">${escapeHtml(reason)}<br>内容は省略していません。下のURLを全文コピーして患者さんへ渡してください。</div>`;
+    if(/overflow|too long/i.test(detail)){
+      try{showSplitShareQr(url);}
+      catch(splitError){document.getElementById('qrBox').innerHTML=`<div style="color:var(--orange);font-size:12px;padding:20px">${escapeHtml(splitError.message)}<br>内容は省略していません。下のURLを全文コピーして患者さんへ渡してください。</div>`;}
+    }else document.getElementById('qrBox').innerHTML =
+      `<div style="color:var(--orange);font-size:12px;padding:20px">QRコードを生成できませんでした：${escapeHtml(detail)}<br>内容は省略していません。下のURLを全文コピーして患者さんへ渡してください。</div>`;
   }
 }
 
-function closeQR() { const m = document.getElementById('qrModal'); if (m) m.remove(); }
+function closeQR() { shareQrParts=[];const m = document.getElementById('qrModal'); if (m) m.remove(); }
 
 function showInstallQR() {
   const url = `${location.origin}${location.pathname}`;
@@ -309,7 +350,7 @@ function startQrScan() {
         <button class="t-close" onclick="stopQrScan()">×</button>
       </div>
       <p style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-        セラピストの「設定データQR」をカメラに向けてください。<br>
+        セラピストの「設定データQR」をカメラに向けてください。分割QRの場合は表示順に読み取ります。<br>
         白い余白を含め、QR全体を大きく映してください。<br>ぼやけるときは少し離し、明るい場所で静止してください。
       </p>
       <div id="qr-reader" style="width:100%;background:#000;border-radius:8px;overflow:hidden;min-height:280px"></div>

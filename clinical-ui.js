@@ -218,8 +218,9 @@ function openClinicalPrescription(id,categoryId,index=-1){
   if(index>=0&&S.menu[index]?.exerciseKey!==d.key)return;
   const ex=index>=0?S.menu[index]:newClinicalCandidate(id,categoryId).ex,r=CR.normalize(ex.clinicalV02);
   clinicalDraft={ex:C.clone(ex),index,patientId:S.patientId};
-  modal('clinicalPrescription',escapeHtml(d.name+'：個別処方'),'<p id="cr-overview">'+escapeHtml(clinicalBatchOverview({ex:{...ex,clinicalV02:r}}))+'</p>'+clinicalBatchFields(id,{ex:{...ex,clinicalV02:r}}).replaceAll('cb-'+id+'-','cr-').replaceAll('data-batch-key=', 'data-single-key=').replace(/<button[\s\S]*?<\/button>/g,'')+'<p id="cr-errors" role="alert"></p><button class="btn btn-pri" onclick="saveClinicalPrescription()">処方を保存</button>');
+  modal('clinicalPrescription',escapeHtml(d.name+'：個別処方'),'<p id="cr-overview">'+escapeHtml(clinicalBatchOverview({ex:{...ex,clinicalV02:r}}))+'</p>'+clinicalBatchFields(id,{ex:{...ex,clinicalV02:r}}).replaceAll('cb-'+id+'-','cr-').replaceAll('data-batch-key=', 'data-single-key=').replace(/<button[\s\S]*?<\/button>/g,'')+`<details class="pt-details"><summary>動画（任意）</summary><p class="hint">標準は上のイラストと説明です。撮影は毎回必要ありません。</p><div id="exercise-video-tools"></div><label class="fld-lbl" for="cr-video">院内共通動画のURL（任意・HTTPS）</label><input id="cr-video" class="fld-inp" type="url" value="${escapeAttr(ex.videoUrl||'')}" placeholder="https://..."><p class="hint">院内で使い回す動画は、担当者が内容を確認したURLを登録します。この患者だけの動画は患者画面で本人の端末内に保存できます。</p></details><p id="cr-errors" role="alert"></p><button class="btn btn-pri" onclick="saveClinicalPrescription()">処方を保存</button>`);
   wireClinicalErrors('clinicalPrescription','cr-errors');
+  if(typeof ExerciseVideo!=='undefined')ExerciseVideo.mount();
 }
 function readClinicalPrescription(){
   const ex=C.clone(clinicalDraft.ex),r=CR.normalize(ex.clinicalV02);
@@ -228,7 +229,9 @@ function readClinicalPrescription(){
     r[key]=clinicalNumberKeys.includes(key)?(el.value===''?null:Number(el.value)):el.value;
   }
   r.mode='simple';r.revision=uid();r.patient.patientId=S.patientId;
-  ex.clinicalV02=r;ex.dows=[];ex.scheduleMode='flexible';ex.scheduleConfirmed=true;ex.prescription=CR.prescription(r);ex.note=r.constraints;ex.params='';
+  const rawVideo=$('cr-video')?.value.trim()||'';
+  if(rawVideo&&!C.videoUrl(rawVideo))throw clinicalFieldError('動画URLはhttps://で入力してください。','cr-video');
+  ex.clinicalV02=r;ex.dows=[];ex.scheduleMode='flexible';ex.scheduleConfirmed=true;ex.prescription=CR.prescription(r);ex.note=r.constraints;ex.params='';ex.videoUrl=C.videoUrl(rawVideo);
   return ex;
 }
 function saveClinicalPrescription(){
