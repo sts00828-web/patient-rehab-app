@@ -58,3 +58,12 @@ test('unilateral additions switch instructions without changing shared reference
   assert.ok(steps.includes('左'),id+' left-side text');assert.equal(d.image,'images/'+id+'.png');
  }
 });
+test('patient copy does not expose internal exercise IDs or staff shorthand',()=>{
+ const forbidden=/(?:[STNKEAP]\d{2}|\bPT\b|セラピストモード|要評価|未許可期不可|代替候補)/;
+ for(const d of Object.values(catalog.definitions)){
+  const ex={exerciseKey:d.key,clinicalV02:{side:'right',mode:'simple'}};
+  assert.doesNotMatch(R.patientCaution(ex,d),forbidden,d.id+' caution');
+  for(const step of R.patientSteps(ex,d))assert.doesNotMatch(step,forbidden,d.id+' step');
+ }
+ assert.match(R.patientCaution({exerciseKey:'v02_T11',clinicalV02:{mode:'simple'}}),/仰向けの足踏み/);
+});

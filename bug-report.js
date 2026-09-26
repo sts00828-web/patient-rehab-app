@@ -10,7 +10,7 @@ function bugReportEnvironment(nav){
   return `端末：${device}\nOS：${os}\nブラウザ：${browser}`;
 }
 function buildBugReport(intent,actual,nav,date){
-  return `【不具合報告】\nやろうとしたこと：\n${intent}\n\n実際に起きたこと：\n${actual}\n\nアプリ版：v61\n日時：${date.toISOString()}（UTC）\n${bugReportEnvironment(nav)}`;
+  return `【不具合報告】\nやろうとしたこと：\n${intent}\n\n実際に起きたこと：\n${actual}\n\nアプリ版：v62\n日時：${date.toISOString()}（UTC）\n${bugReportEnvironment(nav)}`;
 }
 function openBugReport(){
   modal('bugReportModal','不具合を報告',`

@@ -103,11 +103,12 @@ function mediaFor(ex){
   const match=Object.values(EXERCISE_LIBRARY).find(e=>e.name===ex.name);return match||null;
 }
 const prescriptionLabels={side:'運動する側',repetitions:'回数',sets:'セット数',hold:'保持・動作の時間',frequency:'1日の実施回数',load:'重さ・動かす範囲',support:'支え方・見守り'};
-function doseSummary(ex){return ex.params||Object.entries(prescriptionLabels).filter(([key])=>ex.prescription?.[key]&&ex.prescription[key]!=='該当なし').map(([key,label])=>`${label}：${ex.prescription[key]}`).join(' ／ ')||'担当の理学療法士と指示を確認してください';}
+function patientCopy(value){return typeof ClinicalRules!=='undefined'?ClinicalRules.patientText(value):String(value||'');}
+function doseSummary(ex){return patientCopy(ex.params||Object.entries(prescriptionLabels).filter(([key])=>ex.prescription?.[key]&&ex.prescription[key]!=='該当なし').map(([key,label])=>`${label}：${ex.prescription[key]}`).join(' ／ '))||'担当の理学療法士と指示を確認してください';}
 function scheduleText(ex){return ex.scheduleMode==='flexible'?'曜日指定なし・指示された週の頻度で実施':ex.dows?.length?ex.dows.map(d=>DOW_LABEL[d]).join('・')+'曜日':'毎日';}
 function prescriptionHtml(ex){
   const p=ex.prescription||{},rows=Object.entries(prescriptionLabels).filter(([key])=>p[key]);
-  return `${ex.params?`<div class="dose">${escapeHtml(ex.params)}</div>`:''}${rows.length?`<dl class="prescription-list">${rows.map(([key,label])=>`<div><dt>${label}</dt><dd>${escapeHtml(p[key])}</dd></div>`).join('')}</dl>`:''}<p class="hint">実施日：${scheduleText(ex)}${ex.scheduleConfirmed?'':'（実施頻度を担当者と確認してください）'}</p>${!p.side||!p.frequency?'<p class="hint">左右や回数が分からないときは、図から判断せず担当の理学療法士に確認してください。</p>':''}`;
+  return `${ex.params?`<div class="dose">${escapeHtml(patientCopy(ex.params))}</div>`:''}${rows.length?`<dl class="prescription-list">${rows.map(([key,label])=>`<div><dt>${label}</dt><dd>${escapeHtml(patientCopy(p[key]))}</dd></div>`).join('')}</dl>`:''}<p class="hint">実施日：${scheduleText(ex)}${ex.scheduleConfirmed?'':'（実施頻度を担当者と確認してください）'}</p>${!p.side||!p.frequency?'<p class="hint">左右や回数が分からないときは、図から判断せず担当の理学療法士に確認してください。</p>':''}`;
 }
 function consultationHtml(){
   return `<div class="notice"><strong>相談先：</strong>${escapeHtml(S?.consultContact||'担当の理学療法士・受診している医療機関（連絡先は担当者に確認してください）')}<p class="hint">記録は自動送信されません。相談は医療機関へ直接ご連絡ください。</p></div>`;
@@ -118,8 +119,8 @@ function safetyHtml(compact=false){
 function exerciseNotices(ex,media){
   // Remove only a complete, known boilerplate line from the display; stored notes remain intact.
   const noteLines=(ex.note||'').split('\n').filter(line=>line.trim()!==media?.caution?.trim()&&line.trim()!==ex.diseaseNote?.trim());
-  const note=noteLines.join('\n').trim();
-  return `${note?`<div class="notice individual-note"><strong>あなたへの指示・引き継いだ注意</strong><p>${escapeHtml(note)}</p></div>`:''}${media?.caution||ex.diseaseNote?`<div class="notice"><strong>始める前の注意</strong>${media?.caution?`<p>${escapeHtml(media.caution)}</p>`:''}${ex.diseaseNote?`<p>${escapeHtml(ex.diseaseNote)}</p>`:''}</div>`:''}`;
+  const note=patientCopy(noteLines.join('\n').trim()),caution=typeof ClinicalRules!=='undefined'?ClinicalRules.patientCaution(ex,media):patientCopy(media?.caution),diseaseNote=patientCopy(ex.diseaseNote);
+  return `${note?`<div class="notice individual-note"><strong>あなたへの指示・引き継いだ注意</strong><p>${escapeHtml(note)}</p></div>`:''}${caution||diseaseNote?`<div class="notice"><strong>始める前の注意</strong>${caution?`<p>${escapeHtml(caution)}</p>`:''}${diseaseNote?`<p>${escapeHtml(diseaseNote)}</p>`:''}</div>`:''}`;
 }
 function recordSummary(items,log){
   const counts={done:0,partial:0,pain:0,forgot:0,rest:0,cancelled:0};
@@ -146,7 +147,7 @@ function renderToday(){
   const key=todayKey(),dow=todayDow(),log=getLog(key),items=todayExercises(dow),c=getCompletion(key,dow),before=key<S.startDate,summary=recordSummary(items,log),flexible=items.some(ex=>ex.scheduleMode==='flexible');
   todayExerciseIndex=Math.max(0,Math.min(items.length-1,todayExerciseIndex));
   let h='';
-  if(S.plans.some(p=>p.from>key))h+=`<div class="notice">現在の設定は${S.menu.length}種目です。本日は記録済みの${items.length}種目を表示し、更新は明日から反映します。今日から変更する場合は、セラピストモードの「今日から反映」を選んでください。</div>`;
+  if(S.plans.some(p=>p.from>key))h+=`<div class="notice">現在の設定は${S.menu.length}種目です。本日は記録済みの${items.length}種目を表示し、更新は明日から反映します。今日から変更する場合は、担当者にご相談ください。</div>`;
   if(items.length){
     const i=todayExerciseIndex,ex=items[i],media=mediaFor(ex),st=log.status?.[ex.id]||(log.done?.[ex.id]?'done':''),restriction=[ex.clinicalV02?.constraints,ex.prescription?.load].find(value=>value?.trim());
     const image=media?`<img class="today-exercise-image" src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}の姿勢">`:'<div class="today-image-missing">イラストは担当者と確認してください</div>';
@@ -154,10 +155,10 @@ function renderToday(){
       <header class="today-carousel-header"><div><strong>今日の運動</strong><span>${items.length}種目・${summary.recorded}種目を記録</span></div><div class="today-progress" aria-hidden="true"><i style="width:${(i+1)/items.length*100}%"></i></div></header>
       <article class="card exercise-card today-exercise-card" id="today-exercise-view" aria-label="運動 ${i+1}/${items.length}">
         <div class="today-count">運動 ${i+1} / ${items.length}</div><h1 id="today-exercise-title" tabindex="-1">${escapeHtml(ex.name)}</h1>${image}
-        <div class="dose">${escapeHtml([ex.prescription?.repetitions,ex.prescription?.sets,ex.prescription?.frequency].filter(Boolean).join(' × ')||ex.params||'回数は担当者に確認してください')}</div>
+        <div class="dose">${escapeHtml(patientCopy([ex.prescription?.repetitions,ex.prescription?.sets,ex.prescription?.frequency].filter(Boolean).join(' × ')||ex.params||'回数は担当者に確認してください'))}</div>
         <div class="today-side">${escapeHtml(ex.prescription?.side||'実施側は担当者に確認')}</div>
-        ${restriction?`<p class="today-restriction">${escapeHtml(restriction)}</p>`:''}
-        <details class="home-prescription"><summary>やり方・注意点を見る</summary>${prescriptionHtml(ex)}${exerciseNotices(ex,media)}${media?.steps?.length?`<ol class="today-steps">${media.steps.map(step=>`<li>${escapeHtml(step)}</li>`).join('')}</ol>`:''}</details>
+        ${restriction?`<p class="today-restriction">${escapeHtml(patientCopy(restriction))}</p>`:''}
+        <details class="home-prescription"><summary>やり方・注意点を見る</summary>${prescriptionHtml(ex)}${exerciseNotices(ex,media)}${media?.steps?.length?`<ol class="today-steps">${(typeof ClinicalRules!=='undefined'?ClinicalRules.patientSteps(ex,media):media.steps).map(step=>`<li>${escapeHtml(step)}</li>`).join('')}</ol>`:''}</details>
         <p class="today-status" role="status">${st?'記録済み：'+(statusLabels[st]||st):'未記録'}</p>
       </article>
       <div class="today-fixed-actions"><button id="today-start" class="btn btn-pri" onclick="beginPatientSession(${i})">${st?'記録を確認・もう一度行う':'▶ この運動をはじめる'}</button><div class="today-carousel-actions"><button class="btn btn-out" ${i===0?'disabled':''} onclick="moveTodayExercise(-1)">← 前の運動</button><div class="today-dots" aria-label="${i+1}番目／全${items.length}種目">${items.map((_,n)=>`<i class="${n===i?'on':''}"></i>`).join('')}</div><button class="btn btn-out" ${i===items.length-1?'disabled':''} onclick="moveTodayExercise(1)">次の運動 →</button></div></div>
@@ -187,7 +188,7 @@ function showExercise(i){
 }
 function showGuide(ex){
   const media=mediaFor(ex),url=C.videoUrl(ex.videoUrl);
-  modal('guideModal',escapeHtml(ex.name),`${exerciseNotices(ex,media)}${prescriptionHtml(ex)}${safetyHtml(true)}${media?`<div class="exercise-preparation"><p><strong>この運動の目的：</strong>${escapeHtml(media.purpose||'担当の理学療法士に確認してください')}</p><p><strong>用意するもの：</strong>${escapeHtml(media.equipment||'担当の理学療法士に確認してください')}</p></div><img class="guide-image" src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}の姿勢">${media.imageCaption?`<p class="hint">${escapeHtml(media.imageCaption)}</p>`:''}<ol class="steps">${media.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ol>`:''}${ex.id?'<section id="patient-video"></section>':''}${consultationHtml()}${url?`<a class="btn btn-out" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">担当の理学療法士が登録した動画を見る ↗</a>`:''}${media?`<details class="source-note"><summary>説明の参考資料</summary><a href="${escapeAttr(media.source)}" target="_blank" rel="noopener noreferrer">医療機関の運動解説（英語）↗</a><p>イラストは説明用です。左右・動かす範囲・負荷はあなたへの指示を優先してください。</p></details>`:''}<button id="guide-return" class="btn btn-pri" onclick="closeModal('guideModal')">元の画面へ戻る</button>`);
+  modal('guideModal',escapeHtml(ex.name),`${exerciseNotices(ex,media)}${prescriptionHtml(ex)}${safetyHtml(true)}${media?`<div class="exercise-preparation"><p><strong>この運動の目的：</strong>${escapeHtml(patientCopy(media.purpose||'担当の理学療法士に確認してください'))}</p><p><strong>用意するもの：</strong>${escapeHtml(patientCopy(media.equipment||'担当の理学療法士に確認してください'))}</p></div><img class="guide-image" src="${media.imagePath||'assets/exercises/'+media.image}" onerror="this.hidden=true" alt="${escapeAttr(media.name)}の姿勢">${media.imageCaption?`<p class="hint">${escapeHtml(patientCopy(media.imageCaption))}</p>`:''}<ol class="steps">${(typeof ClinicalRules!=='undefined'?ClinicalRules.patientSteps(ex,media):media.steps).map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ol>`:''}${ex.id?'<section id="patient-video"></section>':''}${consultationHtml()}${url?`<a class="btn btn-out" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">担当の理学療法士が登録した動画を見る ↗</a>`:''}${media?`<details class="source-note"><summary>説明の参考資料</summary><a href="${escapeAttr(media.source)}" target="_blank" rel="noopener noreferrer">医療機関の運動解説（英語）↗</a><p>イラストは説明用です。左右・動かす範囲・負荷はあなたへの指示を優先してください。</p></details>`:''}<button id="guide-return" class="btn btn-pri" onclick="closeModal('guideModal')">元の画面へ戻る</button>`);
   PatientVideo.mount(ex);
 }
 const modalOrigins=new Map();

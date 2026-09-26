@@ -5,6 +5,30 @@
   const num=v=>Number.isFinite(v)&&v>0?v:null;
   const date=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(Date.parse(v))&&new Date(v+'T12:00:00Z').toISOString().slice(0,10)===v?v:null;
   const definition=ex=>{const id=(ex.exerciseKey||'').replace(/^v02_/,'');return Object.hasOwn(catalog.definitions,id)?catalog.definitions[id]:undefined;};
+  const patientCautionOverrides={
+    T11:'腰が反る前に止めてください。姿勢を保つのが難しい場合は、仰向けの足踏みに戻してください。',
+    K04:'膝が曲がってしまう場合は、太ももに力を入れる運動や、椅子で膝を伸ばす運動に変更してください。腰痛が増す場合は中止してください。',
+    E07:'手首を上げる運動の代わりに行います。両方を行う必要はありません。'
+  };
+  const patientStepOverrides={
+    S17:['ゴムを両手で持ち、左手を固定します。右肘を体側に保ち、右手を外へ動かします。','担当者が選んだ強さのゴムを使います。'],
+    N05:['仰向けで頭を支え、小さく「はい」とうなずきます。','同じ姿勢でもう一度小さくうなずき、その位置を短く保ちます。'],
+    K12:['椅子に座り、右膝をゆっくり伸ばして戻します。','指定された足首の重りをつけて、膝をゆっくり伸ばし、戻します。'],
+    E10:['前腕を机に置き、軽い重りを持って手首を上げ、ゆっくり下ろします。','担当者が決めた重さを使い、手首を上げてゆっくり下ろします。']
+  };
+  function patientText(value){
+    let text=str(value);if(!text)return '';
+    text=text.replace(/([STNKEAP]\d{2})/g,(match,id)=>catalog.definitions[id]?.name||match)
+      .replace(/医師\s*[／/]\s*PT/g,'医師または理学療法士')
+      .replace(/担当PT/g,'担当の理学療法士').replace(/\bPT\b/g,'理学療法士')
+      .replace(/処方の指示/g,'画面に表示された指示').replace(/処方指定/g,'担当者が指定した内容')
+      .replace(/未許可期不可/g,'担当者から許可されるまでは行わないでください')
+      .replace(/要評価/g,'担当者への確認が必要です')
+      .replace(/除外して/g,'ないことを確認して').replace(/除外し/g,'ないことを確認し').replace(/除外/g,'ないことを確認')
+      .replace(/代替候補/g,'代わりの運動');
+    return text;
+  }
+  function patientCaution(ex,legacyMedia){const d=isNew(ex)?definition(ex):legacyMedia;return patientText(patientCautionOverrides[d?.id]||d?.caution);}
   const isSelectable=id=>Object.hasOwn(catalog.definitions,id)&&catalog.definitions[id].status!=='retired';
   const categoryById=id=>Object.hasOwn(catalog.categories,id)?catalog.categories[id]:undefined;
   const isNew=ex=>(ex.exerciseKey||'').startsWith('v02_');
@@ -79,13 +103,13 @@
   // Bilateral/alternating procedures are deliberately excluded; source text stays intact.
   const rightExampleIds=new Set('S01 S02 S03 S04 S06 S07 S09 S10 S11 S15 S16 S17 S18 S19 S21 S24 S25 S26 T04 K01 K02 K04 K05 K09 K11 K12 K13 K15 K16 K18 K19 E01 E04 E05 E07 A04 A06 A07 A08 P05 S30 K26 A11 A13 A15'.split(' '));
   function patientSteps(ex,legacyMedia){
-    const d=isNew(ex)?definition(ex):legacyMedia,steps=[...(d?.steps||[])];
-    if(!isNew(ex)||!rightExampleIds.has(d?.id))return steps;
+    const d=isNew(ex)?definition(ex):legacyMedia,steps=[...(patientStepOverrides[d?.id]||d?.steps||[])];
+    if(!isNew(ex)||!rightExampleIds.has(d?.id))return steps.map(patientText);
     const side=ex.clinicalV02?.side;
     // One pass swaps both working and assisting sides, preserving words such as 左右.
-    if(side==='left')return steps.map(step=>step.replace(/左右|右左|[左右]/g,word=>word==='右'?'左':word==='左'?'右':word));
+    if(side==='left')return steps.map(step=>patientText(step.replace(/左右|右左|[左右]/g,word=>word==='右'?'左':word==='左'?'右':word)));
     if(side!=='right'&&steps.length)steps[0]='手順は右側を例に説明しています。実施側は処方の指示に従ってください。'+steps[0];
-    return steps;
+    return steps.map(patientText);
   }
   function requiredGates(ex){
     const d=definition(ex),r=normalize(ex.clinicalV02),c=categoryById(r.categoryId);
@@ -151,5 +175,5 @@
     const days=saved?.dows,valid=Array.isArray(days)&&days.length>0&&days.every(d=>Number.isInteger(d)&&d>=0&&d<7)&&new Set(days).size===days.length;
     return {clinicalV02:draft,dows:valid?[...days]:weekdayDraft(draft.daysPerWeek)};
   }
-  return {patientSteps,initialSide,normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
+  return {patientText,patientCaution,patientSteps,initialSide,normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
 });

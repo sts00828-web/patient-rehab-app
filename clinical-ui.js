@@ -8,7 +8,7 @@ function exerciseImageHtml(ex,preview=false){
   const d=CR.definition(ex),m=CR.isNew(ex)?d:legacyMediaFor(ex);
   const path=CR.isNew(ex)?(preview||ex.clinicalV02?.patient?.patientId===S?.patientId?CR.imagePath(ex,preview):null):m&&!ex.mediaDisabled?'assets/exercises/'+m.image:null;
   if(!path)return `<p class="notice">${escapeHtml(d?.image? '画像・個別条件の確認が必要です':d?.assetStatus||'イラストなし')}。担当者に確認してください。</p>`;
-  return `<figure><img class="guide-image" src="${escapeAttr(path)}" alt="${escapeAttr(m.name)}の姿勢" onerror="this.hidden=true;this.parentElement.querySelector('.image-failure').hidden=false;this.closest('#patientSession')?.querySelector('[data-start]')?.setAttribute('disabled','')"><p class="image-failure notice" hidden>画像を読み込めません。開始せず担当者に確認してください。</p>${CR.isNew(ex)?'<figcaption>画像は共通の動作例です。図の左右ではなく、指示された実施側で行ってください。</figcaption>':''}${m.imageCaption?`<figcaption>${escapeHtml(m.imageCaption)}</figcaption>`:''}</figure>`;
+  return `<figure><img class="guide-image" src="${escapeAttr(path)}" alt="${escapeAttr(m.name)}の姿勢" onerror="this.hidden=true;this.parentElement.querySelector('.image-failure').hidden=false;this.closest('#patientSession')?.querySelector('[data-start]')?.setAttribute('disabled','')"><p class="image-failure notice" hidden>画像を読み込めません。開始せず担当者に確認してください。</p>${CR.isNew(ex)?'<figcaption>画像は共通の動作例です。図の左右ではなく、指示された実施側で行ってください。</figcaption>':''}${m.imageCaption?`<figcaption>${escapeHtml(CR.patientText(m.imageCaption))}</figcaption>`:''}</figure>`;
 }
 // UI state is local to this patient; it is never part of a prescription or backup.
 let clinicalSelection=null;
@@ -265,11 +265,11 @@ showExercise=openPatientSession;
 function sessionDoseHtml(ex){
   const p=ex.prescription||{};
   const hold=p.hold&&!['該当なし','保持設定なし','保持なし（PT確認）'].includes(p.hold)?`保持・動作の時間：${p.hold}`:'';
-  return `<p class="session-dose"><strong>実施側：${escapeHtml(p.side||'担当者に確認')}</strong><br>${escapeHtml([p.repetitions,p.sets,hold,ex.params].filter(Boolean).join(' ／ ')||'量は担当者に確認してください')}</p>`;
+  return `<p class="session-dose"><strong>実施側：${escapeHtml(CR.patientText(p.side||'担当者に確認'))}</strong><br>${escapeHtml(CR.patientText([p.repetitions,p.sets,hold,ex.params].filter(Boolean).join(' ／ ')||'量は担当者に確認してください'))}</p>`;
 }
 function sessionEssentialInstructions(ex){
   const r=ex.clinicalV02||{},p=ex.prescription||{};
-  const instructions=[['運動の注意',(CR.definition(ex)||legacyMediaFor(ex))?.caution],['負荷・範囲',p.load],['支え・見守り',p.support],['個別制限',r.constraints],['競技の個別計画',r.sportPlan],['あなたへの注意',ex.note],['疾患の注意',ex.diseaseNote],['再開の指示',S?.restartInstructions]];
+  const instructions=[['運動の注意',CR.patientCaution(ex,legacyMediaFor(ex))],['負荷・範囲',p.load],['支え・見守り',p.support],['個別制限',r.constraints],['競技の個別計画',r.sportPlan],['あなたへの注意',ex.note],['疾患の注意',ex.diseaseNote],['再開の指示',S?.restartInstructions]].map(([k,v])=>[k,CR.patientText(v)]);
   const seen=new Set();
   const rows=instructions.filter(([,v])=>v?.trim()&&!['該当なし','支え不要'].includes(v)&&!seen.has(v)&&seen.add(v));
   return `<div class="session-essential">${p.frequency?`<p><strong>ペース：</strong>${escapeHtml(p.frequency)}${ex.scheduleMode==='flexible'?'（曜日指定なし）':''}</p>`:''}${r.restSeconds?`<p><strong>セット間の休息：</strong>${r.restSeconds}秒</p>`:''}${rows.map(([k,v])=>`<p><strong>${k}：</strong>${escapeHtml(v)}</p>`).join('')}</div>`;
