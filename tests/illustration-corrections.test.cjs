@@ -6,6 +6,8 @@ const expected={
  E08:'6bb19ba6a6baae85411cc5ad22f71fee7edc0e9e6f948bbc8bc38729dabc0237',
  N12:'60ced3bc002ab036dc14796f1c57d779edfe41626f16701824d4cb42014c4aba',
  P08:'0b4b96ea25ff22efde3bd6975235aa8b0a5287f87c897371e7f0ac1140012499',
+ P15:'e93d711a26a3869f9e823057c211d82af1d5f3d3d72b73a41da9f506bbf0cb49',
+ P26:'1a72eafa3427dcb63b0d283ac4aa80c3b376135db90d7809183eead5332fbd9a',
  T20:'7180afa3125aeec199d00ef1e63a73caeffc578eca33538df1509a7fb0a07942'
 };
 
@@ -34,4 +36,8 @@ test('corrected captions state the intended visible motion',()=>{
  assert.match(catalog.definitions.E08.imageCaption,/肘を体側.*前腕/);
  assert.match(catalog.definitions.N12.imageCaption,/額と後頭部.*頭は動かさず/);
  assert.match(catalog.definitions.P08.imageCaption,/低速.*数歩.*緩やか/);
+ assert.match(catalog.definitions.P15.imageCaption,/前脚と後脚.*左右の90\/90/);
+ assert.match(catalog.definitions.P15.assetNotes,/股関節外旋.*股関節内旋.*左右反転/);
+ assert.match(catalog.definitions.P26.imageCaption,/右肘.*左手.*右前腕.*マット側/);
+ assert.match(catalog.definitions.P26.assetNotes,/右側臥位.*右肘90度.*左手.*内旋/);
 });

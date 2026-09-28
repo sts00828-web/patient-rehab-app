@@ -2581,7 +2581,7 @@ const data={
       "id": "P15", "key": "v02_P15", "name": "支持つき90/90切り替え", "purpose": "股関節内外旋の動的可動域",
       "steps": ["両膝を曲げて座り、両手を後ろにつきます。両膝をゆっくり左右へ倒し、楽な範囲で脚の向きを切り替えます。"],
       "doseProposal": "R：左右各4回×1セット", "caution": "膝を床へ押しつけず、90度を強制しません。股関節前面や膝の痛みが出たら中止します。", "equipment": "床、必要なら座面クッション", "gates": "G0",
-      "pose": "床座位、後方手支持。両膝を左右のシンボックス位へ切替", "image": "images/P15.png", "imageCaption": "手で身体を支え、左右の膝を楽な範囲で切り替えます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "前脚と後脚が重ならない左右の切替を2姿勢と矢印で表示。", "clinicalStatus": "pending_review", "sha256": "ac6e509789515ca90dec6366b16f0bd3c984b66ab21d49a6b902d6255eec62ab", "addedIn": "0.4"
+      "pose": "床座位、後方手支持。両膝を左右のシンボックス位へ切替", "image": "images/P15.png", "imageCaption": "手で身体を支え、前脚と後脚を重ねずに左右の90/90姿勢を切り替えます。", "assetStatus": "生成画像・姿勢確認済み", "assetNotes": "共通人物で統一。前脚の股関節外旋と後脚の股関節内旋を、左右反転した2姿勢で表示。両脚・両足の連続性を目視確認。", "clinicalStatus": "pending_review", "sha256": "e93d711a26a3869f9e823057c211d82af1d5f3d3d72b73a41da9f506bbf0cb49", "addedIn": "0.4"
     },
     "P16": {
       "id": "P16", "key": "v02_P16", "name": "支持つき90/90前傾", "purpose": "前脚側の股関節外旋可動域",
@@ -2647,7 +2647,7 @@ const data={
       "id": "P26", "key": "v02_P26", "name": "修正スリーパーストレッチ", "purpose": "肩後方の柔軟性",
       "steps": ["横向きで下側の上腕をタオルで支え、肩と肘を楽な角度にします。反対の手で前腕を内側へ少し倒します。反対側も担当者の指示で行います。"],
       "doseProposal": "S：左右15秒×1回", "caution": "個別指導後に行います。肩前面の挟まり感、不安定感、痛みが出たら中止します。", "equipment": "ベッド、折ったタオル", "gates": "G1",
-      "pose": "側臥位、肩をタオル支持、肩90度未満・肘90度、前腕を小さく内旋", "image": "images/P26.png", "imageCaption": "図は右肩の例です。肩の前が痛まない小さな範囲で行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "タオル支持下の開始と小さな内旋終点。両腕の接続を確認。", "clinicalStatus": "pending_review", "sha256": "abb4cc0404d172e08d1e70fc3882db8e9b2cd60a453c6c9dd93aa4d4bbceb47e", "addedIn": "0.4"
+      "pose": "側臥位、肩をタオル支持、肩90度未満・肘90度、前腕を小さく内旋", "image": "images/P26.png", "imageCaption": "図は右肩の例です。右肘をタオル上で保ち、左手で右前腕を小さくマット側へ倒します。", "assetStatus": "生成画像・姿勢確認済み", "assetNotes": "共通人物で統一。右側臥位、右肩約70度、右肘90度を固定し、左手で右前腕だけを小さく内旋する2姿勢。右手と左手を分離して目視確認。", "clinicalStatus": "pending_review", "sha256": "1a72eafa3427dcb63b0d283ac4aa80c3b376135db90d7809183eead5332fbd9a", "addedIn": "0.4"
     },
     "P27": {
       "id": "P27", "key": "v02_P27", "name": "足関節サポートテープ", "purpose": "活動時の足関節外部支持",

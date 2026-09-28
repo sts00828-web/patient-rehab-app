@@ -2,10 +2,10 @@
 importScripts('./exercises.js');
 importScripts('./clinical-catalog.js');
 const PREFIX = 'patient-rehab-' + encodeURIComponent(self.registration.scope) + '-';
-const CACHE = PREFIX + 'v68';
+const CACHE = PREFIX + 'v69';
 const IMAGE_CACHE = PREFIX + 'clinical-images-v2';
 const IMAGE_URLS = new Set(Object.values(ClinicalCatalog.definitions).filter(d=>d.image).map(d=>new URL(d.image,self.registration.scope).href));
-const REFRESHED_IMAGE_URLS = ['./images/P20.png','./images/P23.png','./images/E08.png','./images/N12.png','./images/P08.png','./images/T20.png'].map(path=>new URL(path,self.registration.scope).href);
+const REFRESHED_IMAGE_URLS = ['./images/P20.png','./images/P23.png','./images/E08.png','./images/N12.png','./images/P08.png','./images/T20.png','./images/P15.png','./images/P26.png'].map(path=>new URL(path,self.registration.scope).href);
 const FILES = ['./','./index.html','./manifest.json','./clinical-catalog.js','./clinical-rules.js','./clinical-ui.js','./clinical-review.html','./core.js','./exercises.js','./prescription-defaults.js','./disease-library.js','./exercise-selection.js','./ui.js','./app-v2.js','./bug-report.js','./exercise-print.js','./exercise-video.js','./patient-video.js','./clinical-evidence.js','./exercise-evidence.js','./app-v2.css',
   './icon-180.png','./icon-192.png','./icon-512.png',
   './vendor/lz-string.min.js','./vendor/qrcode.min.js','./vendor/html5-qrcode.min.js',
