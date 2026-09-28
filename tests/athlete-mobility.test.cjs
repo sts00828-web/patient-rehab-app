@@ -37,6 +37,8 @@ test('stretching and taping copy keeps evidence limits and safety stops explicit
   assert.equal(rules.dosePresetById[id],'T');
  }
  assert.match(catalog.definitions.P23.caution,/上級/);
+ assert.match(catalog.definitions.P23.steps.join(''),/右膝を約90度.*右股関節を軽く伸ば.*右踵を身体の左側/);
+ assert.match(catalog.definitions.P23.assetNotes,/2姿勢.*患者左脚.*右股関節.*右踵.*患者左側/);
  assert.match(catalog.definitions.P30.caution,/筋力増強/);
 });
 
