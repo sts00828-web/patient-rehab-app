@@ -43,7 +43,7 @@ editEx=function(i){if(S?.menu[i]&&CR.isNew(S.menu[i])){const d=CR.definition(S.m
 const legacyApplySelectedTemplate=applySelectedTemplate;
 applySelectedTemplate=function(share=false){const previous=S?.template;try{return legacyApplySelectedTemplate(share);}catch(e){if(S)S.template=previous;alert(e.message+'\nこの運動は「疾患別メニューから選ぶ」で、この患者への処方確認を行ってください。');}};
 function previewClinical(id){const d=CC.definitions[id];if(!d||!requireStaff())return;modal('clinicalPreview',escapeHtml(id+' '+d.name),`<p class="notice">画像・本文・量の案。画像は共通の動作例です。実施側は各運動の指示をご覧ください。</p>${exerciseImageHtml({exerciseKey:d.key},true)}<p>${escapeHtml(d.steps.join(' '))}</p><p>目的：${escapeHtml(d.purpose)}</p><p>用具：${escapeHtml(d.equipment)}</p><p>量の案：${escapeHtml(d.doseProposal)} ／ ${escapeHtml(CC.presets[d.doseProposal[0]]||'')}</p><p class="notice">${escapeHtml(d.caution)}</p><p>姿勢・支持・負荷：${escapeHtml(d.pose)}</p><p>図の確認：${escapeHtml(d.assetNotes)}</p><button type="button" class="evidence-button" onclick="showClinicalEvidence('${id}')">参考文献・資料</button>`);}
-const clinicalFieldLabels={reps:'1セットの量（往復は片道の歩数）',sets:'セット数',holdSeconds:'1回の保持秒（該当時）',restSeconds:'休息秒（任意）',sessionsPerDay:'1日の実施回数',daysPerWeek:'週の実施日数',load:'負荷・重さ（任意）',rom:'許可する方向・動かす範囲',support:'支持物・用具・見守り',constraints:'注意事項・個別制限（任意）',sportPlan:'競技準備の回数・速度・場所・休息・個別計画',extraReason:'6種を超えて処方する理由'};
+const clinicalFieldLabels={reps:'1セットの回数（往復は片道の歩数）',sets:'セット数',holdSeconds:'1回の持続時間（秒）',restSeconds:'セット間の休息（秒・任意）',sessionsPerDay:'1日に行う回数',daysPerWeek:'1週間に行う日数',load:'負荷・重さ（任意）',rom:'許可する方向・動かす範囲',support:'支持物・用具・見守り',constraints:'注意事項・個別制限（任意）',sportPlan:'競技準備の回数・速度・場所・休息・個別計画',extraReason:'6種を超えて処方する理由'};
 function clinicalFieldError(message,target){return Object.assign(Error(message),{target});}
 function clinicalIssueKey(issue,r,batch,ex){
   if(issue.startsWith('不正な数値：'))return issue.split('：')[1];
@@ -124,14 +124,14 @@ function batchSelect(id,key,label,options,value){return `<label class="fld-lbl" 
 function batchCheck(id,key,label,checked){return `<label class="pick-label"><input type="checkbox" id="cb-${id}-${key}" data-batch-key="${key}" ${checked?'checked':''}>${label}</label>`;}
 function clinicalBatchOverview(item){
   const r=item.ex.clinicalV02,p=CR.prescription(r);
-  return ['実施側：'+(p.side||'未選択'),p.repetitions,p.sets,p.hold,p.frequency].filter(Boolean).join(' ／ ');
+  return [`実施側：${p.side||'未選択'}`,`1セット：${p.repetitions||'未設定'}`,`セット数：${p.sets||'未設定'}`,`持続時間：${p.hold||'なし'}`,`頻度：${p.frequency||'未設定'}`].join(' ｜ ');
 }
 function clinicalBatchFields(id,item){
   const ex=item.ex,r=ex.clinicalV02,d=CC.definitions[id];
   return `<p class="hint">初期値は編集案です。画像は共通の動作例です。図の左右ではなく表示された実施側で行ってください。</p><p>${escapeHtml(d.caution)}</p>
   <details><summary>実施側を個別に変更</summary>${batchSelect(id,'side','実施する側',{'':'未選択',right:'右',left:'左',bilateral:'両側',alternating:'左右交互',none:'左右指定なし'},r.side)}</details>
   ${['reps','sets','holdSeconds','sessionsPerDay','daysPerWeek'].map(k=>batchInput(id,k,clinicalFieldLabels[k],r[k],'number')).join('')}
-  <p class="hint">曜日の指定は不要です。週の実施日数と休息の指示に合わせて行います。</p>
+  <p class="hint">特定の日は指定しません。保存した運動は毎日の画面に表示されるため、週の実施日数と休息の指示を守ってください。</p>
   <details><summary>量の詳細・個別指示（任意）</summary>
   ${batchSelect(id,'doseUnit','量の単位',{'':'未設定','回':'回','秒':'秒','歩':'歩','分':'分','呼吸':'呼吸','本':'本'},r.doseUnit)}
   ${batchSelect(id,'amountBasis','量の基準',{'':'未設定',per_side:'指定側につき',each_side:'左右各',total:'合計',each_direction:'各方向',round_trip:'往復（量は片道の歩数）'},r.amountBasis)}
@@ -157,7 +157,7 @@ function openClinicalShelf(categoryId='G03',level){
   const draft=clinicalBatch;
   const levelLabels={beginner:'初級',intermediate:'中級',advanced:'上級',...(c.levelLabels||{})};
   modal('clinicalShelf',escapeHtml(clinicalCategoryName(c)),`<p class="hint clinical-shelf-intro">必要な項目にチェックしてください。画像を押すと動きと資料を確認できます。</p><div id="clinical-level" class="clinical-switch">${Object.entries(levelLabels).filter(([key,label])=>label&&c.levels[key]?.length).map(([key,label])=>`<button class="btn btn-out" data-clinical-level="${key}" aria-pressed="${key===level}" onclick="openClinicalShelf('${categoryId}','${key}')">${escapeHtml(label)}<small>${c.levels[key].length}項目</small></button>`).join('')}</div><details class="clinical-notes" open><summary>注意事項</summary><p>${escapeHtml(c.notes)}</p></details><details class="clinical-tools"><summary>検索・選択中の項目を表示</summary><label for="clinical-exercise-search">項目名で検索</label><input id="clinical-exercise-search" class="fld-inp" value="${escapeAttr(draft.query)}" oninput="clinicalBatch.query=this.value;filterClinicalBatch()"><label class="pick-label"><input id="clinical-selected-only" type="checkbox" ${draft.only?'checked':''} onchange="clinicalBatch.only=this.checked;filterClinicalBatch()">選択中だけ表示</label></details>
-  ${candidateIds.map(id=>[id,draft.items[id]]).map(([id,item])=>{const d=CC.definitions[id];return `<article class="clinical-candidate" data-clinical-exercise="${id}"><div class="clinical-candidate-heading"><label class="pick-label"><input type="checkbox" id="cb-${id}-selected" data-batch-key="selected" ${item.selected?'checked':''} ${!d.image?'disabled':''}><span>${escapeHtml(d.name)}<small>${escapeHtml(d.purpose)}${item.base?' ／ 追加済み・編集':''}</small></span></label>${d.image?`<button type="button" class="candidate-image" aria-label="${escapeAttr(d.name)}の動きと資料を確認" onclick="previewClinical('${id}')"><img src="${escapeAttr(d.image)}" alt="" loading="lazy"></button>`:'<span>画像保留・選択不可</span>'}</div><div id="cb-${id}-selected-fields" ${!item.selected?'hidden':''}><p id="cb-${id}-overview" class="clinical-dose-summary">${escapeHtml(clinicalBatchOverview(item))}</p><details id="cb-${id}-details"><summary>回数・頻度を変更する</summary>${clinicalBatchFields(id,item)}</details></div></article>`;}).join('')}
+  ${candidateIds.map(id=>[id,draft.items[id]]).map(([id,item])=>{const d=CC.definitions[id];return `<article class="clinical-candidate" data-clinical-exercise="${id}"><div class="clinical-candidate-heading"><label class="pick-label"><input type="checkbox" id="cb-${id}-selected" data-batch-key="selected" ${item.selected?'checked':''} ${!d.image?'disabled':''}><span>${escapeHtml(d.name)}<small>${escapeHtml(d.purpose)}${item.base?' ／ 追加済み・編集':''}</small></span></label>${d.image?`<button type="button" class="candidate-image" aria-label="${escapeAttr(d.name)}の動きと資料を確認" onclick="previewClinical('${id}')"><img src="${escapeAttr(d.image)}" alt="" loading="lazy"></button>`:'<span>画像保留・選択不可</span>'}</div><div id="cb-${id}-selected-fields" ${!item.selected?'hidden':''}><p id="cb-${id}-overview" class="clinical-dose-summary">${escapeHtml(clinicalBatchOverview(item))}</p><details id="cb-${id}-details"><summary>回数・セット・時間を変更</summary>${clinicalBatchFields(id,item)}</details></div></article>`;}).join('')}
   <div class="clinical-save-bar"><p id="clinical-batch-count" role="status"></p><p id="clinical-batch-errors" role="alert"></p><button id="clinical-save" class="btn btn-pri" onclick="saveClinicalBatch(false)">選択した項目を保存</button><button id="clinical-save-share" class="btn btn-out" onclick="saveClinicalBatch(true)">保存してQRを表示</button></div>`);
   const clinicalNotes=$('clinicalShelf').querySelector('.clinical-notes');
   clinicalNotes?.classList.add('notice');
@@ -237,6 +237,7 @@ function readClinicalPrescription(){
   const ex=C.clone(clinicalDraft.ex),r=CR.normalize(ex.clinicalV02);
   for(const key of [...clinicalNumberKeys,'side','doseUnit','amountBasis','doseDirections','doseDetail','load','rom','support','constraints','sportPlan']){
     const el=$('cr-'+key);
+    if(!el)continue;
     r[key]=clinicalNumberKeys.includes(key)?(el.value===''?null:Number(el.value)):el.value;
   }
   r.mode='simple';r.revision=uid();r.patient.patientId=S.patientId;
@@ -273,15 +274,16 @@ function beginPatientSession(i){
 showExercise=openPatientSession;
 function sessionDoseHtml(ex){
   const p=ex.prescription||{};
-  const hold=p.hold&&!['該当なし','保持設定なし','保持なし（PT確認）'].includes(p.hold)?`保持・動作の時間：${p.hold}`:'';
-  return `<p class="session-dose"><strong>実施側：${escapeHtml(CR.patientText(p.side||'担当者に確認'))}</strong><br>${escapeHtml(CR.patientText([p.repetitions,p.sets,hold,ex.params].filter(Boolean).join(' ／ ')||'量は担当者に確認してください'))}</p>`;
+  const hold=p.hold&&!['該当なし','保持設定なし','保持なし（PT確認）'].includes(p.hold)?p.hold:'なし';
+  const values=[['1セットの回数',p.repetitions||'要確認'],['セット数',p.sets||'要確認'],['持続時間',hold]];
+  return `<section class="session-dose"><p><strong>実施側：${escapeHtml(CR.patientText(p.side||'担当者に確認'))}</strong></p><dl class="dose-at-a-glance">${values.map(([label,value])=>`<div><dt>${label}</dt><dd>${escapeHtml(CR.patientText(value))}</dd></div>`).join('')}</dl>${ex.params?`<p class="hint">補足：${escapeHtml(CR.patientText(ex.params))}</p>`:''}</section>`;
 }
 function sessionEssentialInstructions(ex){
   const r=ex.clinicalV02||{},p=ex.prescription||{};
   const instructions=[['運動の注意',CR.patientCaution(ex,legacyMediaFor(ex))],['負荷・範囲',p.load],['支え・見守り',p.support],['個別制限',r.constraints],['競技の個別計画',r.sportPlan],['あなたへの注意',ex.note],['疾患の注意',ex.diseaseNote],['再開の指示',S?.restartInstructions]].map(([k,v])=>[k,CR.patientText(v)]);
   const seen=new Set();
   const rows=instructions.filter(([,v])=>v?.trim()&&!['該当なし','支え不要'].includes(v)&&!seen.has(v)&&seen.add(v));
-  return `<div class="session-essential">${p.frequency?`<p><strong>ペース：</strong>${escapeHtml(p.frequency)}${ex.scheduleMode==='flexible'?'（曜日指定なし）':''}</p>`:''}${r.restSeconds?`<p><strong>セット間の休息：</strong>${r.restSeconds}秒</p>`:''}${rows.map(([k,v])=>`<p><strong>${k}：</strong>${escapeHtml(v)}</p>`).join('')}</div>`;
+  return `<div class="session-essential">${p.frequency?`<p><strong>実施頻度：</strong>${escapeHtml(p.frequency)}</p>`:''}${r.restSeconds?`<p><strong>セット間の休息：</strong>${r.restSeconds}秒</p>`:''}${rows.map(([k,v])=>`<p><strong>${k}：</strong>${escapeHtml(v)}</p>`).join('')}</div>`;
 }
 function nextPatientSessionIndex(){
   const items=patientItems(),s=patientSession,log=getLog(s.day),at=items.findIndex(ex=>ex.id===s.itemId);

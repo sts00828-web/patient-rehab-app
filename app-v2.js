@@ -102,13 +102,13 @@ function mediaFor(ex){
   if(EXERCISE_LIBRARY[ex.exerciseKey])return EXERCISE_LIBRARY[ex.exerciseKey];
   const match=Object.values(EXERCISE_LIBRARY).find(e=>e.name===ex.name);return match||null;
 }
-const prescriptionLabels={side:'運動する側',repetitions:'回数',sets:'セット数',hold:'保持・動作の時間',frequency:'1日の実施回数',load:'重さ・動かす範囲',support:'支え方・見守り'};
+const prescriptionLabels={side:'運動する側',repetitions:'1セットの回数',sets:'セット数',hold:'1回の持続時間',frequency:'1日に行う回数',load:'重さ・動かす範囲',support:'支え方・見守り'};
 function patientCopy(value){return typeof ClinicalRules!=='undefined'?ClinicalRules.patientText(value):String(value||'');}
 function doseSummary(ex){return patientCopy(ex.params||Object.entries(prescriptionLabels).filter(([key])=>ex.prescription?.[key]&&ex.prescription[key]!=='該当なし').map(([key,label])=>`${label}：${ex.prescription[key]}`).join(' ／ '))||'担当の理学療法士と指示を確認してください';}
-function scheduleText(ex){return ex.scheduleMode==='flexible'?'曜日指定なし・指示された週の頻度で実施':ex.dows?.length?ex.dows.map(d=>DOW_LABEL[d]).join('・')+'曜日':'毎日';}
+function scheduleText(ex){return ex.scheduleMode==='flexible'?'毎日表示':ex.dows?.length?ex.dows.map(d=>DOW_LABEL[d]).join('・')+'曜日':'毎日';}
 function prescriptionHtml(ex){
-  const p=ex.prescription||{},rows=Object.entries(prescriptionLabels).filter(([key])=>p[key]);
-  return `${ex.params?`<div class="dose">${escapeHtml(patientCopy(ex.params))}</div>`:''}${rows.length?`<dl class="prescription-list">${rows.map(([key,label])=>`<div><dt>${label}</dt><dd>${escapeHtml(patientCopy(p[key]))}</dd></div>`).join('')}</dl>`:''}<p class="hint">実施日：${scheduleText(ex)}${ex.scheduleConfirmed?'':'（実施頻度を担当者と確認してください）'}</p>${!p.side||!p.frequency?'<p class="hint">左右や回数が分からないときは、図から判断せず担当の理学療法士に確認してください。</p>':''}`;
+  const p=ex.prescription||{},rows=Object.entries(prescriptionLabels).filter(([key])=>p[key]),schedule=ex.scheduleMode==='flexible'?'':scheduleText(ex);
+  return `${ex.params?`<div class="dose">${escapeHtml(patientCopy(ex.params))}</div>`:''}${rows.length?`<dl class="prescription-list">${rows.map(([key,label])=>`<div><dt>${label}</dt><dd>${escapeHtml(patientCopy(p[key]))}</dd></div>`).join('')}</dl>`:''}${schedule?`<p class="hint">実施日：${schedule}${ex.scheduleConfirmed?'':'（実施頻度を担当者と確認してください）'}</p>`:''}${!p.side||!p.frequency?'<p class="hint">左右や回数が分からないときは、図から判断せず担当の理学療法士に確認してください。</p>':''}`;
 }
 function consultationHtml(){
   return `<div class="notice"><strong>相談先：</strong>${escapeHtml(S?.consultContact||'担当の理学療法士・受診している医療機関（連絡先は担当者に確認してください）')}<p class="hint">記録は自動送信されません。相談は医療機関へ直接ご連絡ください。</p></div>`;
@@ -390,8 +390,8 @@ function initialPrescriptionDraft(ex,disease){
 }
 function prescriptionFields(prefix,ex={}){
   const p=C.prescription(ex.prescription);
-  if(p.frequency&&!/週|毎日/.test(p.frequency))p.frequency+='・週'+(ex.dows?.length||7)+'日';
-  return `<fieldset id="${prefix}-prescription"><legend>患者さんへの個別指示</legend>${ex.defaultNote?`<div class="notice"><strong>標準指示のたたき台</strong><p>${escapeHtml(ex.defaultNote)}</p>${ex.defaultSource?`<a href="${escapeAttr(ex.defaultSource)}" target="_blank" rel="noopener noreferrer">参考資料</a>`:''}</div>`:''}<div class="dose-reuse"><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','default')">標準指示を入れる</button><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','previous')">この患者の前回指示を使う</button></div><p class="hint">タップで選択できます。左右や負荷は患者さんに合わせて確認してください。両側に行う場合は「左右各○回」を選べます。</p>${Object.entries(C.prescriptionLabels).map(([k,label])=>`<details class="dose-field" ${!p[k]?'open':''}><summary id="${prefix}-${k}-summary">${escapeHtml(label)}：${escapeHtml(p[k]||'選択してください')}</summary><span id="${prefix}-${k}-label" class="fld-lbl">${label}</span><div class="dose-options" role="group" aria-labelledby="${prefix}-${k}-label">${prescriptionChoices[k].map((value,i)=>`<button type="button" class="dose-choice" data-dose-key="${k}" data-dose-index="${i}" aria-pressed="${p[k]===value}" onclick="choosePrescription('${prefix}','${k}',${i})">${escapeHtml(value)}</button>`).join('')}</div><details class="dose-custom" ${p[k]&&!prescriptionChoices[k].includes(p[k])?'open':''}><summary>その他・自由入力 <span id="${prefix}-${k}-custom-value">${p[k]&&!prescriptionChoices[k].includes(p[k])?escapeHtml(p[k]):''}</span></summary><label class="fld-lbl" for="${prefix}-${k}">${label}を入力</label><input id="${prefix}-${k}" class="fld-inp" maxlength="120" value="${escapeAttr(p[k])}" oninput="syncPrescriptionChoices('${prefix}')"></details></details>`).join('')}<label class="fld-lbl" for="${prefix}-weekly-days">週の実施日数</label><select id="${prefix}-weekly-days" class="fld-inp" onchange="setWeeklyFrequency('${prefix}',this.value)">${Array.from({length:7},(_,i)=>i+1).map(n=>`<option value="${n}" ${n===Number(p.frequency.match(/週([1-7])日/)?.[1]||ex.dows?.length||7)?'selected':''}>週${n}日</option>`).join('')}</select><p class="hint">曜日は指定しません。週の頻度と休息に合わせて行います。</p><input id="${prefix}-schedule-confirmed" type="checkbox" hidden ${ex.scheduleConfirmed?'checked':''}><p class="hint">保存ボタンで、表示した左右・回数・負荷・頻度をこの患者さんの指示として確定します。</p><button type="button" class="text-button" onclick="savePrescriptionDefault('${prefix}')">この内容を種目の標準指示として保存</button><p class="hint">先生が保存した標準指示を優先して呼び出します。患者には確認・保存後に反映されます。</p></fieldset>`;
+  if(p.frequency&&!/週|毎日|隔日/.test(p.frequency))p.frequency+='・週'+(ex.dows?.length||7)+'日';
+  return `<fieldset id="${prefix}-prescription"><legend>患者さんへの個別指示</legend>${ex.defaultNote?`<div class="notice"><strong>標準指示のたたき台</strong><p>${escapeHtml(ex.defaultNote)}</p>${ex.defaultSource?`<a href="${escapeAttr(ex.defaultSource)}" target="_blank" rel="noopener noreferrer">参考資料</a>`:''}</div>`:''}<div class="dose-reuse"><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','default')">標準指示を入れる</button><button type="button" class="btn btn-out" onclick="reusePrescription('${prefix}','previous')">この患者の前回指示を使う</button></div><p class="hint">タップで選択できます。左右や負荷は患者さんに合わせて確認してください。両側に行う場合は「左右各○回」を選べます。</p>${Object.entries(C.prescriptionLabels).map(([k,label])=>`<details class="dose-field" ${!p[k]?'open':''}><summary id="${prefix}-${k}-summary">${escapeHtml(label)}：${escapeHtml(p[k]||'選択してください')}</summary><span id="${prefix}-${k}-label" class="fld-lbl">${label}</span><div class="dose-options" role="group" aria-labelledby="${prefix}-${k}-label">${prescriptionChoices[k].map((value,i)=>`<button type="button" class="dose-choice" data-dose-key="${k}" data-dose-index="${i}" aria-pressed="${p[k]===value}" onclick="choosePrescription('${prefix}','${k}',${i})">${escapeHtml(value)}</button>`).join('')}</div><details class="dose-custom" ${p[k]&&!prescriptionChoices[k].includes(p[k])?'open':''}><summary>その他・自由入力 <span id="${prefix}-${k}-custom-value">${p[k]&&!prescriptionChoices[k].includes(p[k])?escapeHtml(p[k]):''}</span></summary><label class="fld-lbl" for="${prefix}-${k}">${label}を入力</label><input id="${prefix}-${k}" class="fld-inp" maxlength="120" value="${escapeAttr(p[k])}" oninput="syncPrescriptionChoices('${prefix}')"></details></details>`).join('')}<label class="fld-lbl" for="${prefix}-weekly-days">1週間に行う日数</label><select id="${prefix}-weekly-days" class="fld-inp" onchange="setWeeklyFrequency('${prefix}',this.value)">${Array.from({length:7},(_,i)=>i+1).map(n=>`<option value="${n}" ${n===Number(p.frequency.match(/週([1-7])日/)?.[1]||ex.dows?.length||7)?'selected':''}>週${n}日</option>`).join('')}</select><p class="hint">特定の日は指定しません。運動日と休息日の回数だけを決めます。</p><input id="${prefix}-schedule-confirmed" type="checkbox" hidden ${ex.scheduleConfirmed?'checked':''}><p class="hint">保存ボタンで、表示した実施側・1セットの回数・セット数・持続時間・実施頻度を確定します。</p><button type="button" class="text-button" onclick="savePrescriptionDefault('${prefix}')">この内容を種目の標準指示として保存</button><p class="hint">先生が保存した標準指示を優先して呼び出します。患者には確認・保存後に反映されます。</p></fieldset>`;
 }
 const prescriptionChoices={side:['右','左','両側','該当なし'],repetitions:['5回','10回','左右各5回','左右各10回','該当なし'],sets:['1セット','2セット','3セット','該当なし'],hold:['該当なし','3秒','5秒','10秒','20秒','30秒'],frequency:['1日1回','1日2回','1日3回'],load:['重りなし','軽い力','該当なし'],support:['支え不要','安定した台につかまる','家族の見守り','該当なし']};
 function showPrescriptionErrors(prefix,name){
@@ -406,11 +406,11 @@ function showPrescriptionErrors(prefix,name){
   for(const [key,label] of Object.entries(C.prescriptionLabels)){
     const input=$(prefix+'-'+key),field=input.closest('.dose-field'),errorId=prefix+'-'+key+'-error';
     $(errorId)?.remove();input.removeAttribute('aria-invalid');input.removeAttribute('aria-describedby');field.classList.remove('dose-error');
-    const invalidFrequency=key==='frequency'&&input.value.trim()&&!/週[1-7]日|毎日/.test(input.value);
+    const invalidFrequency=key==='frequency'&&input.value.trim()&&!/週[1-7]日|毎日|隔日/.test(input.value);
     if(input.value.trim()&&!invalidFrequency)continue;
     field.open=true;field.classList.add('dose-error');input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby',errorId);
     const error=document.createElement('p');error.id=errorId;error.className='dose-error-message';error.setAttribute('role','alert');
-    error.textContent=invalidFrequency?`${name}：週の実施日数（例：週2日）を確認してください。`:`${name}：${label}が未設定です。選択または入力してください。`;
+    error.textContent=invalidFrequency?`${name}：1週間に行う日数（例：週2日）を確認してください。`:`${name}：${label}が未設定です。選択または入力してください。`;
     const summary=$(prefix+'-'+key+'-summary');summary.after(error);first??=summary;
   }
   if(first){
@@ -461,7 +461,7 @@ function reusePrescription(prefix,kind){
   if(!saved){toast(kind==='default'?'この種目の標準指示は未保存です':'この患者の同じ種目の指示はありません');return;}
   const current=readPrescription(prefix);
   if(Object.values(current.prescription).some(Boolean)&&!confirm('入力中の個別指示と頻度を置き換えますか？ 補足・注意文はそのまま残します。'))return;
-  for(const key of Object.keys(prescriptionChoices)){$(prefix+'-'+key).value=(key==='frequency'&&saved.prescription?.frequency&&!/週|毎日/.test(saved.prescription.frequency)?saved.prescription.frequency+'・週'+(saved.dows?.length||7)+'日':saved.prescription?.[key])||'';$(prefix+'-'+key).closest('details').open=!!saved.prescription?.[key]&&!prescriptionChoices[key].includes(saved.prescription[key]);}
+  for(const key of Object.keys(prescriptionChoices)){$(prefix+'-'+key).value=(key==='frequency'&&saved.prescription?.frequency&&!/週|毎日|隔日/.test(saved.prescription.frequency)?saved.prescription.frequency+'・週'+(saved.dows?.length||7)+'日':saved.prescription?.[key])||'';$(prefix+'-'+key).closest('details').open=!!saved.prescription?.[key]&&!prescriptionChoices[key].includes(saved.prescription[key]);}
 
   syncPrescriptionChoices(prefix);toast('指示をコピーしました。患者さんに合わせて確認してください');
 }
@@ -476,7 +476,7 @@ function savePrescriptionDefault(prefix){
   try{T=cleanTemplates(next);persist();toast('標準指示を保存しました');}catch(e){alert(e.message);}
 }
 function readPrescription(prefix,confirmOnSave=false){
-  const frequency=$(prefix+'-frequency');if(frequency.value&&!/週|毎日/.test(frequency.value))frequency.value+='・週'+($(prefix+'-weekly-days')?.value||7)+'日';
+  const frequency=$(prefix+'-frequency');if(frequency.value&&!/週|毎日|隔日/.test(frequency.value))frequency.value+='・週'+($(prefix+'-weekly-days')?.value||7)+'日';
   return {prescription:C.prescription(Object.fromEntries(Object.keys(C.prescriptionLabels).map(k=>[k,$(`${prefix}-${k}`).value]))),dows:[],scheduleMode:'flexible',scheduleConfirmed:confirmOnSave||$(`${prefix}-schedule-confirmed`).checked};
 }
 function prescriptionSummary(p){return Object.entries(C.prescriptionLabels).map(([k,label])=>`${label}：${p[k]}`).join(' ／ ');}
@@ -499,17 +499,17 @@ function applyAthleteDose(i,level){
   const ex=getAllTemplates()[selectedTemplate]?.menu[i],draft=ex&&athleteDosePreset(ex.exerciseKey,level);if(!draft)return;
   const prefix='dose-'+i;
   for(const [key,value] of Object.entries(draft.prescription))$(prefix+'-'+key).value=value;
-  if(!/週|毎日/.test($(prefix+'-frequency').value))$(prefix+'-frequency').value+='・週'+(draft.dows.length||7)+'日';
+  if(!/週|毎日|隔日/.test($(prefix+'-frequency').value))$(prefix+'-frequency').value+='・週'+(draft.dows.length||7)+'日';
   // Reassess actual load whenever choosing a new volume; never silently carry a lighter load.
   $(prefix+'-load').value='';$(prefix+'-schedule-confirmed').checked=false;
   syncScheduleSummary(prefix);syncPrescriptionChoices(prefix);
-  toast('回数・頻度の案を入れました。負荷・範囲・休息を確認してください');
+  toast('回数・セット・時間の案を入れました。負荷・範囲・休息を確認してください');
 }
 function updateCandidateDose(i){
   const overview=$('dose-'+i+'-overview');if(!overview)return;
   const dose=readPrescription('dose-'+i),p=dose.prescription;
   const missing=Object.entries(C.prescriptionLabels).filter(([k])=>!p[k]).map(([,label])=>label);
-  overview.textContent=[p.repetitions,p.sets,p.hold,p.frequency,'曜日指定なし'].filter(Boolean).join(' ／ ')+(p.load?'\n負荷：'+p.load:'');
+  overview.textContent=[`1セット：${p.repetitions||'未設定'}`,`セット数：${p.sets||'未設定'}`,`持続時間：${p.hold||'未設定'}`,`頻度：${p.frequency||'未設定'}`].join(' ／ ')+(p.load?'\n負荷：'+p.load:'');
   $('quick-side-'+i).value=prescriptionChoices.side.includes(p.side)?p.side:'';
   const select=$('quick-side-'+i);let custom=select.querySelector('[data-custom]');custom?.remove();
   if(p.side&&!prescriptionChoices.side.includes(p.side)){custom=document.createElement('option');custom.dataset.custom='true';custom.value=p.side;custom.textContent=p.side;select.appendChild(custom);select.value=p.side;}

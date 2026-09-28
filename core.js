@@ -11,13 +11,13 @@
   const validDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s)) && new Date(s + 'T12:00:00Z').toISOString().slice(0, 10) === s;
   const id = x => typeof x === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(x) && !(x in Object.prototype);
   const record = x => !!x && typeof x === 'object' && !Array.isArray(x);
-  const prescriptionLabels = {side:'実施する側',repetitions:'回数',sets:'セット数',hold:'保持時間',frequency:'1日の実施回数',load:'負荷・強さ',support:'支え方'};
+  const prescriptionLabels = {side:'実施する側',repetitions:'1セットの回数',sets:'セット数',hold:'1回の持続時間',frequency:'1日に行う回数',load:'負荷・強さ',support:'支え方'};
   function prescription(raw) { return Object.fromEntries(Object.keys(prescriptionLabels).map(k=>[k,text(record(raw)?raw[k]:'',120).trim()])); }
   function prescriptionIssues(ex) {
     if(clinical?.isNew(ex)&&ex.clinicalV02?.mode==='simple')return clinical.issues(ex);
     const p=prescription(ex.prescription);
     const weekly=/毎日|隔日|週(?:に)?\s*[1-7１-７](?:\s*[〜～-]\s*[1-7１-７])?\s*[日回]/.test(p.frequency);
-    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(!clinical?.isNew(ex)&&ex.scheduleMode==='flexible'&&p.frequency&&!weekly?['週の実施日数（例：週2日）']:[]),...(ex.scheduleMode==='flexible'||ex.scheduleConfirmed===true?[]:['実施曜日の確認']),...(clinical?.issues(ex)||[])];
+    return [...Object.keys(prescriptionLabels).filter(k=>!p[k]).map(k=>prescriptionLabels[k]),...(!clinical?.isNew(ex)&&ex.scheduleMode==='flexible'&&p.frequency&&!weekly?['1週間に行う日数（例：週2日）']:[]),...(ex.scheduleMode==='flexible'||ex.scheduleConfirmed===true?[]:['実施曜日の確認']),...(clinical?.issues(ex)||[])];
   }
   function menu(input) {
     if (!Array.isArray(input) || input.length > 60) throw Error('メニューは60種目以内にしてください。');

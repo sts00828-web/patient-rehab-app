@@ -2611,7 +2611,7 @@ const data={
       "id": "P20", "key": "v02_P20", "name": "四つ這いで胸を回す", "purpose": "胸椎回旋の可動域",
       "steps": ["四つ這いで片手を耳の後ろへ添えます。骨盤を保ち、肘と胸を床側から天井側へゆっくり回します。反対側も行います。"],
       "doseProposal": "R：左右各5回×1セット", "caution": "首だけを強く回しません。支持側の手首痛やめまいが出たら中止します。", "equipment": "運動マット", "gates": "G0",
-      "pose": "四つ這い、片手後頭部、肘下向きから上向き", "image": "images/P20.png", "imageCaption": "骨盤をなるべく保ち、胸をゆっくり回します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "肘下向きと上向きの2姿勢。", "clinicalStatus": "pending_review", "sha256": "0cd3cb574a960fa73b370aad1cfe6cc9808092a23a9072c9f483b92d5491c999", "addedIn": "0.4"
+      "pose": "四つ這い、片手後頭部、肘下向きから上向き", "image": "images/P20.png", "imageCaption": "骨盤をなるべく保ち、胸をゆっくり回します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "後方斜めから見た2姿勢。支持手と両膝を保ち、反対の肘を床側から天井側へ動かす。手足の本数を確認済み。", "clinicalStatus": "pending_review", "sha256": "a3d68546d7003c5362460cfc829a8abbda8ce38831815c3f04d7972e099e3e8f", "addedIn": "0.4"
     },
     "P21": {
       "id": "P21", "key": "v02_P21", "name": "スレッド・ザ・ニードル", "purpose": "胸椎回旋の動的可動域",
@@ -2629,7 +2629,7 @@ const data={
       "id": "P23", "key": "v02_P23", "name": "小さなスコーピオン", "purpose": "胸椎・股関節を含む複合回旋",
       "steps": ["うつ伏せで両腕を横へ置きます。片膝を曲げ、足を反対側へ小さく動かして戻します。反対側も行います。"],
       "doseProposal": "R：左右各3回×1セット", "caution": "上級の複合動作です。足を床へ着ける目標はありません。腰を反らすと痛む場合、肩・股関節痛、術後は選びません。", "equipment": "運動マット", "gates": "G7",
-      "pose": "腹臥位T字、片膝屈曲、足を反対側へ小さく移動", "image": "images/P23.png", "imageCaption": "片足を反対側へ小さく動かします。足を床へ着けず、痛みのない範囲で行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "上面図。開始と右足を身体の反対側へ動かした終点。", "clinicalStatus": "pending_review", "sha256": "795a274d2621aef8eea82253473be286f457ff85a8d6c3a810784974391398de", "addedIn": "0.4"
+      "pose": "腹臥位T字、片膝屈曲、足を反対側へ小さく移動", "image": "images/P23.png", "imageCaption": "片足を反対側へ小さく動かします。足を床へ着けず、痛みのない範囲で行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "真上から見た2姿勢。両腕をT字に保ち、曲げた右脚の足先が身体の中心線を越えて反対側へ動く。手足の本数を確認済み。", "clinicalStatus": "pending_review", "sha256": "dcef5eaa7c53ec1467b9e339ae97fde57775d346a85e75ebb8a9bffead6f16bc", "addedIn": "0.4"
     },
     "P24": {
       "id": "P24", "key": "v02_P24", "name": "壁で胸の前を伸ばす", "purpose": "胸部・肩前面の柔軟性",

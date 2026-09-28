@@ -31,8 +31,8 @@ test('contradictory frequency mode data and unknown modes are rejected',()=>{
  assert.ok(R.issues(exercise({dows:[1]})).some(s=>s.includes('固定曜日')));
  const x=exercise({scheduleMode:undefined,dows:[]});assert.ok(R.issues(x).some(s=>s.includes('実施曜日')));
 });
-test('free-text flexible prescriptions cannot silently lose weekly frequency',()=>{
+test('free-text flexible prescriptions retain weekly frequency without fixed weekdays',()=>{
  const ex={id:'legacy',name:'架空',exerciseKey:'custom',scheduleMode:'flexible',dows:[],prescription:Object.fromEntries(Object.keys(C.prescriptionLabels).map(k=>[k,'個別指示']))};
- ex.prescription.frequency='1日2回';assert.ok(C.prescriptionIssues(ex).some(s=>s.includes('週の実施日数')));
+ ex.prescription.frequency='1日2回';assert.ok(C.prescriptionIssues(ex).some(s=>s.includes('1週間に行う日数')));
  for(const frequency of ['週2日・1日2回','週2〜3日・1日1回','毎日・1日1回','隔日']){ex.prescription.frequency=frequency;assert.deepEqual(C.prescriptionIssues(ex),[]);}
 });
