@@ -42,14 +42,15 @@
     B:{reps:3,sets:1,doseUnit:'回',holdSeconds:10,sessionsPerDay:1,daysPerWeek:3},
     C:{reps:5,sets:1,doseUnit:'回',holdSeconds:5,sessionsPerDay:1,daysPerWeek:3},
     W:{reps:5,sets:1,doseUnit:'分',sessionsPerDay:1,daysPerWeek:3},
-    P:{sessionsPerDay:1,daysPerWeek:2}
+    P:{sessionsPerDay:1,daysPerWeek:2},
+    T:{reps:1,sets:1,doseUnit:'回',sessionsPerDay:1,daysPerWeek:1}
   };
   const doseGroups={
-    R:'S01 S02 S03 S04 S08 S19 S23 T02 T03 T04 T05 T15 T16 T17 T18 N02 N03 K02 E02 E03 A01 A02 A06',
-    S:'S16 K01 E04', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04 N12',
+    R:'S01 S02 S03 S04 S08 S19 S23 T02 T03 T04 T05 T15 T16 T17 T18 N02 N03 K02 E02 E03 A01 A02 A06 P14 P15 P18 P20 P21 P23 P25',
+    S:'S16 K01 E04 P16 P17 P19 P22 P24 P26', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04 N12',
     M:'S09 S10 S11 S12 S13 S14 S15 S17 S20 S21 S22 S24 S25 T08 T13 T14 T19 K04 K05 K06 K07 K08 K09 K10 K12 K13 K14 K15 K16 K17 K18 K19 E06 E07 E08 E10 A05 A07 S30 S37 K26 A11 A13',
     B:'K11 K24 A08 A09 A15', C:'S18 S26 T01 T06 T07 T09 T10 T11 T12 T20 T21 T22 T23 N01 N04 N05 N08 N09 N10 K23 E09 A10 T25 T26',
-    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13'
+    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13',T:'P27 P28 P29 P30'
   };
   const dosePresetById=Object.fromEntries(Object.entries(doseGroups).flatMap(([preset,ids])=>ids.split(' ').map(id=>[id,preset])));
   const doseOverrides={
@@ -72,11 +73,20 @@
     K26:{amountBasis:'per_side'},K38:{reps:3,sets:2,doseUnit:'分',restSeconds:0,amountBasis:'total'},
     A11:{amountBasis:'per_side'},A13:{amountBasis:'per_side'},A15:{reps:3,holdSeconds:null,restSeconds:30,amountBasis:'each_direction',doseDirections:'前・横・後ろ'},
     P12:{reps:6,sets:2,doseUnit:'回',restSeconds:60,amountBasis:'total'},
-    P13:{reps:3,sets:2,doseUnit:'回',holdSeconds:2,restSeconds:60,amountBasis:'each_side'}
+    P13:{reps:3,sets:2,doseUnit:'回',holdSeconds:2,restSeconds:60,amountBasis:'each_side'},
+    // Athlete mobility and taping additions. These are conservative editable starts, not claims of an optimal dose.
+    P14:{reps:5,amountBasis:'each_side'},P15:{reps:4,amountBasis:'each_direction',doseDirections:'左・右'},
+    P16:{reps:2,holdSeconds:15,amountBasis:'each_side'},P17:{reps:2,holdSeconds:15,amountBasis:'each_side'},
+    P18:{reps:5,amountBasis:'each_side'},P19:{reps:2,holdSeconds:15,amountBasis:'each_side'},
+    P20:{reps:5,amountBasis:'each_side'},P21:{reps:5,amountBasis:'each_side'},
+    P22:{reps:2,holdSeconds:10,amountBasis:'total'},P23:{reps:3,amountBasis:'each_side'},
+    P24:{reps:2,holdSeconds:15,amountBasis:'each_side'},P25:{reps:5,amountBasis:'each_direction',doseDirections:'前・後ろ'},
+    P26:{reps:1,holdSeconds:15,amountBasis:'each_side'},
+    P27:{amountBasis:'per_side'},P28:{amountBasis:'per_side'},P29:{amountBasis:'per_side'},P30:{amountBasis:'per_side'}
   };
   function doseDraft(id){
     const d=catalog.definitions[id],preset=dosePresetById[id];if(!isSelectable(id)||!preset)return null;
-    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算'};
+    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算',P23:'足を床へ着ける目標は設けない',P25:'小さい円で前・後ろ各5回',P27:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P28:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P29:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P30:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先'};
     return {...dosePresets[preset],...doseOverrides[id],support:d.equipment,doseDetail:details[id]||''};
   }
   function normalize(raw){
@@ -94,9 +104,9 @@
   }
   // Exceptions reflect explicit bilateral/alternating movements in the unchanged catalog text.
   const sideExceptions={
-    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06 S37 P12',
-    alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10 P13',
-    none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09 N12 T25 T26 K38'
+    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06 S37 P12 P16 P17 P18 P19 P20 P21 P22 P23 P24 P25 P26',
+    alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10 P13 P14',
+    none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09 N12 T25 T26 K38 P15'
   };
   function initialSide(id,affectedSide){return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
   // Only these catalog procedures use the right side as a unilateral example.

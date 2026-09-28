@@ -3,7 +3,7 @@
  * "method" means a related movement in an educational handout, NOT efficacy evidence.
  */
 const ClinicalEvidence = (() => {
-  const checked = '2026-09-26';
+  const checked = '2026-09-28';
   const sources = {
     rcGuideline:{title:'Rotator Cuff Tendinopathy: Clinical Practice Guideline',publisher:'JOSPT / Desmeules et al.',year:'2025',url:'https://doi.org/10.2519/jospt.2025.13182'},
     neckGuideline:{title:'Neck Pain: Revision 2017',publisher:'JOSPT / APTA Orthopedics',year:'2017',url:'https://doi.org/10.2519/jospt.2017.0302'},
@@ -25,7 +25,13 @@ const ClinicalEvidence = (() => {
     falls:{title:'Strength and balance exercise programme for falls prevention',publisher:'South Tees Hospitals NHS',url:'https://www.southtees.nhs.uk/resources/strength-and-balance-exercise-programme-for-falls-prevention/'},
     breathing:{title:'Breathing exercises for stress',publisher:'NHS',url:'https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/breathing-exercises-for-stress/'},
     strength:{title:'How to improve your strength and flexibility',publisher:'NHS',url:'https://www.nhs.uk/live-well/exercise/how-to-improve-strength-flexibility/'},
-    fifa:{title:'Effect of FIFA 11+ Training Program on Soccer-Specific Physical Performance and Functional Movement in Collegiate Male Soccer Players: A Randomized Controlled Trial',publisher:'Hwang J, Kim J. Exercise Science 28(2):141–149',year:'2019',url:'https://ksep-es.org/journal/view.php?doi=10.15857/ksep.2019.28.2.141'}
+    fifa:{title:'Effect of FIFA 11+ Training Program on Soccer-Specific Physical Performance and Functional Movement in Collegiate Male Soccer Players: A Randomized Controlled Trial',publisher:'Hwang J, Kim J. Exercise Science 28(2):141–149',year:'2019',url:'https://ksep-es.org/journal/view.php?doi=10.15857/ksep.2019.28.2.141'},
+    stretchConsensus:{title:'Practical recommendations on stretching exercise: A Delphi consensus statement of international research experts',publisher:'Journal of Sport and Health Science',year:'2025',url:'https://doi.org/10.1016/j.jshs.2025.101067'},
+    hipRotation:{title:'Comparison of Controlled Articular Rotations and Static Stretching on Hip Internal Rotation Range of Motion',publisher:'Head et al. / International Journal of Exercise Science',year:'2026',url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC13405672/'},
+    thoracicReview:{title:'Clinical reasoning framework for thoracic spine exercise prescription in sport: a systematic review and narrative synthesis',publisher:'BMJ Open Sport & Exercise Medicine',year:'2020',url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC7173996/'},
+    shoulderStretchTrial:{title:'The effects of sleeper stretch vs. crossbody stretch in overhead athletes with shoulder pain and glenohumeral internal rotation deficit: a randomized controlled trial',publisher:'Journal of Shoulder and Elbow Surgery',year:'2026',url:'https://pubmed.ncbi.nlm.nih.gov/41580269/'},
+    heelPainGuideline:{title:'Heel Pain – Plantar Fasciitis: Revision 2023',publisher:'JOSPT / APTA Orthopedics',year:'2023',url:'https://doi.org/10.2519/jospt.2023.0303'},
+    pfpBestPractice:{title:'Best practice guide for patellofemoral pain',publisher:'British Journal of Sports Medicine',year:'2024',url:'https://doi.org/10.1136/bjsports-2024-108110'}
   };
   const entries = {};
   function add(ids,source,kind,section){
@@ -48,6 +54,14 @@ const ClinicalEvidence = (() => {
   add('A02 A03 A04 A05 A06 A07 A08','ankle','background','足・足関節の可動性、筋力、バランスの一般資料。この種目と同じ手順の掲載は未確認です。');
   add('P01 P02 P03 P10','strength','background','筋力・柔軟性の一般資料。投球・パス・素振りの手順や競技復帰の許可を裏付けるものではありません。');
   add('P04 P05 P06 P07 P08 P09','fifa','background','健康な大学男子サッカー選手20名の複合プログラムの研究です（Table 2）。跳躍・走行・方向転換の段階構成の参考であり、傷害治療や本種目単独の効果・用量の検証ではありません。');
+  add('P14 P15 P16','hipRotation','background','股関節回旋可動域の短期変化を扱う小規模研究です。90/90という特定手法の優越性、長期の傷害予防、競技力向上を保証しません。');
+  add('P17 P18 P19 P24 P25','stretchConsensus','background','健康者のストレッチ実践に関する国際専門家合意です。主目的は可動域で、各イラスト固有の効果や傷害予防を保証しません。');
+  add('P20 P21 P22 P23','thoracicReview','background','競技者向け胸椎運動の種目と処方を整理したレビューです。全体の根拠水準は低く、単一種目の競技効果や姿勢矯正を保証しません。');
+  add('P26','shoulderStretchTrial','background','肩痛と内旋制限のあるオーバーヘッド競技者における2手法の比較です。無症状者全員への必要性や本アプリの姿勢・量の優越性を示しません。');
+  add('P27','ankleGuideline','background','足関節捻挫で外部支持と段階的運動を組み合わせる考え方の資料です。図の貼付方法・張力・装着時間を直接検証するものではありません。');
+  add('P28','heelPainGuideline','background','足底腱膜痛に対する短期補助としてのテーピング資料です。単独治療や図の貼付法の優越性を保証しません。');
+  add('P29','pfpBestPractice','background','膝蓋大腿痛では教育と運動が中心で、テーピングは症状・希望に応じた追加策です。図どおりの貼付を全員へ勧める資料ではありません。');
+  add('P30','rcGuideline','background','腱板関連肩痛に対する短期補助の選択肢に関する資料です。筋力増強、恒久的な姿勢矯正、脱臼予防を示すものではありません。');
   // Similar movement references. Position, load and dose remain patient-specific.
   add('S01','shoulder','method','1：振り子運動');
   add('S03','frozen','method','治療の項：仰向けでの介助挙上');
@@ -91,7 +105,7 @@ const ClinicalEvidence = (() => {
   add('A10','falls','method','支持物を使う立位の足踏み');
   // Only categories with a matching guideline; do not transfer frozen-shoulder
   // evidence to all shoulder diagnoses, or knee OA evidence to meniscus injuries.
-  const categoryGuidelines={G01:'shoulder',G02:'lowback',G03:'knee',G04:'tennisElbow',G05:'cervicalSpondylosis',G13:'ankleSprain',A05:'tennisElbow',A06:'ankleSprain',A08:'lowback'};
+  const categoryGuidelines={G01:'shoulder',G02:'lowback',G03:'knee',G04:'tennisElbow',G05:'cervicalSpondylosis',G13:'ankleSprain',A05:'tennisElbow',A06:'ankleSprain',A08:'lowback',A12:'stretchConsensus',A13:'thoracicReview',A14:'stretchConsensus'};
   function lookup(ex){
     const key=ex?.exerciseKey;
     if(typeof key!=='string'||!key.startsWith('v02_'))return null;

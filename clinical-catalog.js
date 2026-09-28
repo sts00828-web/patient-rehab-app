@@ -1,7 +1,7 @@
 /* Existing v0.2 definitions plus selected v0.3 additions. Clinical approval is not inferred from AI review. */
 (function(root){
 const data={
-  "version": "0.3-selected",
+  "version": "0.4-athlete-mobility",
   "definitions": {
     "S01": {
       "id": "S01",
@@ -2569,6 +2569,109 @@ const data={
         "R14",
         "R23"
       ]
+    },
+    "P14": {
+      "id": "P14", "key": "v02_P14", "name": "椅子で股関節を内外へ回す", "purpose": "股関節回旋の可動域",
+      "steps": ["椅子に浅く座り、太ももと骨盤を保ったまま片足先を外、内へゆっくり動かします。反対側も行います。"],
+      "doseProposal": "R：左右各5回×1セット", "caution": "膝を手でねじらないでください。股関節前面の挟まり感や痛みが出る範囲へ動かしません。", "equipment": "安定した椅子", "gates": "G0",
+      "pose": "正面斜め。座位で大腿を固定し、下腿を外・内へ動かす", "image": "images/P14.png", "imageCaption": "足先を外へ動かすと股関節は内旋、内へ動かすと外旋します。太ももと骨盤は保ちます。",
+      "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "青い足首バンド側を例示。中間位、下腿を外、下腿を内の3姿勢。", "clinicalStatus": "pending_review", "sha256": "db00130d30cd94554a190509b4cf0b6aebd6fbadbf78791e5f5fd7538904f543", "addedIn": "0.4"
+    },
+    "P15": {
+      "id": "P15", "key": "v02_P15", "name": "支持つき90/90切り替え", "purpose": "股関節内外旋の動的可動域",
+      "steps": ["両膝を曲げて座り、両手を後ろにつきます。両膝をゆっくり左右へ倒し、楽な範囲で脚の向きを切り替えます。"],
+      "doseProposal": "R：左右各4回×1セット", "caution": "膝を床へ押しつけず、90度を強制しません。股関節前面や膝の痛みが出たら中止します。", "equipment": "床、必要なら座面クッション", "gates": "G0",
+      "pose": "床座位、後方手支持。両膝を左右のシンボックス位へ切替", "image": "images/P15.png", "imageCaption": "手で身体を支え、左右の膝を楽な範囲で切り替えます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "前脚と後脚が重ならない左右の切替を2姿勢と矢印で表示。", "clinicalStatus": "pending_review", "sha256": "ac6e509789515ca90dec6366b16f0bd3c984b66ab21d49a6b902d6255eec62ab", "addedIn": "0.4"
+    },
+    "P16": {
+      "id": "P16", "key": "v02_P16", "name": "支持つき90/90前傾", "purpose": "前脚側の股関節外旋可動域",
+      "steps": ["前後の膝を楽な角度に曲げて座り、必要ならお尻をクッションで支えます。背中を保ったまま前脚側へ少し前傾します。反対側も行います。"],
+      "doseProposal": "S：左右15秒×2回", "caution": "手で膝を押さず、強い前屈をしません。股関節前面の挟まり感や膝痛が出たら中止します。", "equipment": "床、クッション", "gates": "G0",
+      "pose": "90/90座位、指先支持、股関節から小さく前傾", "image": "images/P16.png", "imageCaption": "背中を丸めず、前脚側へ小さく前傾します。90度や床への接地は強制しません。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "クッション支持の開始と小さな前傾を2姿勢で表示。", "clinicalStatus": "pending_review", "sha256": "4cb45a17f904bc044f8d684bca21db9cfe424075d495d36aa79c964d8d442d2c", "addedIn": "0.4"
+    },
+    "P17": {
+      "id": "P17", "key": "v02_P17", "name": "片膝立ちで股関節前を伸ばす", "purpose": "股関節前面の柔軟性",
+      "steps": ["片膝をクッションにつき、骨盤を少し後ろへ傾けます。腰を反らず、身体を小さく前へ移します。反対側も行います。"],
+      "doseProposal": "S：左右15秒×2回", "caution": "腰を反らして代用しません。腰痛や膝の圧迫痛が出る場合は変更してください。", "equipment": "膝下クッション", "gates": "G0",
+      "pose": "片膝立ち、両手腰、骨盤後傾を保って小さく前方移動", "image": "images/P17.png", "imageCaption": "腰を反らず、骨盤と身体を一緒に少し前へ移します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "片膝立ちの開始と小さな前方移動を表示。", "clinicalStatus": "pending_review", "sha256": "8557401799de3eb226756a90af7eb8e745152c98489442f822d0f47449e0ddfd", "addedIn": "0.4"
+    },
+    "P18": {
+      "id": "P18", "key": "v02_P18", "name": "内ももロックバック", "purpose": "股関節内転筋の動的可動域",
+      "steps": ["四つ這いから片脚を横へ伸ばします。背中を保ち、お尻を少し後ろへ引いて戻します。反対側も行います。"],
+      "doseProposal": "R：左右各5回×1セット", "caution": "鼠径部の痛みを越えて動かしません。支持する手首や膝が痛む場合は中止します。", "equipment": "運動マット", "gates": "G0",
+      "pose": "四つ這いから片脚を側方伸展、骨盤を後方へ移動", "image": "images/P18.png", "imageCaption": "横へ伸ばした脚を保ち、お尻を小さく後ろへ引きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "開始と後方移動の2姿勢。支持点と脚の分離を確認。", "clinicalStatus": "pending_review", "sha256": "b550263950a3ef20a21c395347132c8ad824d3485464661186616302d65b92e1", "addedIn": "0.4"
+    },
+    "P19": {
+      "id": "P19", "key": "v02_P19", "name": "仰向けでもも裏を伸ばす", "purpose": "ハムストリングスの柔軟性",
+      "steps": ["仰向けで片ももを両手で支えます。太ももの位置を保ち、膝をゆっくり伸ばします。反対側も行います。"],
+      "doseProposal": "S：左右15秒×2回", "caution": "膝は少し曲がっていて構いません。しびれを伴う伸びや腰痛が出たら中止します。", "equipment": "運動マット", "gates": "G0",
+      "pose": "仰向け、反対膝屈曲、両手で大腿後面支持、膝伸展", "image": "images/P19.png", "imageCaption": "太ももを支えたまま、膝を無理のない範囲で伸ばします。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "膝屈曲位から伸展位への2姿勢。", "clinicalStatus": "pending_review", "sha256": "cde57e52ba1251b52be5a12956471c5f7fcf0475418e582441bc426e7e26d9ed", "addedIn": "0.4"
+    },
+    "P20": {
+      "id": "P20", "key": "v02_P20", "name": "四つ這いで胸を回す", "purpose": "胸椎回旋の可動域",
+      "steps": ["四つ這いで片手を耳の後ろへ添えます。骨盤を保ち、肘と胸を床側から天井側へゆっくり回します。反対側も行います。"],
+      "doseProposal": "R：左右各5回×1セット", "caution": "首だけを強く回しません。支持側の手首痛やめまいが出たら中止します。", "equipment": "運動マット", "gates": "G0",
+      "pose": "四つ這い、片手後頭部、肘下向きから上向き", "image": "images/P20.png", "imageCaption": "骨盤をなるべく保ち、胸をゆっくり回します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "肘下向きと上向きの2姿勢。", "clinicalStatus": "pending_review", "sha256": "0cd3cb574a960fa73b370aad1cfe6cc9808092a23a9072c9f483b92d5491c999", "addedIn": "0.4"
+    },
+    "P21": {
+      "id": "P21", "key": "v02_P21", "name": "スレッド・ザ・ニードル", "purpose": "胸椎回旋の動的可動域",
+      "steps": ["四つ這いから片腕を上へ開き、次に反対の腕の下へ通して戻します。反対側も行います。"],
+      "doseProposal": "R：左右各5回×1セット", "caution": "肩へ体重を押しつけず、深く沈み込む必要はありません。首や肩の痛みが出たら中止します。", "equipment": "運動マット", "gates": "G0",
+      "pose": "四つ這い、片腕を上方から反対腕下へ通す", "image": "images/P21.png", "imageCaption": "上へ開いた腕を、反対の腕の下へ楽な範囲で通します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "上方リーチと腕を通した終点を2姿勢で表示。", "clinicalStatus": "pending_review", "sha256": "566b716a085e8dc678c78ddb6f6810abc31226d8d9d7776603a71f70392748e6", "addedIn": "0.4"
+    },
+    "P22": {
+      "id": "P22", "key": "v02_P22", "name": "台で胸と肩を伸ばす", "purpose": "胸椎伸展と両肩挙上の可動域",
+      "steps": ["安定した台に両肘を置き、お尻を後ろへ引きます。腰を反らず、胸を少し下げて戻します。"],
+      "doseProposal": "S：10秒×2回", "caution": "肩の挟まり感があれば、腕の高さと範囲を下げます。台が動かないことを確認します。", "equipment": "安定した台、膝下クッション", "gates": "G0",
+      "pose": "両膝立ち、台に両肘支持、骨盤後方移動と胸部下降", "image": "images/P22.png", "imageCaption": "両肘を台で支え、腰を反らずにお尻を少し後ろへ引きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "両上肢を対称に支持した開始と終点。", "clinicalStatus": "pending_review", "sha256": "886e86a0010ce7cfb34e770696417d584c5ba30e48542b71eaef8369f989dfd4", "addedIn": "0.4"
+    },
+    "P23": {
+      "id": "P23", "key": "v02_P23", "name": "小さなスコーピオン", "purpose": "胸椎・股関節を含む複合回旋",
+      "steps": ["うつ伏せで両腕を横へ置きます。片膝を曲げ、足を反対側へ小さく動かして戻します。反対側も行います。"],
+      "doseProposal": "R：左右各3回×1セット", "caution": "上級の複合動作です。足を床へ着ける目標はありません。腰を反らすと痛む場合、肩・股関節痛、術後は選びません。", "equipment": "運動マット", "gates": "G7",
+      "pose": "腹臥位T字、片膝屈曲、足を反対側へ小さく移動", "image": "images/P23.png", "imageCaption": "片足を反対側へ小さく動かします。足を床へ着けず、痛みのない範囲で行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "上面図。開始と右足を身体の反対側へ動かした終点。", "clinicalStatus": "pending_review", "sha256": "795a274d2621aef8eea82253473be286f457ff85a8d6c3a810784974391398de", "addedIn": "0.4"
+    },
+    "P24": {
+      "id": "P24", "key": "v02_P24", "name": "壁で胸の前を伸ばす", "purpose": "胸部・肩前面の柔軟性",
+      "steps": ["前腕を壁につけ、身体を少し反対へ向けます。胸の前が軽く伸びる位置で止め、反対側も行います。"],
+      "doseProposal": "S：左右15秒×2回", "caution": "肘を肩より高く上げすぎません。肩前面の痛みやしびれが出たら中止します。", "equipment": "壁", "gates": "G0",
+      "pose": "前腕壁支持、肘は肩より低位、体幹を小さく反対へ回旋", "image": "images/P24.png", "imageCaption": "前腕を壁につけたまま、身体を小さく反対へ向けます。反対側も行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "同じ右前腕を壁へ保った開始と回旋終点。", "clinicalStatus": "pending_review", "sha256": "cfc4ee374bdec61f46e7a6a0d7781debfb3f1dcec65e82488816f25420792e21", "addedIn": "0.4"
+    },
+    "P25": {
+      "id": "P25", "key": "v02_P25", "name": "小さなアームサークル", "purpose": "運動前の両肩の動的準備",
+      "steps": ["両腕を楽な高さへ広げ、小さな円を前、後ろへゆっくり描きます。"],
+      "doseProposal": "R：前後各5回×1セット", "caution": "勢いで大きく回さず、肩をすくめません。痛みや不安定感が出たら中止します。", "equipment": "なし", "gates": "G0",
+      "pose": "立位、両腕を肩よりやや低く外転、小円運動", "image": "images/P25.png", "imageCaption": "肩をすくめず、両手で小さな円を描きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "正面立位、左右対称の小さい円矢印。", "clinicalStatus": "pending_review", "sha256": "7e4e9e1195b7c6754722b8e346ee1db9c0b727c0362b900244900d1209aad2e8", "addedIn": "0.4"
+    },
+    "P26": {
+      "id": "P26", "key": "v02_P26", "name": "修正スリーパーストレッチ", "purpose": "肩後方の柔軟性",
+      "steps": ["横向きで下側の上腕をタオルで支え、肩と肘を楽な角度にします。反対の手で前腕を内側へ少し倒します。反対側も担当者の指示で行います。"],
+      "doseProposal": "S：左右15秒×1回", "caution": "個別指導後に行います。肩前面の挟まり感、不安定感、痛みが出たら中止します。", "equipment": "ベッド、折ったタオル", "gates": "G1",
+      "pose": "側臥位、肩をタオル支持、肩90度未満・肘90度、前腕を小さく内旋", "image": "images/P26.png", "imageCaption": "図は右肩の例です。肩の前が痛まない小さな範囲で行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "タオル支持下の開始と小さな内旋終点。両腕の接続を確認。", "clinicalStatus": "pending_review", "sha256": "abb4cc0404d172e08d1e70fc3882db8e9b2cd60a453c6c9dd93aa4d4bbceb47e", "addedIn": "0.4"
+    },
+    "P27": {
+      "id": "P27", "key": "v02_P27", "name": "足関節サポートテープ", "purpose": "活動時の足関節外部支持",
+      "steps": ["担当者が教えた非伸縮テープの方法で貼ります。貼付後に短く歩き、足指の色、温度、感覚と違和感を確認します。"],
+      "doseProposal": "T：必要な活動時に1回", "caution": "担当者の指導後のみ。傷・湿疹・アレルギー部位には貼りません。しびれ、冷感、色の変化、灼熱感、水疱が出たら直ちに外します。", "equipment": "指定された非伸縮テープ、皮膚保護材", "gates": "G7+G8",
+      "pose": "足関節の完成テープ概念図。具体的手順は個別指導", "image": "images/P27.png", "imageCaption": "完成位置の概念図です。テープの種類、張力、方向、装着時間は担当者の指示を優先します。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "裸足と完成後の比較。自己流の貼付手順としては使わない。", "clinicalStatus": "pending_review", "sha256": "0fa1dbc2e005e05896b58ac574c14aea5e1423846a16921335d5d9ac7ed68ba2", "addedIn": "0.4"
+    },
+    "P28": {
+      "id": "P28", "key": "v02_P28", "name": "足底アーチサポートテープ", "purpose": "足底症状への短期補助",
+      "steps": ["担当者が教えた位置へ貼り、貼付後に短く歩いて症状と皮膚の状態を確認します。"],
+      "doseProposal": "T：必要な活動時に1回", "caution": "担当者の指導後のみ。循環を妨げる巻き方をせず、しびれ、冷感、色の変化、かゆみ、水疱が出たら直ちに外します。", "equipment": "指定されたテープ、皮膚保護材", "gates": "G7+G8",
+      "pose": "足底アーチの完成テープ概念図。具体的手順は個別指導", "image": "images/P28.png", "imageCaption": "完成位置の概念図です。貼り方と装着時間は担当者の指示を優先します。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "足底面の裸足と完成後。自己流の貼付手順としては使わない。", "clinicalStatus": "pending_review", "sha256": "92df1db8cf26ea2c651d2058b9e133876b6fbd5cdd319fc9a0b6ffe0aa540da6", "addedIn": "0.4"
+    },
+    "P29": {
+      "id": "P29", "key": "v02_P29", "name": "膝蓋骨周囲サポートテープ", "purpose": "膝前面症状への短期補助",
+      "steps": ["担当者が決めた位置へ貼り、浅い膝曲げや階段動作で痛みの変化と皮膚を確認します。"],
+      "doseProposal": "T：必要な活動時に1回", "caution": "運動や負荷調整の代わりにはしません。しびれ、冷感、色の変化、かゆみ、水疱、痛みの増加で直ちに外します。", "equipment": "指定されたテープ、皮膚保護材", "gates": "G7+G8",
+      "pose": "膝蓋骨周囲の完成テープ概念図。具体的手順は個別指導", "image": "images/P29.png", "imageCaption": "完成位置の概念図です。症状に合う方向と張力を担当者が決めます。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "裸膝と完成後の比較。全周を強く締める指示ではない。", "clinicalStatus": "pending_review", "sha256": "a1ff3d26881b5f7b681b700a798ed991536c007bbba1ac5e33a257fff1db1164", "addedIn": "0.4"
+    },
+    "P30": {
+      "id": "P30", "key": "v02_P30", "name": "肩の補助テープ", "purpose": "肩症状への短期的な補助",
+      "steps": ["担当者が決めた肩・肩甲骨周囲の位置へ貼り、腕をゆっくり動かして症状と皮膚を確認します。"],
+      "doseProposal": "T：必要な活動時に1回", "caution": "筋力増強、姿勢の恒久矯正、脱臼予防を保証しません。かゆみ、灼熱感、水疱、しびれ、痛みの増加で直ちに外します。", "equipment": "指定された伸縮テープ、皮膚保護材", "gates": "G1+G7+G8",
+      "pose": "肩外側から肩甲帯の完成テープ概念図。具体的手順は個別指導", "image": "images/P30.png", "imageCaption": "完成位置の概念図です。テープは短期補助で、運動療法の代わりではありません。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "右肩の未貼付と完成後の比較。貼付方向・張力は個別指導。", "clinicalStatus": "pending_review", "sha256": "48af1cf4128c27f89bfdba1e5536cada1b4dd41f23edfccfb5b2c31c340697de", "addedIn": "0.4"
     }
   },
   "categories": {
@@ -3376,6 +3479,50 @@ const data={
           "P08"
         ]
       }
+    },
+    "A12": {
+      "id": "A12",
+      "name": "競技：両下肢ストレッチ",
+      "notes": "可動域づくりが目的。左右同じ角度を強制しない。運動前は短い動的運動を優先し、長い静的保持の直後に全力走・跳躍を行わない。鋭い痛み、挟まり感、しびれで中止",
+      "levelLabels": {"beginner": "基本", "intermediate": "動的", "advanced": "回旋"},
+      "levels": {
+        "beginner": ["P17", "P19"],
+        "intermediate": ["P14", "P15", "P18"],
+        "advanced": ["P16"]
+      }
+    },
+    "A13": {
+      "id": "A13",
+      "name": "競技：胸椎ストレッチ",
+      "notes": "胸椎の回旋・伸展を練習する選択肢。姿勢矯正・傷害予防・競技力向上を保証しない。スコーピオンは股関節・腰椎も動く上級種目で、適否を個別確認",
+      "levelLabels": {"beginner": "基本", "intermediate": "動的", "advanced": "上級"},
+      "levels": {
+        "beginner": ["T04", "T15"],
+        "intermediate": ["P20", "P21", "P22"],
+        "advanced": ["P23"]
+      }
+    },
+    "A14": {
+      "id": "A14",
+      "name": "競技：両肩ストレッチ",
+      "notes": "投球側など競技適応による左右差を、左右差だけで異常と判断しない。運動前は小さな動的準備を優先。脱臼歴、術後、肩前面の挟まり感は個別確認",
+      "levelLabels": {"beginner": "基本", "intermediate": "動的", "advanced": "個別指導"},
+      "levels": {
+        "beginner": ["S16", "P22", "P24"],
+        "intermediate": ["P25", "S08"],
+        "advanced": ["P26"]
+      }
+    },
+    "A15": {
+      "id": "A15",
+      "name": "競技：テーピング",
+      "notes": "短期補助として、担当者が目的・種類・張力・方向・装着時間を指定。運動療法の代わりや筋力増強をうたわない。毎回皮膚を確認し、かゆみ、灼熱感、水疱、しびれ、冷感、色の変化で直ちに外す",
+      "levelLabels": {"beginner": "足部・足関節", "intermediate": "膝・肩", "advanced": ""},
+      "levels": {
+        "beginner": ["P27", "P28"],
+        "intermediate": ["P29", "P30"],
+        "advanced": []
+      }
     }
   },
   "presets": {
@@ -3386,7 +3533,8 @@ const data={
     "B": "10〜20秒×3回、週3〜5日。必ず支持物を近くに置く",
     "C": "保持5〜10秒×5回または左右各5回、週3〜5日。息を止めない",
     "W": "合計5分程度から、週3〜5日。短い区間に分割可。会話できる強度",
-    "P": "辞書の少量案を上限候補としてPTが初回監督下で調整。週2回程度・原則48時間程度あけ、競技練習と合算"
+    "P": "辞書の少量案を上限候補としてPTが初回監督下で調整。週2回程度・原則48時間程度あけ、競技練習と合算",
+    "T": "必要な活動時に1回。貼付方法・装着時間は担当者と製品指示を優先し、毎回皮膚・循環・感覚を確認"
   },
   "gates": {
     "G0": "通常のPT評価・処方。追加の病期ゲートなし",

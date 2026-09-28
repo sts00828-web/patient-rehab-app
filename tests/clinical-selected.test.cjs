@@ -4,14 +4,15 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const catalog=require('../clinical-catalog.js'),R=require('../clinical-rules.js'),C=require('../core.js');
 const selected=['S30','S37','N12','T25','T26','K26','K38','A11','A13','A15','P12','P13'];
+const athlete=Array.from({length:17},(_,i)=>'P'+(i+14));
 const oldIds=Object.entries({S:26,T:23,N:10,K:24,E:10,A:10,P:10}).flatMap(([prefix,n])=>Array.from({length:n},(_,i)=>prefix+String(i+1).padStart(2,'0'))).sort();
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
-test('selection preserves the v0.2 catalog apart from approved display-name updates and adds only 12 reviewed IDs',()=>{
+test('selection preserves the v0.2 catalog and includes reviewed and athlete-menu additions',()=>{
  assert.equal(oldIds.length,113);
- assert.deepEqual(Object.keys(catalog.definitions).sort(),[...oldIds,...selected].sort());
+ assert.deepEqual(Object.keys(catalog.definitions).sort(),[...oldIds,...selected,...athlete].sort());
  assert.equal(hash(oldIds.map(id=>[id,catalog.definitions[id]])),'28d2337eaf9fb35ed1ab59331678b584cc0d20ae2a78e78ef2e725962bf7d884');
- assert.equal(Object.keys(catalog.categories).length,25);
- const oldLevels=Object.keys(catalog.categories).sort().map(id=>[id,Object.fromEntries(Object.entries(catalog.categories[id].levels).map(([level,ids])=>[level,ids.filter(eid=>!selected.includes(eid))]))]);
+ assert.equal(Object.keys(catalog.categories).length,29);
+ const oldLevels=Object.keys(catalog.categories).filter(id=>!['A12','A13','A14','A15'].includes(id)).sort().map(id=>[id,Object.fromEntries(Object.entries(catalog.categories[id].levels).map(([level,ids])=>[level,ids.filter(eid=>!selected.includes(eid))]))]);
  assert.equal(hash(oldLevels),'f7d3581b76f06e1fef2e19f8f9905d0de0f348be5b91f141ea418c34e82163ac');
  assert.equal(oldLevels.flatMap(([,levels])=>Object.values(levels).flat()).length,437);
  const linked=new Set();
