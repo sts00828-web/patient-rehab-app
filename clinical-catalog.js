@@ -909,22 +909,22 @@ const data={
     "T20": {
       "id": "T20",
       "key": "v02_T20",
-      "name": "横向きのゴムに耐える",
+      "name": "パロフプレス",
       "purpose": "回旋制御",
       "steps": [
-        "体の横に固定したゴムを胸前で持ち、両手を少し前へ伸ばして戻します。"
+        "体の横・胸の高さに固定したゴムを両手で胸前に持ちます。胸と骨盤を正面に保ったまま、両手を胸の正面へゆっくり押し出して戻します。左右を入れ替えて行います。"
       ],
       "doseProposal": "C：左右各5回",
       "caution": "体を回さない。分離症は回旋抵抗の許可を確認",
       "equipment": "ゴム、専用固定点",
       "gates": "G6該当時+G8",
-      "pose": "正面。固定点は真横の胸高。両手胸前→前方、骨盤前向き保持",
+      "pose": "正面。固定点は真横の胸高。両手を胸骨前から正中線上へ押し出し、胸郭・骨盤を正面に保持",
       "image": "images/T20.png",
-      "imageCaption": "",
-      "assetStatus": "採用候補",
-      "assetNotes": "側方胸高専用アンカー・胸前から前へ、骨盤前向き。",
+      "imageCaption": "横から引かれるゴムに対し、胸と骨盤を正面に保ったまま両手を前へ押し出します。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "共通人物で統一。側方胸高アンカー、胸前から正中線上へ押し出す2姿勢、体幹・骨盤の正面保持を目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "bbcdc4d0bde607ca10631bfa5342a46effb37b476e08c3f02da214dbbc1843fa"
+      "sha256": "7180afa3125aeec199d00ef1e63a73caeffc578eca33538df1509a7fb0a07942"
     },
     "T21": {
       "id": "T21",
@@ -1824,11 +1824,11 @@ const data={
       "gates": "G0",
       "pose": "正面斜め。肘90°固定、棒の重心は手に近い。勢いを使わない",
       "image": "images/E08.png",
-      "imageCaption": "",
-      "assetStatus": "採用候補",
-      "assetNotes": "右肘体側で棒を回内外。短い木棒の把持位置は手に近い重心として読める。",
+      "imageCaption": "肘を体側で90度に保ち、前腕だけをゆっくり回して棒の向きを変えます。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "共通人物で統一。右肘の体側固定、棒の垂直位から水平位への前腕回旋、正常な両上肢を目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "fbc9aa47ef36b3b00e47be8a7fb5da0cb7a0b3ea7697c53c7f71f47f26daf919"
+      "sha256": "6bb19ba6a6baae85411cc5ad22f71fee7edc0e9e6f948bbc8bc38729dabc0237"
     },
     "E09": {
       "id": "E09",
@@ -2228,11 +2228,11 @@ const data={
       "gates": "G4該当時+G6該当時+G7+G8",
       "pose": "斜め上。低速で約30°の予定コース。固定足上の急な膝ねじりでない",
       "image": "images/P08.png",
-      "imageCaption": "",
-      "assetStatus": "採用候補",
-      "assetNotes": "予定された緩い曲線を数歩で進む。急な固定足上の捻りを描いていない。正確な角度・速度は本文に従う。",
+      "imageCaption": "床印に沿って低速で進み、予定した方向へ数歩かけて緩やかに曲がります。",
+      "assetStatus": "生成画像・姿勢確認済み",
+      "assetNotes": "共通人物の3時点で統一。予定された緩い曲線を歩行し、固定足上の急な膝ねじりを描いていないことを目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "57741b004b5862174877e2187dabcf38b5042acc9ee26a3adee016cd5ef4e7ca"
+      "sha256": "0b4b96ea25ff22efde3bd6975235aa8b0a5287f87c897371e7f0ac1140012499"
     },
     "P09": {
       "id": "P09",
@@ -2341,9 +2341,9 @@ const data={
       "image": "images/N12.png",
       "imageCaption": "額と後頭部で、それぞれ手と頭を軽く押し合います。頭は動かさず、息を止めません。",
       "assetStatus": "生成画像・姿勢確認済み",
-      "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
+      "assetNotes": "共通人物で統一。額／後頭部への手掌接触、頭頚部中間位、反対手の大腿支持、正常な両上肢を目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "2908dfb6eb0cdc16ccf600456a61816a2bc5cf5c14d545ffeadc849a7a4ae750",
+      "sha256": "60ced3bc002ab036dc14796f1c57d779edfe41626f16701824d4cb42014c4aba",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R9"
