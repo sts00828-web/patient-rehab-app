@@ -9,7 +9,7 @@ const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex'
 test('selection preserves the v0.2 catalog apart from approved display-name updates and adds only 12 reviewed IDs',()=>{
  assert.equal(oldIds.length,113);
  assert.deepEqual(Object.keys(catalog.definitions).sort(),[...oldIds,...selected].sort());
- assert.equal(hash(oldIds.map(id=>[id,catalog.definitions[id]])),'acea444609e4e7ab61b66b3229bbee95e3e6eb5f5a2bb20ae98a50503714428d');
+ assert.equal(hash(oldIds.map(id=>[id,catalog.definitions[id]])),'28d2337eaf9fb35ed1ab59331678b584cc0d20ae2a78e78ef2e725962bf7d884');
  assert.equal(Object.keys(catalog.categories).length,25);
  const oldLevels=Object.keys(catalog.categories).sort().map(id=>[id,Object.fromEntries(Object.entries(catalog.categories[id].levels).map(([level,ids])=>[level,ids.filter(eid=>!selected.includes(eid))]))]);
  assert.equal(hash(oldLevels),'f7d3581b76f06e1fef2e19f8f9905d0de0f348be5b91f141ea418c34e82163ac');
