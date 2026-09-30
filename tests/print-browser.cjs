@@ -25,27 +25,31 @@ async function main(){
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await send('Page.navigate',{url:origin+'/'});
   for(let i=0;i<100;i++){if(await evaluate("typeof RehabCore !== 'undefined' && typeof activeDay !== 'undefined' && document.readyState === 'complete'"))break;await delay(100);}
-  await evaluate(`staffUnlocked=true;openTherapist();window.alert=message=>window.testAlert=message;
+  await evaluate(`staffUnlocked=true;openTherapist();window.alert=message=>window.testAlert=message;S.chartId='TEST-PRINT';
     window.completePrintEx=(ex,i)=>({...ex,id:'print_'+i,prescription:{...PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription,side:'右',load:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.load||'担当者が指定した範囲',support:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.support||'安定した台',repetitions:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.repetitions||'5回',hold:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.hold||'保持なし'},scheduleConfirmed:true});
-    S.menu=TEMPLATES.lowback.menu.slice(0,6).map(completePrintEx);renderTherapist();openExercisePrint();`);
-  await check('saved six exercises initially selected for printing',"document.querySelectorAll('#exercisePrintModal input:checked').length===6");
-  await check('zero and seven selections rejected without opening popup',`(()=>{
+    S.menu=TEMPLATES.lowback.menu.slice(0,8).map(completePrintEx);renderTherapist();openExercisePrint();`);
+  await check('returning staff sees current patient and paper-only workflow',`(()=>{
+    const root=$('therapist-content'),banner=root.querySelector('[data-staff-patient-banner]'),paper=root.querySelector('button[onclick="openExercisePrint()"]');
+    return document.querySelector('.header-staff').textContent.includes('スタッフ画面')&&banner.textContent.includes('TEST-PRINT')&&root.querySelector('button[onclick="newPatient()"]').textContent.includes('次の患者')&&paper.classList.contains('btn-pri')&&root.querySelector('button[onclick="showShareQR()"]').hidden&&root.querySelector('button[onclick="showInstallQR()"]').hidden;
+  })()`);
+  await check('saved eight exercises initially selected for printing',"document.querySelectorAll('#exercisePrintModal input:checked').length===8");
+  await check('zero and nine selections rejected without opening popup',`(()=>{
     const original=window.open;let opens=0;window.open=()=>{opens++;return null};
     document.querySelectorAll('#exercisePrintModal input').forEach(e=>e.checked=false);previewExercisePrint();
-    $('exercisePrintModal').remove();S.menu=TEMPLATES.lowback.menu.slice(0,7).map(completePrintEx);openExercisePrint();
+    $('exercisePrintModal').remove();S.menu=TEMPLATES.lowback.menu.slice(0,9).map(completePrintEx);openExercisePrint();
     const none=document.querySelectorAll('#exercisePrintModal input:checked').length===0;
     document.querySelectorAll('#exercisePrintModal input').forEach(e=>e.checked=true);previewExercisePrint();
     window.open=original;return opens===0&&none;
   })()`);
   await check('incomplete prescriptions cannot be printed',`(()=>{
     const original=window.open;let opens=0;window.open=()=>{opens++;return null};
-    $('exercisePrintModal').remove();S.menu=S.menu.slice(0,6);S.menu[0].prescription.side='';openExercisePrint();previewExercisePrint();
+    $('exercisePrintModal').remove();S.menu=TEMPLATES.lowback.menu.slice(0,8).map(completePrintEx);S.menu[0].prescription.side='';openExercisePrint();previewExercisePrint();
     S.menu[0].prescription.side='右';window.open=original;return opens===0&&testAlert.includes('個別指示');
   })()`);
   const docs=await evaluate(`(()=>{
     const s={...S,patientName:'印刷テスト',chartId:'000123',consultContact:'担当の理学療法士・当院受付'};
     const items=S.menu,render=(xs,ms)=>RehabPrint.documentHtml(s,xs,ms||xs.map(mediaFor),location.href);
-    return {stock:Object.entries(TEMPLATES).flatMap(([key,t])=>Array.from({length:Math.ceil(t.menu.length/6)},(_,n)=>({name:key+'-'+n,html:render(t.menu.slice(n*6,n*6+6).map((ex,i)=>({...completePrintEx(ex,i),params:''})))}))),six:render(items),one:render(items.slice(0,1)),four:render(items.slice(0,4)),long:render([{...items[0],note:'長い個別指示。'.repeat(80)}]),missing:render(items.slice(0,1),[{...mediaFor(items[0]),image:'not-found.png'}])};
+    return {stock:Object.entries(TEMPLATES).flatMap(([key,t])=>Array.from({length:Math.ceil(t.menu.length/8)},(_,n)=>({name:key+'-'+n,html:render(t.menu.slice(n*8,n*8+8).map((ex,i)=>({...completePrintEx(ex,i),params:''})))}))),eight:render(items),one:render(items.slice(0,1)),four:render(items.slice(0,4)),long:render(items.slice(0,1),[{...mediaFor(items[0]),steps:['長い動作説明。'.repeat(100)]}]),missing:render(items.slice(0,1),[{...mediaFor(items[0]),image:'not-found.png'}])};
   })()`);
   // Open the actual print window through the app's button.
   await send("Runtime.evaluate",{expression:"previewExercisePrint()",userGesture:true});
@@ -58,7 +62,7 @@ async function main(){
   await send('Emulation.setDeviceMetricsOverride',{width:900,height:1250,deviceScaleFactor:1,mobile:false});
   async function ready(){for(let i=0;i<80;i++){if(await evaluate("!!document.getElementById('status')&&!document.getElementById('status').textContent.includes('読み込んでいます')"))return;await delay(100);}throw Error('Print image load timeout');}
   await ready();
-  await check('six-exercise popup ready with images, explanations and doses',"!document.body.classList.contains('invalid')&&document.querySelectorAll('.sheet').length===2&&document.images.length===6&&document.querySelectorAll('.instructions ol').length===6&&!document.getElementById('print').disabled");
+  await check('eight-exercise popup ready with images, explanations and doses',"!document.body.classList.contains('invalid')&&document.querySelectorAll('.sheet').length===3&&document.images.length===8&&document.querySelectorAll('.instructions ol').length===8&&!document.getElementById('print').disabled");
   await check('print popup cannot access parent window',"window.opener===null");
   async function pdf(name,expected){
     await evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
@@ -68,7 +72,7 @@ async function main(){
     const pages=(bytes.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;
     assert.equal(pages,expected,name+' PDF page count');console.log('PASS '+name+' PDF has '+pages+' pages');
   }
-  await pdf('six',2);
+  await pdf('eight',3);
   await send('Emulation.setEmulatedMedia',{media:'print'});
   const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'exercise-print-preview.png'),Buffer.from(shot.data,'base64'));
   await send('Emulation.setEmulatedMedia',{media:''});

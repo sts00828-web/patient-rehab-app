@@ -105,24 +105,22 @@ function bindTitleLongPress() {
 }
 
 function openPinModal() {
-  // During the demo, an unset PIN means staff access is intentionally open.
-  // Once a PIN is saved, the existing verification flow is used.
-  if (!localPin) {
-    staffUnlocked = true;
-    openTherapist();
-    return;
-  }
+  const replacingCredentials=!!pinRecoveryAuthorized;
   document.getElementById('pin-input').value = '';
   document.getElementById('pin-confirm').value = '';
-  document.getElementById('pin-confirm-wrap').hidden = true;
-  document.getElementById('pin-help').textContent = 'PINを入力してください。';
-  document.getElementById('pin-submit').textContent = '確認';
-  document.getElementById('pin-note').textContent = 'この端末だけの誤操作防止PINです。';
+  document.getElementById('pin-recovery').value = '';
+  document.getElementById('pin-recovery-confirm').value = '';
+  document.getElementById('pin-confirm-wrap').hidden = !!localPin&&!replacingCredentials;
+  document.getElementById('pin-recovery-wrap').hidden = !!pinRecoveryHash&&!replacingCredentials;
+  document.getElementById('pin-help').textContent = replacingCredentials?'新しいPINと、新しい院内復旧コードを設定してください。':localPin?'院内のPINを入力してください。':'初回のみ、スタッフ画面を保護する4〜6桁の院内PINを設定してください。';
+  document.getElementById('pin-submit').textContent = replacingCredentials?'PINと復旧コードを再設定して開く':localPin?(pinRecoveryHash?'確認':'復旧コードを登録して開く'):'PINと復旧コードを設定して開く';
+  document.getElementById('pin-note').textContent = localPin?'この端末だけの誤操作防止PINです。':'PINと復旧コードは患者さんに伝えず、院内スタッフ間で管理してください。';
+  document.getElementById('pin-reset').hidden = replacingCredentials||!localPin||!pinRecoveryHash;
   document.getElementById('pinModal').classList.add('on');
   setTimeout(() => document.getElementById('pin-input').focus(), 100);
 }
 
-function closePinModal() { document.getElementById('pinModal').classList.remove('on'); }
+function closePinModal() { pinRecoveryAuthorized=false;document.getElementById('pinModal').classList.remove('on'); }
 
 function saveCurrentAsTemplate() {
   if (!requireStaff()) return;
@@ -483,11 +481,8 @@ function init() {
   if (!S) {
     const ov = document.getElementById('setupOverlay');
     ov.hidden = false;
-    // PWA（standalone）として開いているかで案内文を切り替え
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                       || window.navigator.standalone === true;
-    document.getElementById('setup-intro-standalone').style.display = isStandalone ? 'block' : 'none';
-    document.getElementById('setup-intro-browser').style.display    = isStandalone ? 'none'  : 'block';
+    document.getElementById('setup-intro-standalone').style.display = 'none';
+    document.getElementById('setup-intro-browser').style.display = 'block';
   }
   bindTitleLongPress();
   renderHeader();

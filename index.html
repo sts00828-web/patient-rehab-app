@@ -46,7 +46,7 @@ body{
 }
 .header-main{display:flex;align-items:center;gap:10px;position:relative;z-index:2}
 .header-main .h-title{flex:1;min-width:0}
-.header-staff{font:inherit;font-size:12px;font-weight:700;color:var(--teal-d);background:#fff;border:0;border-radius:18px;padding:7px 11px;cursor:pointer;white-space:nowrap;min-height:36px}
+.header-staff{font:inherit;font-size:13px;font-weight:700;color:var(--teal-d);background:#fff;border:0;border-radius:22px;padding:8px 13px;cursor:pointer;white-space:nowrap;min-height:44px}
 .header::after{
   content:'';position:absolute;left:0;top:0;bottom:0;width:0;
   background:rgba(255,255,255,.22);transition:width .05s linear;pointer-events:none;
@@ -263,7 +263,7 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
 <header class="header">
   <div class="header-main">
     <div class="h-title" id="hdr-title">🌱 リハビリチェック</div>
-    <button type="button" class="header-staff" onclick="event.stopPropagation();openPinModal()">スタッフ</button>
+    <button type="button" class="header-staff" onclick="event.stopPropagation();openPinModal()">⚙ スタッフ画面</button>
   </div>
   <div class="h-sub">
     <span id="hdr-name">未設定</span>
@@ -299,20 +299,10 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
 <div class="setup-overlay" id="setupOverlay" hidden>
   <div class="setup-card">
     <h2 style="font-size:17px;line-height:1.4">🌱 小牧いとう整形外科<br>リハビリチェック</h2>
-    <div id="setup-intro-standalone" style="display:none;background:#e8f4f6;border-left:4px solid #2e7d8a;padding:10px;border-radius:6px;margin-bottom:12px;text-align:left;font-size:13px;color:#1f5963">
-      <strong>📲 ホーム画面のアプリです</strong><br>
-      セラピストから受け取ったQRをカメラで読み直すか、URLを下の欄に貼り付けてください。
-    </div>
-    <p id="setup-intro-browser" style="text-align:left">このアプリは整形外科クリニックでセラピストが設定するアプリです。<br><br>
-      <strong>セラピストから受け取ったURL</strong>を下に貼り付けて「読み込む」を押してください。
-    </p>
-    <button class="btn btn-pri" onclick="startQrScan()" style="margin-bottom:10px">📷 カメラでQRを読み取る</button>
-    <div style="text-align:center;color:var(--text2);font-size:11px;margin:4px 0">または</div>
-    <textarea id="paste-url" placeholder="https://patient-rehab-app.vercel.app/?d=..." style="width:100%;min-height:54px;padding:8px;border:1.5px solid #dbe4ec;border-radius:6px;font-size:11px;font-family:monospace;margin-bottom:8px"></textarea>
-    <button class="btn btn-out" onclick="manualImport()">📥 URLから読み込む</button>
-    <div style="height:14px"></div>
-    <button class="btn btn-out" onclick="openPinModal()">スタッフ：メニューを作成・変更</button>
-    <p style="font-size:11px;color:#888;text-align:left;margin-top:8px">デモ中はPINなしで開けます。必要な端末だけスタッフ画面でPINを設定できます。</p>
+    <div id="setup-intro-standalone" style="display:none"></div>
+    <p id="setup-intro-browser" style="text-align:left"><strong>現在は院内スタッフが患者さん用の運動メニューを作り、紙で印刷するために使用します。</strong><br><br>患者さんへのQRコード・URLでの配布は行いません。</p>
+    <button class="btn btn-pri" onclick="openPinModal()">スタッフ画面を開く</button>
+    <p style="font-size:11px;color:#888;text-align:left;margin-top:8px">初回のみ、スタッフ画面を保護する4〜6桁の院内PINを設定します。</p>
     <button class="btn btn-out" onclick="openBugReport()">不具合を報告</button>
     <button class="btn btn-out" style="margin-top:6px" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
   </div>
@@ -331,8 +321,16 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
       <label class="fld-lbl" for="pin-confirm" style="margin-top:10px">確認のためもう一度</label>
       <input class="fld-inp pin-inp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-confirm" placeholder="••••">
     </div>
+    <div id="pin-recovery-wrap" hidden>
+      <p class="notice" style="margin-top:12px">PINを忘れた時に患者データを残して復旧するため、PINとは別の院内復旧コードを設定し、院内の安全な場所へ保管してください。</p>
+      <label class="fld-lbl" for="pin-recovery">院内復旧コード（英数字8〜24文字）</label>
+      <input class="fld-inp" type="password" maxlength="24" id="pin-recovery" autocomplete="new-password">
+      <label class="fld-lbl" for="pin-recovery-confirm">確認のためもう一度</label>
+      <input class="fld-inp" type="password" maxlength="24" id="pin-recovery-confirm" autocomplete="new-password">
+    </div>
     <button id="pin-submit" class="btn btn-pri" style="margin-top:12px" onclick="checkPin()">確認</button>
     <div id="pin-note" class="hint" style="margin-top:10px">この端末だけの誤操作防止PINです。</div>
+    <button id="pin-reset" class="text-button" type="button" onclick="resetStaffPin()" hidden>PINを忘れた場合</button>
   </div>
 </div>
 

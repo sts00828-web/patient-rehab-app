@@ -2,21 +2,27 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 const source=fs.readFileSync(path.join(__dirname,'../exercise-print.js'),'utf8');
 const ctx=vm.createContext({URL});vm.runInContext(source,ctx);
 const render=(count,extra={})=>{ctx.input={patientName:'架空患者',chartId:'00123',...extra};ctx.items=Array.from({length:count},(_,i)=>({name:'運動'+i,prescription:{repetitions:'5回',sets:'2セット',frequency:'1日1回'},dows:[1,4]}));return vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.png',steps:['腰と床の隙間を小さくする'],caution:'お尻を浮かせない'})),'https://example.test/app/')",ctx);};
-test('one to six exercises split into sheets of at most three with only clear doses and steps',()=>{
-  for(let n=1;n<=6;n++){const html=render(n);assert.equal((html.match(/class="sheet"/g)||[]).length,Math.ceil(n/3));assert.equal((html.match(/class="exercise"/g)||[]).length,n);assert.equal((html.match(/<span>回数<\/span><strong>5回<\/strong>/g)||[]).length,n);assert.equal((html.match(/<span>セット数<\/span><strong>2セット<\/strong>/g)||[]).length,n);assert.ok(!html.includes('月・木曜日'));assert.ok(!html.includes('頻度'));assert.ok(html.includes('https://example.test/app/assets/exercises/pelvic-tilt.png'));assert.ok(html.includes('<h3>やり方</h3>'));}
+test('one to eight exercises split into sheets of at most three with only clear doses and steps',()=>{
+  for(let n=1;n<=8;n++){const html=render(n);assert.equal((html.match(/class="sheet"/g)||[]).length,Math.ceil(n/3));assert.equal((html.match(/class="exercise"/g)||[]).length,n);assert.equal((html.match(/<span>回数<\/span><strong>5回<\/strong>/g)||[]).length,n);assert.equal((html.match(/<span>セット数<\/span><strong>2セット<\/strong>/g)||[]).length,n);assert.ok(!html.includes('月・木曜日'));assert.ok(html.includes('<dt>頻度<\/dt><dd>1日1回<\/dd>'));assert.ok(html.includes('https://example.test/app/assets/exercises/pelvic-tilt.png'));assert.ok(html.includes('<h3>やり方</h3>'));}
 });
-test('zero or more than six exercises are rejected rather than silently omitted',()=>{assert.throws(()=>render(0));assert.throws(()=>render(7));});
+test('zero or more than eight exercises are rejected rather than silently omitted',()=>{assert.throws(()=>render(0));assert.throws(()=>render(9));});
 test('hold time is prominent only when it is prescribed',()=>{
   ctx.input={};ctx.items=[{name:'保持あり',prescription:{repetitions:'3回',sets:'2セット',hold:'10秒'}},{name:'保持なし',prescription:{repetitions:'5回',sets:'1セット',hold:'該当なし'}}];
   const html=vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.png',steps:['姿勢を整える']})),'https://example.test/app/')",ctx);
   assert.equal((html.match(/<span>保持時間<\/span>/g)||[]).length,1);assert.ok(html.includes('<strong>10秒</strong>'));assert.ok(!html.includes('<strong>該当なし</strong>'));
 });
 test('print layout gives more room to the illustration and keeps quantity type moderate',()=>{
-  const html=render(1);assert.ok(html.includes('grid-template-columns:78mm 1fr'));assert.ok(html.includes('width:78mm;height:58mm'));assert.ok(html.includes('font-size:12.5pt'));
+  const html=render(1);assert.ok(html.includes('grid-template-columns:74mm 1fr'));assert.ok(html.includes('width:74mm;height:56mm'));assert.ok(html.includes('font-size:11.5pt'));
 });
-test('patient identity and unrelated prescription details are omitted',()=>{
+test('patient identity is repeated while unrelated diagnosis is omitted',()=>{
   const html=render(1,{patientName:'印刷しない患者名',chartId:'SECRET-ID',diagnosis:'印刷しない診断名'});
-  for(const text of ['印刷しない患者名','SECRET-ID','印刷しない診断名','開始日','患者ID'])assert.ok(!html.includes(text));
+  for(const text of ['印刷しない患者名','SECRET-ID'])assert.ok(html.includes(text));
+  for(const text of ['印刷しない診断名','開始日','患者ID'])assert.ok(!html.includes(text));
+});
+test('an explicit no-side instruction remains visible on paper',()=>{
+  ctx.input={patientName:'架空患者'};ctx.items=[{name:'中央の運動',prescription:{side:'左右指定なし',repetitions:'5回',sets:'1セット'}}];
+  const html=vm.runInContext("RehabPrint.documentHtml(input,items,[{image:'pelvic-tilt.png',steps:['正面を保つ']}],'https://example.test/app/')",ctx);
+  assert.ok(html.includes('<dt>実施側</dt><dd>左右の指定なし</dd>'));
 });
 
 const catalog=require('../clinical-catalog.js');
@@ -46,9 +52,13 @@ for(const kind of ['new','old','mixed'])for(const count of [3,6])test(`${kind}: 
       const index=i*3+j,m=media[index],ex=items[index];
       const card=sheet.split('<article class="exercise">')[j+1].split('</article>')[0];
       for(const text of [ex.name,...m.steps,ex.prescription.repetitions,ex.prescription.sets].filter(Boolean))assert.ok(card.includes(escapeText(text)),text);
-      for(const text of [m.imageCaption,m.caution,ex.params,ex.diseaseNote,ex.note,ex.prescription.side,ex.prescription.frequency,ex.prescription.load,ex.prescription.support].filter(Boolean))assert.ok(!card.includes(escapeText(text)),text);
+      for(const text of [ex.prescription.side,ex.prescription.frequency,ex.prescription.load,ex.prescription.support,m.caution,ex.diseaseNote,ex.note].filter(Boolean))assert.ok(card.includes(escapeText(text)),text);
+      for(const text of [m.imageCaption].filter(Boolean))assert.ok(!card.includes(escapeText(text)),text);
       assert.ok(card.includes(m.imagePath||'assets/exercises/'+m.image));
-      if(ex.clinicalV02)for(const text of ['痛みのない範囲','監督下で実施','セット間休息：60秒'])assert.ok(!card.includes(text));
+      if(ex.clinicalV02){
+        assert.ok(card.includes('痛みのない範囲'));
+        for(const text of ['監督下で実施','セット間休息：60秒'])assert.ok(!card.includes(text));
+      }
     }
   }
 });
