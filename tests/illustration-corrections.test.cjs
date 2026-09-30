@@ -3,21 +3,21 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const catalog=require('../clinical-catalog.js');
 
 const expected={
- E08:'6bb19ba6a6baae85411cc5ad22f71fee7edc0e9e6f948bbc8bc38729dabc0237',
- N12:'60ced3bc002ab036dc14796f1c57d779edfe41626f16701824d4cb42014c4aba',
- P08:'0b4b96ea25ff22efde3bd6975235aa8b0a5287f87c897371e7f0ac1140012499',
- P15:'e93d711a26a3869f9e823057c211d82af1d5f3d3d72b73a41da9f506bbf0cb49',
- P26:'1a72eafa3427dcb63b0d283ac4aa80c3b376135db90d7809183eead5332fbd9a',
- T20:'7180afa3125aeec199d00ef1e63a73caeffc578eca33538df1509a7fb0a07942'
+ E08:'62fa591b658e64577864f35bcd6728c44aebc096cfd5e0fc19e66e2c26640964',
+ N12:'cd015a8121142b0cf7fc3e6c7ac894bd40b841b79c5c780923b07cf52a445215',
+ P08:'3a2aceddf551a1d98c6333ecfd23410c931a856b5de9f89b88bc000a38d89f6b',
+ P15:'fda5f3aaae7f3d1392c167c2533de8b5d07fffa460e3ec8551758f16dfa020dc',
+ P26:'d62698be5ff1d1230ed6934190306981b623cd6564ee6a16099c3c78f5309563',
+ T20:'2d8c7cf83e22ac01977877f8c83e3820c6cd398c5b5050b52148123a4d382b70'
 };
 
 test('four corrected illustrations match their catalog hashes',()=>{
  for(const [id,hash] of Object.entries(expected)){
   const d=catalog.definitions[id];
-  assert.equal(d.image,`images/${id}.png`);
+  assert.equal(d.image,`images/${id}.webp`);
   assert.equal(d.sha256,hash);
   const bytes=fs.readFileSync(path.join(__dirname,'..',d.image));
-  assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  assert.equal(bytes.subarray(0,4).toString('ascii'),'RIFF');assert.equal(bytes.subarray(8,12).toString('ascii'),'WEBP');
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),hash);
   assert.equal(d.assetStatus,'生成画像・姿勢確認済み');
   assert.match(d.assetNotes,/共通人物/);

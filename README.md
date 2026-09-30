@@ -1,5 +1,12 @@
 # 患者リハビリチェックアプリ
 
+## 2026-09-30 運動画像の軽量化（v73）
+
+- 運動イラスト201点を、表示・印刷に必要な解像度を保ったWebPへ変更しました。
+- 画像容量は296.25MBから7.69MBへ減少（97.4%削減）し、Vercelの公開容量を大幅に抑えました。
+- 長辺は最大1200px、WebP品質88で統一し、変換後の画像をすべて再読込して破損がないことを検証します。
+- 画像パス、オフラインキャッシュ、画面表示、印刷をv73として一括確認します。
+
 ## 2026-09-30 試験運用の任意入力化（v72）
 
 - 試験運用中はスタッフ画面をPINなしで開けます。旧版で保存されたPIN・復旧コードは使用せず、以後の保存対象にも含めません。
@@ -261,7 +268,7 @@ PINは認証基盤や暗号化ではありません。QRには運動内容と個
 - [AAOS：Epicondylitis exercise program](https://orthoinfo.aaos.org/globalassets/pdfs/2022-therapeutic-exercise-program-for-epicondylitis.pdf)
 - [NHS Bexley：Tennis elbow](https://msk-bexley.nhs.uk/conditions/elbow-pain/tennis-elbow)
 
-画像：`assets/exercises/*.png`（アプリで使用する46点。以前の修正版も保存）
+画像：`assets/exercises/*.webp`（アプリで使用する画像。以前の修正版も保存）
 生成方法：組み込み `image_gen`。プロンプト：`assets/exercises/PROMPTS.json`。
 
 46点とも同じ20代前半の若い男性モデルに統一しました。振り子体操の画像を人物の基準として、顔・髪型・体格・青緑のTシャツ・紺の長ズボン・白〜グレーの靴を合わせています。`illustration-preview.html` で全画像を一覧できます。テニス肘の10点も組み込み `image_gen` で制作し、手首や手が見やすい構図にしています。プロンプトと修正指示を保存しています。
@@ -293,7 +300,7 @@ node tests/browser-smoke.cjs
 
 確認済み：データ処理11項目、保存等の回帰7項目、種目データ・画像・キャッシュ対象5項目、疾患別の共有・注意文引継ぎ10項目、Chromeでの画面・QR・保存・オフライン動作84項目、計117項目。QRカメラの起動待ちでキャンセルした場合と、権限拒否後の終了処理も模擬カメラで確認しています。スマホ実機のカメラ権限・iPhoneのホーム画面追加・実際の運動指導は、この自動確認の範囲外です。
 
-公開先は https://patient-rehab-app.vercel.app/ です。GitHubの `sts00828-web/patient-rehab-app` の `main` への更新をVercelが自動配信します。公開時は実行用ファイルとassets・vendorを一緒に配置し、更新ごとに `sw.js` のキャッシュバージョンを上げてください。今回の公開対象は `v72` です。更新が表示されないときは、オンラインでアプリを開いた後、一度閉じて開き直してください。端末の記録を残すため、サイトデータの削除は不要です。
+公開先は https://patient-rehab-app.vercel.app/ です。GitHubの `sts00828-web/patient-rehab-app` の `main` への更新をVercelが自動配信します。公開時は実行用ファイルとassets・vendorを一緒に配置し、更新ごとに `sw.js` のキャッシュバージョンを上げてください。今回の公開対象は `v73` です。更新が表示されないときは、オンラインでアプリを開いた後、一度閉じて開き直してください。端末の記録を残すため、サイトデータの削除は不要です。
 
 
 ### TASK-014 / SW v49：シンプル処方と患側

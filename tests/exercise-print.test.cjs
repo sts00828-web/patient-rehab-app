@@ -1,14 +1,14 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../exercise-print.js'),'utf8');
 const ctx=vm.createContext({URL});vm.runInContext(source,ctx);
-const render=(count,extra={})=>{ctx.input={patientName:'架空患者',chartId:'00123',...extra};ctx.items=Array.from({length:count},(_,i)=>({name:'運動'+i,prescription:{repetitions:'5回',sets:'2セット',frequency:'1日1回'},dows:[1,4]}));return vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.png',steps:['腰と床の隙間を小さくする'],caution:'お尻を浮かせない'})),'https://example.test/app/')",ctx);};
+const render=(count,extra={})=>{ctx.input={patientName:'架空患者',chartId:'00123',...extra};ctx.items=Array.from({length:count},(_,i)=>({name:'運動'+i,prescription:{repetitions:'5回',sets:'2セット',frequency:'1日1回'},dows:[1,4]}));return vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.webp',steps:['腰と床の隙間を小さくする'],caution:'お尻を浮かせない'})),'https://example.test/app/')",ctx);};
 test('one to eight exercises split into sheets of at most three with only clear doses and steps',()=>{
-  for(let n=1;n<=8;n++){const html=render(n);assert.equal((html.match(/class="sheet"/g)||[]).length,Math.ceil(n/3));assert.equal((html.match(/class="exercise"/g)||[]).length,n);assert.equal((html.match(/<span>回数<\/span><strong>5回<\/strong>/g)||[]).length,n);assert.equal((html.match(/<span>セット数<\/span><strong>2セット<\/strong>/g)||[]).length,n);assert.ok(!html.includes('月・木曜日'));assert.ok(html.includes('<dt>頻度<\/dt><dd>1日1回<\/dd>'));assert.ok(html.includes('https://example.test/app/assets/exercises/pelvic-tilt.png'));assert.ok(html.includes('<h3>やり方</h3>'));}
+  for(let n=1;n<=8;n++){const html=render(n);assert.equal((html.match(/class="sheet"/g)||[]).length,Math.ceil(n/3));assert.equal((html.match(/class="exercise"/g)||[]).length,n);assert.equal((html.match(/<span>回数<\/span><strong>5回<\/strong>/g)||[]).length,n);assert.equal((html.match(/<span>セット数<\/span><strong>2セット<\/strong>/g)||[]).length,n);assert.ok(!html.includes('月・木曜日'));assert.ok(html.includes('<dt>頻度<\/dt><dd>1日1回<\/dd>'));assert.ok(html.includes('https://example.test/app/assets/exercises/pelvic-tilt.webp'));assert.ok(html.includes('<h3>やり方</h3>'));}
 });
 test('zero or more than eight exercises are rejected rather than silently omitted',()=>{assert.throws(()=>render(0));assert.throws(()=>render(9));});
 test('hold time is prominent only when it is prescribed',()=>{
   ctx.input={};ctx.items=[{name:'保持あり',prescription:{repetitions:'3回',sets:'2セット',hold:'10秒'}},{name:'保持なし',prescription:{repetitions:'5回',sets:'1セット',hold:'該当なし'}}];
-  const html=vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.png',steps:['姿勢を整える']})),'https://example.test/app/')",ctx);
+  const html=vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.webp',steps:['姿勢を整える']})),'https://example.test/app/')",ctx);
   assert.equal((html.match(/<span>保持時間<\/span>/g)||[]).length,1);assert.ok(html.includes('<strong>10秒</strong>'));assert.ok(!html.includes('<strong>該当なし</strong>'));
 });
 test('print layout gives more room to the illustration and keeps quantity type moderate',()=>{
@@ -21,7 +21,7 @@ test('patient identity is repeated while unrelated diagnosis is omitted',()=>{
 });
 test('an explicit no-side instruction remains visible on paper',()=>{
   ctx.input={patientName:'架空患者'};ctx.items=[{name:'中央の運動',prescription:{side:'左右指定なし',repetitions:'5回',sets:'1セット'}}];
-  const html=vm.runInContext("RehabPrint.documentHtml(input,items,[{image:'pelvic-tilt.png',steps:['正面を保つ']}],'https://example.test/app/')",ctx);
+  const html=vm.runInContext("RehabPrint.documentHtml(input,items,[{image:'pelvic-tilt.webp',steps:['正面を保つ']}],'https://example.test/app/')",ctx);
   assert.ok(html.includes('<dt>実施側</dt><dd>左右の指定なし</dd>'));
 });
 
@@ -33,7 +33,7 @@ function catalogPrint(kind,count){
   ctx.items=ids.slice(0,count).map((id,i)=>{
     const modern=kind==='new'||(kind==='mixed'&&i%2===0);
     const d=catalog.definitions[id];
-    media.push(modern?{...d,imagePath:d.image}:{image:'pelvic-tilt.png',steps:['腰と床の隙間を小さくする','ゆっくり戻す'],imageCaption:'旧図の説明',caution:'お尻を浮かせない'});
+    media.push(modern?{...d,imagePath:d.image}:{image:'pelvic-tilt.webp',steps:['腰と床の隙間を小さくする','ゆっくり戻す'],imageCaption:'旧図の説明',caution:'お尻を浮かせない'});
     return {name:modern?d.name:'旧運動'+i,prescription:{side:'両側',repetitions:'5回',sets:'2セット',hold:'保持なし',frequency:'1日1回',load:'重りなし・確認した範囲',support:'安定した椅子'},dows:[1,3,5],params:'息を止めずに行う',diseaseNote:'痛みが増したら中止',note:'担当者と確認した動作で実施',...(modern?{clinicalV02:{revision:'test-v1',patient:{date:'2026-09-25'},constraints:'痛みのない範囲',sportPlan:'監督下で実施',restSeconds:60}}:{})};
   });
   ctx.media=media;ctx.input={patientName:'架空患者',startDate:'2026-09-25'};

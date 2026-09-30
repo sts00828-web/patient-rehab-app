@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path'),os=require('os'),http=require('http'),{spawn}=require('child_process'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..'),art=path.join(root,'.test-artifacts');fs.mkdirSync(art,{recursive:true});
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.json':'application/json'};
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.webp':'image/webp','.json':'application/json'};
 const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost'),p=path.resolve(root,'.'+decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname));if(!p.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(p,(err,data)=>{if(err){res.writeHead(404).end();return;}res.writeHead(200,{'Content-Type':mime[path.extname(p)]||'application/octet-stream','Cache-Control':'no-cache'}).end(data);});});
 let browser,ws,profile;
 async function main(){
@@ -285,7 +285,7 @@ async function main(){
   await evaluate("$('guideModal').remove();$('template-purpose').value='';$('template-level').value='';filterTemplateExercises();for(const i of [0,1,5]){$('pick-'+i).checked=true;fillTestPrescription('dose-'+i);$('dose-'+i).value='PT確認用：軽い力で5回';}applySelectedTemplate();showShareQR();if($('shareReviewModal')){$('share-reviewed').checked=true;$('share-confirm').click();}");
   await check('selected elbow exercises persist and generate transferable QR',"(()=>{const p=JSON.parse(LZString.decompressFromEncodedURIComponent(decodeURIComponent(buildShareUrl().split('#d=')[1])));return S.menu.length===3&&p.menu.length===3&&p.menu[2].exerciseKey==='wrist-isometric-extension'&&JSON.parse(localStorage.getItem('rehab_v2')).settings.menu[2].exerciseKey==='wrist-isometric-extension'&&!!document.querySelector('#qrBox svg')})()");
   await evaluate("window.elbowShareUrl=buildShareUrl();closeQR();closeTherapist();window.elbowImportConfirmed=false;window.confirm=()=>{window.elbowImportConfirmed=true;return true};manualImport(elbowShareUrl);window.confirm=()=>true;");
-  await check('elbow prescription reimports with matching guides',"elbowImportConfirmed&&location.hash===''&&S.menu.length===3&&mediaFor(S.menu[2]).image==='wrist-isometric-extension.png'");
+  await check('elbow prescription reimports with matching guides',"elbowImportConfirmed&&location.hash===''&&S.menu.length===3&&mediaFor(S.menu[2]).image==='wrist-isometric-extension.webp'");
   await evaluate("$('pin-input').value='1234';checkPin();window.menuBeforeNeck=JSON.stringify(S.menu);applyTemplate('cervicalSpondylosis');");
   await check('cervical library offers seven unselected choices without changing current prescription',"document.querySelectorAll('#chooseTemplate .template-ex').length===7&&!document.querySelector('#chooseTemplate input:checked')&&JSON.stringify(S.menu)===menuBeforeNeck&&$('chooseTemplate').textContent.includes(DISEASE_LIBRARY.cervicalSpondylosis.guidance)");
   await check('neck library reuses existing shoulder and walking exercise IDs and illustrations',"(()=>{const menu=TEMPLATES.cervicalSpondylosis.menu;return ['scapular-setting','band-row','walking'].every(key=>menu.some(ex=>ex.exerciseKey===key))&&mediaFor(menu.find(ex=>ex.exerciseKey==='scapular-setting')).image===mediaFor(TEMPLATES.shoulder.menu.find(ex=>ex.exerciseKey==='scapular-setting')).image&&mediaFor(menu.find(ex=>ex.exerciseKey==='walking')).image===mediaFor(TEMPLATES.lowback.menu.find(ex=>ex.exerciseKey==='walking')).image})()");
@@ -327,7 +327,7 @@ async function main(){
   await send('Page.reload');
   for(let i=0;i<100;i++){if(await evaluate("document.readyState==='complete'&&typeof C!=='undefined'&&typeof S!=='undefined'&&!!S"))break;await delay(100);}
   await check('offline reload retains patient and QR library',"typeof C !== 'undefined' && S.patientId==='another_patient' && typeof LZString==='object' && !storageBlocked");
-  await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.png');return r.ok&&(await r.blob()).size>1000})()");
+  await check('illustrations available offline',"(async()=>{const r=await fetch('assets/exercises/pendulum.webp');return r.ok&&(await r.blob()).size>1000})()");
   await check('all library illustrations available offline',"(async()=>{const images=[...new Set(Object.values(EXERCISE_LIBRARY).map(e=>e.image))];const r=await Promise.all(images.map(async image=>(await fetch('assets/exercises/'+image)).ok));return images.length>0&&r.every(Boolean)})()");
   await check('patient video persists across reload and offline and can be removed',"(async()=>{const k=localStorage.getItem('video_test_key');const row=await PatientVideo.get(k);if(!row||!row.blob.size)return false;await PatientVideo.remove(k);localStorage.removeItem('video_test_key');return !(await PatientVideo.get(k))})()");
   await check('built-in dose library is available offline',"typeof PRESCRIPTION_DEFAULTS!=='undefined'&&Object.keys(PRESCRIPTION_DEFAULTS).length===58");

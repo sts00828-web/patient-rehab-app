@@ -1,30 +1,30 @@
 /* Clinician-selectable examples, not an automatic prescription. Original descriptions. */
 const EXERCISE_LIBRARY = {
-  pendulum: {name:'振り子体操', region:'shoulder', image:'pendulum.png', params:'回数・時間はPTと設定',
+  pendulum: {name:'振り子体操', region:'shoulder', image:'pendulum.webp', params:'回数・時間はPTと設定',
     steps:['机に片手をつき、上体を少し前に傾けます。','反対の腕を下に垂らし、小さくゆっくり揺らします。','肩の力を抜いて、楽な範囲で行います。'],
     caution:'腕を自力で大きく振らないでください。', source:'https://orthoinfo.aaos.org/globalassets/pdfs/2017-rehab_shoulder.pdf'},
-  'supine-flexion': {name:'あお向けで腕を上げる',region:'shoulder',image:'supine-flexion.png',params:'回数・範囲はPTと設定',
+  'supine-flexion': {name:'あお向けで腕を上げる',region:'shoulder',image:'supine-flexion.webp',params:'回数・範囲はPTと設定',
     steps:['あお向けになり、両手を組みます。','楽な側の腕で支えながら、両手を頭の方向へ動かします。','無理に床へ近づけず、ゆっくり戻します。'],
     caution:'腰を反らせず、肩をすくめない範囲で。',source:'https://www.orthoinfo.org/diseases--conditions/frozen-shoulder'},
-  crossover: {name:'腕を胸の前で支えるストレッチ',region:'shoulder',image:'crossover.png',params:'保持時間はPTと設定',
+  crossover: {name:'腕を胸の前で支えるストレッチ',region:'shoulder',image:'crossover.webp',params:'保持時間はPTと設定',
     steps:['片腕を胸の前に出します。','反対の手で肘の少し上を支えます。','肩をすくめず、軽く胸へ近づけて戻します。'],
     caution:'肩の前側が痛む場合は中止し、担当PTに相談してください。',source:'https://www.orthoinfo.org/diseases--conditions/frozen-shoulder'},
-  'abdominal-brace': {name:'お腹に軽く力を入れる',region:'lowback',image:'abdominal-brace.png',params:'保持時間・回数はPTと設定',
+  'abdominal-brace': {name:'お腹に軽く力を入れる',region:'lowback',image:'abdominal-brace.webp',params:'保持時間・回数はPTと設定',
     steps:['あお向けで両膝を立てます。','お腹に手を添え、息を吐きながら軽く力を入れます。','呼吸を続けてから力を抜きます。'],
     caution:'息を止めたり、上体を起こしたりしません。',source:'https://www.orthoinfo.org/recovery/spine-conditioning-program/'},
-  bridge: {name:'ブリッジ（お尻上げ）',region:'lowback',image:'bridge.png',params:'高さ・回数はPTと設定',
+  bridge: {name:'ブリッジ（お尻上げ）',region:'lowback',image:'bridge.webp',params:'高さ・回数はPTと設定',
     steps:['あお向けで膝を立て、足裏を床につけます。','お尻をゆっくり上げます。','腰を反らさない高さで止め、ゆっくり下ろします。'],
     caution:'首に体重をかけず、呼吸を続けます。',source:'https://www.orthoinfo.org/recovery/spine-conditioning-program/'},
-  'knee-to-chest': {name:'片膝を胸に近づける',region:'lowback',image:'knee-to-chest.png',params:'範囲・保持時間はPTと設定',
+  'knee-to-chest': {name:'片膝を胸に近づける',region:'lowback',image:'knee-to-chest.webp',params:'範囲・保持時間はPTと設定',
     steps:['あお向けになり、片膝を曲げます。','太ももの後ろを両手で支えます。','楽な範囲で胸に近づけ、ゆっくり戻します。'],
     caution:'腰や脚の痛み・しびれが増す場合は行わないでください。',source:'https://www.orthoinfo.org/recovery/spine-conditioning-program/'},
-  'heel-slide': {name:'かかとを滑らせて膝を曲げる',region:'knee',image:'heel-slide.png',params:'範囲・回数はPTと設定',
+  'heel-slide': {name:'かかとを滑らせて膝を曲げる',region:'knee',image:'heel-slide.webp',params:'範囲・回数はPTと設定',
     steps:['あお向けになり、脚を楽に伸ばします。','かかとを床につけたまま、ゆっくり手前に滑らせます。','膝を楽な範囲で曲げ、伸ばして戻します。'],
     caution:'膝を無理に深く曲げないでください。',source:'https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee'},
-  'short-arc-quad': {name:'タオルを使った膝伸ばし',region:'knee',image:'short-arc-quad.png',params:'保持時間・回数はPTと設定',
+  'short-arc-quad': {name:'タオルを使った膝伸ばし',region:'knee',image:'short-arc-quad.webp',params:'保持時間・回数はPTと設定',
     steps:['あお向けで、膝の下に丸めたタオルを置きます。','膝をタオルにつけたまま、かかとを少し上げて膝を伸ばします。','太ももの力を感じたら、ゆっくり下ろします。'],
     caution:'脚全体を持ち上げず、膝をタオルから離しません。',source:'https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee'},
-  'sit-to-stand': {name:'椅子からの立ち座り',region:'knee',image:'sit-to-stand.png',params:'椅子の高さ・回数はPTと設定',
+  'sit-to-stand': {name:'椅子からの立ち座り',region:'knee',image:'sit-to-stand.webp',params:'椅子の高さ・回数はPTと設定',
     steps:['動かない椅子に座り、両足を床につけます。','体を少し前に傾け、ゆっくり立ち上がります。','椅子の位置を確かめ、ゆっくり座ります。'],
     caution:'始める前に椅子の高さと手の支え方を担当の理学療法士と確認してください。ふらつく場合は一人で行わないでください。',source:'https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-knee'}
 };
@@ -87,7 +87,7 @@ const additions = [
     ['横向きになり、下の膝を軽く曲げます。','上の膝を伸ばし、脚を少し持ち上げます。','つま先を前へ向けたまま、ゆっくり下ろします。'],'骨盤を後ろへ倒したり、脚を高く上げすぎたりしません。','kneeStrength']
 ];
 for(const [id,region,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of additions){
-  EXERCISE_LIBRARY[id]={name,region,image:id+'.png',params:'回数・時間・範囲はPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:EXERCISE_SOURCES[source]};
+  EXERCISE_LIBRARY[id]={name,region,image:id+'.webp',params:'回数・時間・範囲はPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:EXERCISE_SOURCES[source]};
 }
 const existingMetadata = {
   pendulum:['mobility','基本','肩の力を抜いて腕を動かす','机','前傾姿勢が安全にとれることと疼痛反応を確認。'],
@@ -138,12 +138,12 @@ const tennisElbowExercises = [
     ['肘を直角に曲げて前腕を机で支え、指定の軽い重りを持ちます。','手首をまっすぐに保ち、手のひらをゆっくり上・下へ返します。','中央へ戻し、力を緩めます。'],'重りの勢いでひねらず、肩や肘で代わりに動かしません。','load']
 ];
 for(const [id,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of tennisElbowExercises){
-  EXERCISE_LIBRARY[id]={name,region:'tennisElbow',image:id+'.png',params:'回数・時間・重さはPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:TENNIS_ELBOW_SOURCES[source]};
+  EXERCISE_LIBRARY[id]={name,region:'tennisElbow',image:id+'.webp',params:'回数・時間・重さはPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:TENNIS_ELBOW_SOURCES[source]};
 }
-EXERCISE_LIBRARY['wrist-flexor-stretch'].image='wrist-flexor-stretch-v3.png';
-EXERCISE_LIBRARY['kneeling-plank'].image='kneeling-plank-v2.png';
-EXERCISE_LIBRARY['wrist-extensor-stretch'].image='wrist-extensor-stretch-v2.png';
-EXERCISE_LIBRARY['forearm-turn'].image='forearm-turn-v2.png';
+EXERCISE_LIBRARY['wrist-flexor-stretch'].image='wrist-flexor-stretch-v3.webp';
+EXERCISE_LIBRARY['kneeling-plank'].image='kneeling-plank-v2.webp';
+EXERCISE_LIBRARY['wrist-extensor-stretch'].image='wrist-extensor-stretch-v2.webp';
+EXERCISE_LIBRARY['forearm-turn'].image='forearm-turn-v2.webp';
 
 // Editorial relationships for clinician selection, not automatic prescriptions or clinical stages.
 const EXERCISE_CHOICE_GROUPS = {
@@ -217,7 +217,7 @@ const neckShoulderAdditions = [
     '腰を反らさず、顔を壁へ突き出しません。肩や手首の痛みが増える場合はいったん中止し、担当の理学療法士に負荷と再開方法を相談してください。','cuff']
 ];
 for(const [id,region,name,category,difficulty,purpose,equipment,selectionNote,steps,caution,source] of neckShoulderAdditions){
-  EXERCISE_LIBRARY[id]={name,region,image:id+'.png',params:'回数・時間・範囲・負荷はPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:NECK_SHOULDER_SOURCES[source],clinicalRole:'症状・動作能力を確認して選択'};
+  EXERCISE_LIBRARY[id]={name,region,image:id+'.webp',params:'回数・時間・範囲・負荷はPTと設定',category,difficulty,purpose,equipment,selectionNote,steps,caution,source:NECK_SHOULDER_SOURCES[source],clinicalRole:'症状・動作能力を確認して選択'};
 }
 EXERCISE_CHOICE_GROUPS['neck-mobility']={name:'首の可動性の練習',note:'回旋・側屈・頭の後退で動く方向が異なります。症状が増えない方向だけを選び、すべての方向を無理に行いません。'};
 for(const [id,variant] of Object.entries({'neck-rotation':'顔を左右へ向ける','neck-side-bend':'耳を肩へ近づける','neck-retraction':'目線を水平に保ち頭を後ろへ動かす'}))Object.assign(EXERCISE_LIBRARY[id],{choiceGroup:'neck-mobility',choiceVariant:variant});
@@ -313,12 +313,12 @@ DISEASE_LIBRARY.lumbarDiscHerniation={
 
 // Shared lower-limb movements. No automatic progression or clearance for sport.
 EXERCISE_LIBRARY['ankle-pumps']={
-  name:'足首をゆっくり曲げ伸ばしする',region:'ankleSprain',image:'ankle-pumps.png',params:'回数・範囲はPTと設定',category:'mobility',difficulty:'基本',purpose:'足首の曲げ伸ばしを取り戻す',equipment:'マット',selectionNote:'固定を外して動かす許可と座位の安定を確認。足首を内外へひねらない。',clinicalRole:'症状・動作能力を確認して選択',
+  name:'足首をゆっくり曲げ伸ばしする',region:'ankleSprain',image:'ankle-pumps.webp',params:'回数・範囲はPTと設定',category:'mobility',difficulty:'基本',purpose:'足首の曲げ伸ばしを取り戻す',equipment:'マット',selectionNote:'固定を外して動かす許可と座位の安定を確認。足首を内外へひねらない。',clinicalRole:'症状・動作能力を確認して選択',
   steps:['脚を前に伸ばして座り、両手を後ろについて上体を支えます。','指定された側のかかとを床につけたまま、足先をすねの方へゆっくり起こします。','次に足先をゆっくり遠ざけ、楽な位置へ戻します。足首を横にひねりません。'],
   caution:'装具や固定は自己判断で外しません。痛み・腫れが増える場合は中止し相談してください。',imageCaption:'左図は足先を起こす場面、右図は遠ざける場面です。図は両側ですが、指定された側だけ動かします。指だけでなく足首から動かします。',source:'https://www.worcsacute.nhs.uk/leaflets/ankle-sprain/'
 };
 EXERCISE_LIBRARY['supported-single-leg-stance']={
-  name:'台につかまって片脚で立つ',region:'ankleSprain',image:'supported-single-leg-stance.png',params:'時間・支え方はPTと設定',category:'function',difficulty:'標準',purpose:'片脚で体を支えるバランスを練習する',equipment:'動かない安定した台・滑りにくい靴',selectionNote:'片脚への全荷重が許可され、手で支えて安全に立てる場合だけ選択。見守りの要否を確認。',clinicalRole:'荷重許可・転倒リスクを確認して選択',
+  name:'台につかまって片脚で立つ',region:'ankleSprain',image:'supported-single-leg-stance.webp',params:'時間・支え方はPTと設定',category:'function',difficulty:'標準',purpose:'片脚で体を支えるバランスを練習する',equipment:'動かない安定した台・滑りにくい靴',selectionNote:'片脚への全荷重が許可され、手で支えて安全に立てる場合だけ選択。見守りの要否を確認。',clinicalRole:'荷重許可・転倒リスクを確認して選択',
   steps:['動かない台のそばに立ち、指定された手の支え方で台をつかみます。','指定された運動側の足裏全体を床につけ、反対の足を少しだけ浮かせます。','目を開けたまま指定時間だけ保ち、浮かせた足をゆっくり床へ戻します。'],
   caution:'手を離す・目を閉じる・不安定な床で行う変更はしません。ぐらつき・痛みが出たら両足を床に戻して中止します。見守りを指示された場合は一人で行いません。',imageCaption:'運動する側は床について体を支える脚です。浮かせる脚とは逆です。図の左右に合わせず、PTが指定した側と手の支え方で行います。',source:'https://www.worcsacute.nhs.uk/leaflets/ankle-sprain/'
 };
@@ -374,7 +374,7 @@ DISEASE_LIBRARY.meniscalInjury={
       '片手荷重の許可後に選択。肩の不安定感・痛み、体の大きなねじれが出たら中止します。',strength,'運動する側は床から離す手です。支持する腕は反対側です。']
   ];
   for(const [key,name,athleteLevel,purpose,equipment,steps,caution,source,imageCaption] of rows){
-    EXERCISE_LIBRARY[key]={name,region:'athleteAdvanced',image:key+'.png',params:'回数・時間・負荷はPTと確認',category:key==='lateral-hop-stick'?'function':'strength',difficulty:'発展',athleteLevel,purpose,equipment,steps,caution:caution+' 症状が増える場合は中止し、翌日の反応もPTへ伝えます。',source,imageCaption,clinicalRole:'負荷・フォーム・病期をPTが確認した後の強化候補',selectionNote:'動作を院内で確認し、許可された範囲・負荷だけを処方。段階は動作の目安で、競技復帰判定ではありません。'};
+    EXERCISE_LIBRARY[key]={name,region:'athleteAdvanced',image:key+'.webp',params:'回数・時間・負荷はPTと確認',category:key==='lateral-hop-stick'?'function':'strength',difficulty:'発展',athleteLevel,purpose,equipment,steps,caution:caution+' 症状が増える場合は中止し、翌日の反応もPTへ伝えます。',source,imageCaption,clinicalRole:'負荷・フォーム・病期をPTが確認した後の強化候補',selectionNote:'動作を院内で確認し、許可された範囲・負荷だけを処方。段階は動作の目安で、競技復帰判定ではありません。'};
   }
 })();
 

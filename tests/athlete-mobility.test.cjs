@@ -7,9 +7,9 @@ test('athlete mobility and taping additions have matching reviewed assets',()=>{
  assert.equal(catalog.version,'0.4-athlete-mobility');
  for(const id of ids){
   const d=catalog.definitions[id];assert.ok(d,id);assert.equal(d.addedIn,'0.4');assert.equal(d.clinicalStatus,'pending_review');
-  assert.equal(d.image,'images/'+id+'.png');assert.match(d.sha256,/^[0-9a-f]{64}$/);
+  assert.equal(d.image,'images/'+id+'.webp');assert.match(d.sha256,/^[0-9a-f]{64}$/);
   const bytes=fs.readFileSync(path.join(__dirname,'..',d.image));
-  assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  assert.equal(bytes.subarray(0,4).toString('ascii'),'RIFF');assert.equal(bytes.subarray(8,12).toString('ascii'),'WEBP');
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),d.sha256,id);
   assert.ok(rules.doseDraft(id),id+' dose');
  }

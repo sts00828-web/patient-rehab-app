@@ -10,7 +10,7 @@ const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex'
 test('selection preserves the v0.2 catalog and includes reviewed and athlete-menu additions',()=>{
  assert.equal(oldIds.length,113);
  assert.deepEqual(Object.keys(catalog.definitions).sort(),[...oldIds,...selected,...athlete].sort());
- assert.equal(hash(oldIds.map(id=>[id,catalog.definitions[id]])),'29f8997365b5e0876b1d893b4b9651c0e0e723d56e8a1f264310c2a1d23f979f');
+ assert.equal(hash(oldIds.map(id=>[id,catalog.definitions[id]])),'38f82c0e4bded2a0130177515e46dafe759c17689871ae969a95f0b3362af04a');
  assert.equal(Object.keys(catalog.categories).length,29);
  const oldLevels=Object.keys(catalog.categories).filter(id=>!['A12','A13','A14','A15'].includes(id)).sort().map(id=>[id,Object.fromEntries(Object.entries(catalog.categories[id].levels).map(([level,ids])=>[level,ids.filter(eid=>!selected.includes(eid))]))]);
  assert.equal(hash(oldLevels),'f7d3581b76f06e1fef2e19f8f9905d0de0f348be5b91f141ea418c34e82163ac');
@@ -23,13 +23,13 @@ test('selection preserves the v0.2 catalog and includes reviewed and athlete-men
  for(const id of selected)assert.ok(linked.has(id),id+' must be selectable from a category');
  assert.ok(linked.has('A08'),'supported reach remains available');
 });
-test('all 12 additions have actual PNGs, matching hashes and pending clinical review',()=>{
+test('all 12 additions have actual WebPs, matching hashes and pending clinical review',()=>{
  for(const id of selected){
   const d=catalog.definitions[id];assert.equal(d.key,'v02_'+id);assert.equal(d.addedIn,'0.3');
-  assert.equal(d.clinicalStatus,'pending_review');assert.equal(d.image,'images/'+id+'.png');
+  assert.equal(d.clinicalStatus,'pending_review');assert.equal(d.image,'images/'+id+'.webp');
   assert.ok(d.steps.length&&d.steps.every(s=>typeof s==='string'&&s.trim()));assert.ok(d.caution&&d.imageCaption);
   const bytes=fs.readFileSync(path.join(__dirname,'..',d.image));
-  assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  assert.equal(bytes.subarray(0,4).toString('ascii'),'RIFF');assert.equal(bytes.subarray(8,12).toString('ascii'),'WEBP');
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),d.sha256);
  }
 });
@@ -56,7 +56,7 @@ test('unilateral additions switch instructions without changing shared reference
   const d=catalog.definitions[id];assert.equal(R.initialSide(id,'left'),'left');
   const ex={exerciseKey:d.key,clinicalV02:{side:'left',mode:'simple'}};
   const steps=R.patientSteps(ex,d).join(' ');
-  assert.ok(steps.includes('左'),id+' left-side text');assert.equal(d.image,'images/'+id+'.png');
+  assert.ok(steps.includes('左'),id+' left-side text');assert.equal(d.image,'images/'+id+'.webp');
  }
 });
 test('patient copy does not expose internal exercise IDs or staff shorthand',()=>{

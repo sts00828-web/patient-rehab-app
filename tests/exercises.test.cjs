@@ -60,7 +60,7 @@ test('every exercise has selection context and individually assigned dosage',()=
 test('offline asset list includes the complete illustration set',()=>{
   const listeners={},scope='https://example.test/rehab/';
   const sw=vm.createContext({URL,self:{registration:{scope},addEventListener:(n,f)=>listeners[n]=f}});
-  sw.importScripts=()=>vm.runInContext(fs.readFileSync(path.join(root,'exercises.js'),'utf8'),sw);
+  sw.importScripts=(...files)=>files.forEach(file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sw));
   vm.runInContext(fs.readFileSync(path.join(root,'sw.js'),'utf8')+';globalThis.files=FILES;',sw);
   for(const [,e] of entries)assert.ok(sw.files.includes('./assets/exercises/'+e.image));
   assert.deepEqual(new Set(sw.files.filter(f=>f.startsWith('./assets/exercises/'))),new Set(entries.map(([,e])=>'./assets/exercises/'+e.image)));

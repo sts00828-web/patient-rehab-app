@@ -16,12 +16,12 @@ const data={
       "equipment": "安定した机",
       "gates": "G1",
       "pose": "斜め前。左手支持、右腕下垂。小さな体重移動で腕が前後。おもりなし",
-      "image": "images/S01.png",
+      "image": "images/S01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "左手机支持・右腕下垂、小幅な前後差。力抜きと体重移動は文で補足。",
       "clinicalStatus": "pending_review",
-      "sha256": "e01a9d10c679a01aeaf85bc411a0d6f6728cc9556840c1146756c657aa786c1f"
+      "sha256": "ff7ea6bb1c0a3ea4e9cdc6f791c4ef8ddc41645edfe8db5fcc01fee4123aaa65"
     },
     "S02": {
       "id": "S02",
@@ -36,12 +36,12 @@ const data={
       "equipment": "机、タオル",
       "gates": "G1",
       "pose": "右側面。座位、前腕と手を支持。体が後退し肩が屈曲。指で壁を登る図にしない",
-      "image": "images/S02.png",
+      "image": "images/S02.webp",
       "imageCaption": "右前腕と手を机で支えたまま、体を少し後ろへ引きます。肩を無理に押し込まないでください。",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：右前腕・手をタオル上に支持、前方へ突っ込む姿勢を解消。机端と肩の距離が増え左向き矢印で体後退を示す。別コマのため机の絶対位置・微小移動量は判定不可、本文併用。",
       "clinicalStatus": "pending_review",
-      "sha256": "d5893e7c48b88083421310413f796a1c6c1cd58c98472fc448ff834ff793c990"
+      "sha256": "73830ebf9b07c498a3362d4c405dd222cf619f369770262761039d126311244c"
     },
     "S03": {
       "id": "S03",
@@ -56,12 +56,12 @@ const data={
       "equipment": "ベッド等",
       "gates": "G1",
       "pose": "右斜め側面。両腕が胸前→頭側、左手が右手首支持。体幹は床上",
-      "image": "images/S03.png",
+      "image": "images/S03.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：頭左・足右、手前右腕を奥左手が手首で支持。胸前から頭側へ2コマで挙上、体幹は支持面。",
       "clinicalStatus": "pending_review",
-      "sha256": "6d876dfdac9d8f1c3a6dda4d50debbf53cc55dd60984ee7ab21aaa66639ec927"
+      "sha256": "5de458503a153eca64b0a45ffe1716b43f95fba6a2881e4e68c92b3a95c98484"
     },
     "S04": {
       "id": "S04",
@@ -76,12 +76,12 @@ const data={
       "equipment": "棒、肘下タオル",
       "gates": "G1",
       "pose": "足側斜め上。右肘90°、上腕体側固定、前腕のみ外側へ。肩外転を描かない",
-      "image": "images/S04.png",
+      "image": "images/S04.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "仰向け右肘体側タオル支持、右前腕外側・棒介助の終点。開始と回旋は説明文で補う。",
       "clinicalStatus": "pending_review",
-      "sha256": "b87a76e41b12fd05e16890daba201809ac2e41f8bd335bffd16b5f99b6160a49"
+      "sha256": "70abcd7b5bbfe5f04986d7e9ca7ad03878322a45d81368d3598b2272ea397b7a"
     },
     "S05": {
       "id": "S05",
@@ -96,12 +96,12 @@ const data={
       "equipment": "椅子可",
       "gates": "G0",
       "pose": "後方。腕下垂、肩甲骨の小さい内側移動。過剰な胸張りなし",
-      "image": "images/S05.png",
+      "image": "images/S05.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "後面腕下垂・肩甲帯の小さな寄せ。誇張や下制なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "394c8c4e4c579ede06ab9a15b3712c0ec921dcd5eebd70723681b54298934f3a"
+      "sha256": "768a24da32a6ca94db0c0578eb1a70cef2a446c6be807aa5de06f7a5bff0a289"
     },
     "S06": {
       "id": "S06",
@@ -137,12 +137,12 @@ const data={
       "equipment": "肘下タオル",
       "gates": "G1",
       "pose": "正面。左手が右掌の内側に抵抗。前腕を腹側へ動かそうとする力のみ",
-      "image": "images/S07.png",
+      "image": "images/S07.webp",
       "imageCaption": "右肘を体の横で保ち、右手のひらを左手に軽く押し当てます。矢印は力の向きで、腕を動かす量ではありません。",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：右前腕が前方へ伸び手首がほぼ一直線。右掌の内側に左手を当て、内向き力矢印。両腕の連続性と体側タオルを確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "8efd89d2bb4b245228b88d7086efc591f2bd0d50342e77c0dfc8c658a2c26541"
+      "sha256": "7dd47aa92a42b17d8d3cf063ed40a60bf60a4ea23c1231756194a435f1a4b7fa"
     },
     "S08": {
       "id": "S08",
@@ -157,12 +157,12 @@ const data={
       "equipment": "壁、タオル",
       "gates": "G1",
       "pose": "側面。手は胸高→許可された高さ。両足接地、肘屈曲から伸展",
-      "image": "images/S08.png",
+      "image": "images/S08.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手タオル壁支持で挙上、足底接地、腰の過反りなし。",
       "clinicalStatus": "pending_review",
-      "sha256": "6a1e6f28fe8d567ed2315421ae4426828c711c946109947f9b3bd4b6bc40b7a9"
+      "sha256": "0bc5cfb9913586764c654fe94953b6dd933b4958e6df01c89c2066e9a2fd9c1e"
     },
     "S09": {
       "id": "S09",
@@ -177,12 +177,12 @@ const data={
       "equipment": "タオル、軽い重りは任意",
       "gates": "G1",
       "pose": "足側斜め上。右上腕体側、肘90°。右前腕が腹前→天井方向。肩外転でない",
-      "image": "images/S09.png",
+      "image": "images/S09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "左下側臥位で右上腕タオル近傍、右前腕の持上げ。厳密な肘90度は投影で未確定。",
       "clinicalStatus": "pending_review",
-      "sha256": "f9bba4a86a1b409cb26d22ae020d3eb3af94cab25aea5f4871e4722008a0fde9"
+      "sha256": "215238a224dbaf09bef6b13eae43857695e4f5cea476e9f9ece41491e10e7c06"
     },
     "S10": {
       "id": "S10",
@@ -197,12 +197,12 @@ const data={
       "equipment": "軽いゴム",
       "gates": "G1",
       "pose": "正面。左手は腹前、右肘固定。右前腕のみ外へ。ゴムは両手間",
-      "image": "images/S10.png",
+      "image": "images/S10.webp",
       "imageCaption": "肘を体の横で曲げたまま、前腕を少し外へ開いて戻します。",
       "assetStatus": "採用候補",
       "assetNotes": "右肘屈曲が保たれ外旋でバンドを伸ばす。厳密な体側接触は不確実だが伸展エラーなし。",
       "clinicalStatus": "pending_review",
-      "sha256": "7d3356aecf5e5375f2dd6f78b797ca50191a524d7619f88e1e024cd096a6bcae"
+      "sha256": "98f7d2962a93c1a7c001e61e2c4e98d9bb767c6f2a3bcf729b8787a1668281e4"
     },
     "S11": {
       "id": "S11",
@@ -217,12 +217,12 @@ const data={
       "equipment": "ベッド等",
       "gates": "G1",
       "pose": "側面。肩90°屈曲、右肘伸展。肩甲骨がわずかに床から離れる前方突出",
-      "image": "images/S11.png",
+      "image": "images/S11.webp",
       "imageCaption": "肘を伸ばしたまま、手を天井へ少し近づけて戻します。腕を頭側へ倒さないでください。",
       "assetStatus": "修正後採用候補",
       "assetNotes": "開始は右肩を床へ休め、終了は肘を伸ばしたまま右肩を少し浮かせて手を天井へ近づける2姿勢。右手首の青いバンドと小さな上矢印で挙上側を明示。左右の腕は各肩から連続し、各姿勢とも腕2本・手2つ。肩甲骨そのものは隠れるため本文を併用。",
       "clinicalStatus": "pending_review",
-      "sha256": "f3ed8c07420b06fca7e53f8209da843e8251f0d2cd86179e217c25460a36b6c0"
+      "sha256": "041efe7f345a77bab22ca575b6c9543a7ee5b9e49fb350cf26cd9e3513e3abe2"
     },
     "S12": {
       "id": "S12",
@@ -237,12 +237,12 @@ const data={
       "equipment": "ゴム、専用の安全な固定部",
       "gates": "G8",
       "pose": "斜め側面。アンカーは前方・肘高、両手→下部肋骨。ドアノブへ適当に結ばない",
-      "image": "images/S12.png",
+      "image": "images/S12.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "前方肘高専用固定部、両手を下部肋骨へ引く。",
       "clinicalStatus": "pending_review",
-      "sha256": "963af1eb32ca30d2124ad8712185d677ed41a93c60eb27c7281dd79d83294cd4"
+      "sha256": "603329b2e90b293a3f69b8500b7016a52fdd029e2d48cd5af93fea7e9d219ebd"
     },
     "S13": {
       "id": "S13",
@@ -257,12 +257,12 @@ const data={
       "equipment": "壁",
       "gates": "G1",
       "pose": "側面。頭から踵まで自然な一直線。踵接地、肘曲げ→伸ばし",
-      "image": "images/S13.png",
+      "image": "images/S13.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手壁・踵接地・肘屈伸、体幹自然な直線。",
       "clinicalStatus": "pending_review",
-      "sha256": "2f6eb7915ba1bfaeef5337e11e25958b4277398d9d03f01dbeb1ae7c81f0fb5b"
+      "sha256": "357aad5b1092e839a0d59c3bc5ada37191c60e76ab6ee41381c8d85cd31ff2c9"
     },
     "S14": {
       "id": "S14",
@@ -277,12 +277,12 @@ const data={
       "equipment": "壁",
       "gates": "G1",
       "pose": "側面。肘角は一定。胸郭と肩甲骨の相対移動のみ、腕立てと区別",
-      "image": "images/S14.png",
+      "image": "images/S14.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両肘ほぼ伸展一定・壁支持・肩甲帯小差。微小運動は説明文で補う。",
       "clinicalStatus": "pending_review",
-      "sha256": "f7ca399e9cd48d2e0bd2ed4639b17d12d8536b94a19243e7d43f2f64d051f761"
+      "sha256": "e7ee6a3640aa571a98bbdeef78224c41242d44e17d76d91c253d77796b7d2a02"
     },
     "S15": {
       "id": "S15",
@@ -297,12 +297,12 @@ const data={
       "equipment": "任意の軽い重り",
       "gates": "G1",
       "pose": "斜め前。体の真横より約30°前方、肩甲面で挙上。親指上",
-      "image": "images/S15.png",
+      "image": "images/S15.webp",
       "imageCaption": "担当者が示した斜め前の方向へ、親指を上にして腕を上げます。",
       "assetStatus": "説明補強",
       "assetNotes": "親指上の右腕挙上。肩甲面角度は2Dで不確実、図が誤りとは断定しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "49edb72e42dbeffd22291f30507c7c28ab895efe474b5a0c1b8350afa5c2aabd"
+      "sha256": "9f901d50b61af1b984c5f85477b59dca89f17a251e21c679baef84fa49738b13"
     },
     "S16": {
       "id": "S16",
@@ -317,12 +317,12 @@ const data={
       "equipment": "なし",
       "gates": "G1",
       "pose": "前方。右腕は胸前、左手は右上腕を支持。頚部を圧迫しない",
-      "image": "images/S16.png",
+      "image": "images/S16.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右腕胸前・左手右上腕支持・頚部圧迫なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "e4e3e135dc9159332f0f944d6a239df64685d77a3fdc92c58c21f9f0d00af153"
+      "sha256": "49f9be1e2a5911411b55f16699e095ca2f9d7d4b7db077f20d26ddc4159a2ec7"
     },
     "S17": {
       "id": "S17",
@@ -338,12 +338,12 @@ const data={
       "equipment": "強度指定ゴム",
       "gates": "G1",
       "pose": "S10の抵抗variant。角度は同じ、ゴム強度だけ変更。別運動として水増ししない",
-      "image": "images/S17.png",
+      "image": "images/S17.webp",
       "imageCaption": "肘を体の横で曲げたまま、前腕を少し外へ開いて戻します。抵抗は担当者が決めたものを使います。",
       "assetStatus": "採用候補",
       "assetNotes": "S10と同PNGの抵抗違い。強度は処方欄で指定。",
       "clinicalStatus": "pending_review",
-      "sha256": "7d3356aecf5e5375f2dd6f78b797ca50191a524d7619f88e1e024cd096a6bcae",
+      "sha256": "98f7d2962a93c1a7c001e61e2c4e98d9bb767c6f2a3bcf729b8787a1668281e4",
       "baseExerciseId": "S10"
     },
     "S18": {
@@ -359,12 +359,12 @@ const data={
       "equipment": "壁、柔らかい球",
       "gates": "G1",
       "pose": "斜め側面。片手で胸高の球を保持、小さな十字軌道。投げない",
-      "image": "images/S18.png",
+      "image": "images/S18.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右手胸高の球・壁接触と小十字矢印。",
       "clinicalStatus": "pending_review",
-      "sha256": "f1dec80949ac82655cb3dcde6fe3b94ab4173da65200ab462e91a36d8463dddf"
+      "sha256": "cb0d70ba791f0aa74650d7e78cd40330c50855376dc002901d2adcdc8eeab7d7"
     },
     "S19": {
       "id": "S19",
@@ -379,12 +379,12 @@ const data={
       "equipment": "なし",
       "gates": "G1",
       "pose": "後方。右手が右臀部→腰部。挙上範囲は処方に合わせる",
-      "image": "images/S19.png",
+      "image": "images/S19.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右手が臀部から腰へ、左腕下垂で一貫。",
       "clinicalStatus": "pending_review",
-      "sha256": "05fa99fea78ea8299d913b06418a48c95770b2af31cc69a94fe1f8144ad8a20c"
+      "sha256": "5414a525e4b699e1474e69c83a01593b6c3f8adc826b2a8a4d6248446d95c58b"
     },
     "S20": {
       "id": "S20",
@@ -399,12 +399,12 @@ const data={
       "equipment": "頑丈な台",
       "gates": "G1+G8",
       "pose": "側面。台の転倒・滑りがない姿勢。足と手の4点支持",
-      "image": "images/S20.png",
+      "image": "images/S20.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手台上と両足支持、体幹直線・肘屈伸。",
       "clinicalStatus": "pending_review",
-      "sha256": "ba311dfcdce72bddcc4172a7202f0397af2541101f8c3973dc85ff6c9ff1b8e8"
+      "sha256": "bb9714c2ce5c8ec1f0cb9db787aff9186bc25589dabeca6a5966600cd1c70eda"
     },
     "S21": {
       "id": "S21",
@@ -419,12 +419,12 @@ const data={
       "equipment": "机、軽い重り",
       "gates": "G1+G8",
       "pose": "右側面。左手支持、右腕下垂→右肘屈曲。肩の高さまで肘を上げない",
-      "image": "images/S21.png",
+      "image": "images/S21.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "左手机支持・右手重り下垂から脇へ。",
       "clinicalStatus": "pending_review",
-      "sha256": "5b919755e3426c9787244d5b97ed6e184a1d32bdacf5da34a701c8cb8dda6326"
+      "sha256": "d74471204c1d5e4b97dc529476e287720aa6b543e9ca2508d35afdd2f91623e4"
     },
     "S22": {
       "id": "S22",
@@ -439,12 +439,12 @@ const data={
       "equipment": "同重量の荷物、空間",
       "gates": "G8",
       "pose": "正面斜め。両腕体側、荷物は体の横、足元に障害物なし",
-      "image": "images/S22.png",
+      "image": "images/S22.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手荷物体側・障害物なしの歩行。荷重値は処方欄で指定。",
       "clinicalStatus": "pending_review",
-      "sha256": "113b8ace25da9303fde413cb263974e69f2bf97eb47f8e3ccee2e3913cbd9c8c"
+      "sha256": "13f0c705a2a1f881cef07655f6ebb67fa01735b0d83a27465f151ebbc423c2fa"
     },
     "S23": {
       "id": "S23",
@@ -459,12 +459,12 @@ const data={
       "equipment": "必要時タオル",
       "gates": "G1+G3",
       "pose": "側面。右上腕体側、肘屈伸。肩挙上なし。介助variantは左手支持",
-      "image": "images/S23.png",
+      "image": "images/S23.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "左手で右上腕支持・右肘屈伸、肩挙上なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "d257d800d9bbb053e5d811a4dd4397e431eb41d986ca15d6755e756c1bd23f75"
+      "sha256": "cdca764570a10c03a41aa487ff354507d1ef05a62a93e6ded52eeaf92f75f704"
     },
     "S24": {
       "id": "S24",
@@ -479,12 +479,12 @@ const data={
       "equipment": "軽い重り",
       "gates": "G3",
       "pose": "正面。上腕固定、前腕回外、肘のみ屈伸。体を振らない",
-      "image": "images/S24.png",
+      "image": "images/S24.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右手重りで回外肘屈伸、上腕体側。",
       "clinicalStatus": "pending_review",
-      "sha256": "74eb2e7b05eca1ef53f9d1879a1390e82b074f8a5df29ebaeb03eb57c19c6499"
+      "sha256": "39b721448bca0b2f16f7ed375884f60029fdb75beda9dd96f64b953b38f2ff0c"
     },
     "S25": {
       "id": "S25",
@@ -499,12 +499,12 @@ const data={
       "equipment": "上腕支持台、負荷は処方指定",
       "gates": "G2+G7",
       "pose": "足側斜め。上腕は許可された外転位（90°variant）、肘90°。回転軸は上腕長軸",
-      "image": "images/S25.png",
+      "image": "images/S25.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右上腕と肘を高台支持、肘屈曲前腕垂直の終点。回旋説明が必要。",
       "clinicalStatus": "pending_review",
-      "sha256": "070d9a9f66abb878ddc49a22698c77004a260045a0db1a73498717e65c8cef6c"
+      "sha256": "eb3ccfcec4eca4a789b0e7a3c4a1e8dc518801b936d9aa7a45846385bcb116df"
     },
     "S26": {
       "id": "S26",
@@ -519,12 +519,12 @@ const data={
       "equipment": "軽い重り",
       "gates": "G2+G7",
       "pose": "側面。右腕挙上保持、腰過伸展なし。歩行・振り回し矢印なし",
-      "image": "images/S26.png",
+      "image": "images/S26.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右腕頭上の静止保持、腰過伸展なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "0784b390b4546bee26e219136e83d7e7cf8562adb4bce0fa72dab9b22f953eac"
+      "sha256": "818f03c61b021bf99933dde17f376f4aa524d9ff576908d1992baaddc0a8deec"
     },
     "T01": {
       "id": "T01",
@@ -539,12 +539,12 @@ const data={
       "equipment": "ベッド等",
       "gates": "G0",
       "pose": "側面。両膝立て、手は腹部、胸腹の小さな呼吸表示",
-      "image": "images/T01.png",
+      "image": "images/T01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両膝立て・手腹部・小呼吸表示、支持適合。",
       "clinicalStatus": "pending_review",
-      "sha256": "4c130e02aa47864fee6a6acea4ce05d2db8649ba67add0c974170bcf28eaec13"
+      "sha256": "f83521d6cb1b0bf3fc5dad630812d2df3748d3315152d7456173d7914f7da83b"
     },
     "T02": {
       "id": "T02",
@@ -559,12 +559,12 @@ const data={
       "equipment": "ベッド等",
       "gates": "G6該当時",
       "pose": "側面。骨盤の小さな傾き2コマ、臀部は床についたまま",
-      "image": "images/T02.png",
+      "image": "images/T02.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "臀部接地・小骨盤差。微小差は説明で補う。",
       "clinicalStatus": "pending_review",
-      "sha256": "0e5e6675cd3056a56ba34c9b6478dee55bd0898234589e3bb9d627da8220a1eb"
+      "sha256": "aaee552dd9fad2a0c7355960f8379fda8419db000a095bd50709a7d48018466b"
     },
     "T03": {
       "id": "T03",
@@ -579,12 +579,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "側面。手肩下・膝股下、小範囲の胸腰部屈伸。極端な落ち込みなし",
-      "image": "images/T03.png",
+      "image": "images/T03.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "四つ這い手膝支持、丸めから軽い伸展。頚部過伸展なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "90b04bf8ed78f24cafeb9d537aa804169f0147bc556564017ddae73193ffb1df"
+      "sha256": "fec60e37a1fe1b51ab2e973f86fb185252a7f9f340f55104d817d63dd1fa7939"
     },
     "T04": {
       "id": "T04",
@@ -599,12 +599,12 @@ const data={
       "equipment": "枕、マット",
       "gates": "G0",
       "pose": "斜め上。両股膝屈曲、膝接触を保持。右腕が胸前→右側、腰の過回旋なし",
-      "image": "images/T04.png",
+      "image": "images/T04.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：頭右で左下側臥位。下左腕は前へ残り、上右腕が胸とともに開く。両膝が重なって接触、両腕の連続性あり。",
       "clinicalStatus": "pending_review",
-      "sha256": "cf2f589728387f2e5b2ffbe24b0902ee29d38d50c6f4ac7a966bdee95d2409a1"
+      "sha256": "5368927ec40cc511e0724258f22b0ecb529b7159bd050414decd62d1ac3fd8ed"
     },
     "T05": {
       "id": "T05",
@@ -619,12 +619,12 @@ const data={
       "equipment": "椅子",
       "gates": "G0",
       "pose": "前斜め。骨盤前向き、胸郭のみ小回旋。手で首を引かない",
-      "image": "images/T05.png",
+      "image": "images/T05.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "骨盤前向きで胸郭回旋、首だけではない。頭胸角度差は小。",
       "clinicalStatus": "pending_review",
-      "sha256": "724ba8b9ddaf652533ac226e809949e810742971320fec2b35b1a22a88403d93"
+      "sha256": "4365facb4ec3aebf10e3e356864a3b1cf43934afdd087a3ac3f6a27696a6dfde"
     },
     "T06": {
       "id": "T06",
@@ -639,12 +639,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "側面。開始は両足床。片足のみ数cm浮く。両股関節90°の図にしない",
-      "image": "images/T06.png",
+      "image": "images/T06.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "一足だけ少し浮く、反対足と頭体幹支持。",
       "clinicalStatus": "pending_review",
-      "sha256": "423c67dd8fdaa86ee6e72f7f37dd7290e89cddf47a13c6959cf39c0f04273ffa"
+      "sha256": "de53d93e9febf6000491675e154404ada2829cd6a058322a65f0ee9d0fcc48ca"
     },
     "T07": {
       "id": "T07",
@@ -659,12 +659,12 @@ const data={
       "equipment": "マット",
       "gates": "G6該当時",
       "pose": "左右識別できる斜め上。右腕＋左脚が伸展、左手＋右膝は床。4肢全て描く",
-      "image": "images/T07.png",
+      "image": "images/T07.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：左向きで手前左手と奥右膝支持、奥右腕と手前左脚を伸展。4肢連続、脚は体幹とほぼ同高。",
       "clinicalStatus": "pending_review",
-      "sha256": "02277c93480ed5aaeb5ee8c834ee5cc1de93f935ad3b791767faea3183e8bc08"
+      "sha256": "02e164340f54cd85f8db0f1c0c16eef9e126f7f73a62ea364deb865fed502de8"
     },
     "T08": {
       "id": "T08",
@@ -679,12 +679,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "側面。両足床、骨盤挙上。膝と肩を結ぶ程度、腰過伸展なし",
-      "image": "images/T08.png",
+      "image": "images/T08.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両足と肩背部支持で骨盤挙上、過伸展目立たず。",
       "clinicalStatus": "pending_review",
-      "sha256": "38be85409d3c376bd59dbbc6bb530495a2fa45957181a93a44b9f2e2a46d381e"
+      "sha256": "2276fd09242440e9b21cb6b76adca0a672c07666149eb4ce9dd44416856947c1"
     },
     "T09": {
       "id": "T09",
@@ -699,12 +699,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "正面斜め。下側肘肩下、両膝屈曲、肘と膝支持。手支持と混同しない",
-      "image": "images/T09.png",
+      "image": "images/T09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "下側左肘肩下と屈曲膝支持、臀部浮き。",
       "clinicalStatus": "pending_review",
-      "sha256": "e5389c144c55cbb3b7558d5cac88f118d47f452f71d0890cfee6b63a3b41287a"
+      "sha256": "538cea6ff0efcda690420ec0b3288d035981fd40cdb76a69568cf619dbbb26a0"
     },
     "T10": {
       "id": "T10",
@@ -719,12 +719,12 @@ const data={
       "equipment": "壁を後方目標に可",
       "gates": "G0",
       "pose": "側面。股関節屈曲、膝軽度屈曲。腰だけを丸める図でない",
-      "image": "images/T10.png",
+      "image": "images/T10.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "股関節から後方へ臀部を引く軽い膝曲げ、腰だけ丸めず。",
       "clinicalStatus": "pending_review",
-      "sha256": "a97e53dce3f2207084d1db4c07d4ffc5f78c77c8ad705be27556494847109437"
+      "sha256": "37131c2ca6b17def6f6a8a6d8ff75444ec99f9cc819b1f412a73cb8bbd4af0ba"
     },
     "T11": {
       "id": "T11",
@@ -739,12 +739,12 @@ const data={
       "equipment": "マット",
       "gates": "G6該当時",
       "pose": "斜め上。開始：両肩屈曲90°、両股膝90°。終了：右腕頭側＋左脚足側、左腕垂直＋右股膝90°固定",
-      "image": "images/T11.png",
+      "image": "images/T11.webp",
       "imageCaption": "図は右腕と左脚を伸ばした位置です。指示された範囲で行います。",
       "assetStatus": "採用候補",
       "assetNotes": "右腕頭側＋左脚足側、左腕垂直＋右股膝屈曲の終点。前の左右逆判定を支持しない。開始姿勢は説明補足。",
       "clinicalStatus": "pending_review",
-      "sha256": "fc7b2f3e1a6473ee7c71dda8f28cf08fa2ba8dace813f61d806987eaab2fcdbb"
+      "sha256": "fd78416d416c73bbf6546e08151568a01a3b78efbb41aa2027db88abd4f62244"
     },
     "T12": {
       "id": "T12",
@@ -759,12 +759,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "正面斜め。肘肩下、膝伸展、両足を前後にずらして支持可",
-      "image": "images/T12.png",
+      "image": "images/T12.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "肘肩下・伸展膝・ずらした両足支持、横支え成立。",
       "clinicalStatus": "pending_review",
-      "sha256": "0118dd09aeff9cf817abf0b0b8355c3194b45edf5331b0578cb74ab9a5ed0da3"
+      "sha256": "4e3e62c5cab56d45f510a88df202045750cfa15f70b17a1d1a69953301f4abc4"
     },
     "T13": {
       "id": "T13",
@@ -779,12 +779,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "足側斜め。右足床、左股膝屈曲で浮く、骨盤挙上",
-      "image": "images/T13.png",
+      "image": "images/T13.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：頭右で手前左脚が浮上、奥右足が接地。両腕接地と骨盤挙上、四肢連続性を確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "f7b0a2aea59ab608c0fb2445709b9d952dc216d01924877f01713618c28b0e74"
+      "sha256": "be14a593733ebf09a4bb5d86c2e87fcfea037bdcf564d440a901bc0e7bc321bc"
     },
     "T14": {
       "id": "T14",
@@ -799,12 +799,12 @@ const data={
       "equipment": "軽い荷物",
       "gates": "G8",
       "pose": "側面。荷物は前腿近く、股関節で折り、すね中間より上まで",
-      "image": "images/T14.png",
+      "image": "images/T14.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "荷物体近く、股関節屈曲で膝付近まで、床へ下ろさず。",
       "clinicalStatus": "pending_review",
-      "sha256": "9809a646395e6fcb80ffae4d7a43ac85d1b8f0fbb1f4153dd7031492fcbf4296"
+      "sha256": "6f3997c18b1b9ef8d0b30f8ff455b1c76bf8f5d5e35d26c6260649df12115c99"
     },
     "T15": {
       "id": "T15",
@@ -819,12 +819,12 @@ const data={
       "equipment": "安定した椅子",
       "gates": "G0",
       "pose": "側面。胸椎の小伸展、頚部は中間に近い。反り返りなし",
-      "image": "images/T15.png",
+      "image": "images/T15.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "胸の小起こし・頭中間位・足座面支持。局所胸腰運動は未確定。",
       "clinicalStatus": "pending_review",
-      "sha256": "5b31790c2bea9665eeb8a293780d17e424e730ba6bbfb402d1b2649eb8eef8ce"
+      "sha256": "8979b91d0aa003d2c16bbdb30073b042398ff503467cf51f4739a3615911da31"
     },
     "T16": {
       "id": "T16",
@@ -839,12 +839,12 @@ const data={
       "equipment": "マット",
       "gates": "G5",
       "pose": "側面。手は膝裏の大腿を支える。強く膝前面を引かない",
-      "image": "images/T16.png",
+      "image": "images/T16.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：両コマで手前右脚を曲げ、奥左脚は伸ばして支持。終了時の手は膝前面ではなく膝裏側の大腿を支える。頭・体幹はマット上。",
       "clinicalStatus": "pending_review",
-      "sha256": "73c350cb5f3e4caa8ca1494e88e23429932b8ea4d47abd680362a95f04a49a91"
+      "sha256": "e819ac6a881d8d5c4bcea098ace7fd5f110ba6d61db5aa70c0a416393bedb49e"
     },
     "T17": {
       "id": "T17",
@@ -859,12 +859,12 @@ const data={
       "equipment": "マット",
       "gates": "G5",
       "pose": "側面。肘支持、骨盤・大腿は床。腕立ての大きな伸展にしない",
-      "image": "images/T17.png",
+      "image": "images/T17.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "肘支持で小上体起こし、骨盤大腿床。適応は個別指示に保持。",
       "clinicalStatus": "pending_review",
-      "sha256": "a90d246652980696676ae99f2674f34b3274ab3ea8ebb8da2787b1a8158c133e"
+      "sha256": "f8795bc541735bd31bcf05f909254f1af17be308ac9fd662669652bad0d34402"
     },
     "T18": {
       "id": "T18",
@@ -879,12 +879,12 @@ const data={
       "equipment": "椅子",
       "gates": "G5",
       "pose": "側面。両足床、手は腿上、体幹の小屈曲。深い床タッチなし",
-      "image": "images/T18.png",
+      "image": "images/T18.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "足床・手腿で小前屈、床タッチなし。",
       "clinicalStatus": "pending_review",
-      "sha256": "9d09ae6adb985bc597bcbc137bd8b0094fad01c7d918c79965add4b98c24a57f"
+      "sha256": "e0f3a17c7358624b7b2ea37414f921bc5b966cb1605b10a8195e88c162203f04"
     },
     "T19": {
       "id": "T19",
@@ -899,12 +899,12 @@ const data={
       "equipment": "荷物、空間",
       "gates": "G8",
       "pose": "S22と同一姿勢資産可。体幹機能を目的とする別ラベル",
-      "image": "images/T19.png",
+      "image": "images/T19.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手荷物で歩行、S22共用整合。",
       "clinicalStatus": "pending_review",
-      "sha256": "113b8ace25da9303fde413cb263974e69f2bf97eb47f8e3ccee2e3913cbd9c8c"
+      "sha256": "13f0c705a2a1f881cef07655f6ebb67fa01735b0d83a27465f151ebbc423c2fa"
     },
     "T20": {
       "id": "T20",
@@ -919,12 +919,12 @@ const data={
       "equipment": "ゴム、専用固定点",
       "gates": "G6該当時+G8",
       "pose": "正面。固定点は真横の胸高。両手を胸骨前から正中線上へ押し出し、胸郭・骨盤を正面に保持",
-      "image": "images/T20.png",
+      "image": "images/T20.webp",
       "imageCaption": "横から引かれるゴムに対し、胸と骨盤を正面に保ったまま両手を前へ押し出します。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "共通人物で統一。側方胸高アンカー、胸前から正中線上へ押し出す2姿勢、体幹・骨盤の正面保持を目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "7180afa3125aeec199d00ef1e63a73caeffc578eca33538df1509a7fb0a07942"
+      "sha256": "2d8c7cf83e22ac01977877f8c83e3820c6cd398c5b5050b52148123a4d382b70"
     },
     "T21": {
       "id": "T21",
@@ -939,12 +939,12 @@ const data={
       "equipment": "マット",
       "gates": "G6",
       "pose": "側面。中間位保持、骨盤動作なし。腹圧を誤って腹筋起こしで描かない",
-      "image": "images/T21.png",
+      "image": "images/T21.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "仰向け膝立て中間位、腹筋起こしなし。呼吸と軽い力は文で指定。",
       "clinicalStatus": "pending_review",
-      "sha256": "ed19770feb2d8f504132a40aae22e24788a4179fc46582e7c87b1aa61e4adde6"
+      "sha256": "40c23febb28ab64287863fa9dbf5fa9f95799fc7e076a6fdaab89ab5dd7c1265"
     },
     "T22": {
       "id": "T22",
@@ -959,12 +959,12 @@ const data={
       "equipment": "マット",
       "gates": "G6",
       "pose": "斜め側面。両膝立て足床、片腕のみ胸前→頭側。T11と区別",
-      "image": "images/T22.png",
+      "image": "images/T22.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両足接地のまま左腕のみ頭側へ、脚不動。",
       "clinicalStatus": "pending_review",
-      "sha256": "4e17d47241ef9bf1875369061e26b627df0d485858e05e11772a3e81e763c4d8"
+      "sha256": "4b3c781b35ef32d2dc46755b3e56253cdbe0cb6c97d49d98a70f9b117b43966a"
     },
     "T23": {
       "id": "T23",
@@ -979,12 +979,12 @@ const data={
       "equipment": "マット",
       "gates": "G6",
       "pose": "側面。両手支持、片膝が伸びつま先は接地。脚を浮かせない",
-      "image": "images/T23.png",
+      "image": "images/T23.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手支持、後方へ脚を伸ばしつま先接地。",
       "clinicalStatus": "pending_review",
-      "sha256": "eaccfe56571ad6a3968fadcb0943a3424394b80bccbc5d65d7366e2f1c784b06"
+      "sha256": "270ec6296cf2b1646df6e4f2a064db1e825c5d6c2d138a92d402c8d360aa08c4"
     },
     "N01": {
       "id": "N01",
@@ -999,12 +999,12 @@ const data={
       "equipment": "背もたれ椅子",
       "gates": "G0",
       "pose": "側面。前腕支持、頭部楽な中間位",
-      "image": "images/N01.png",
+      "image": "images/N01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "背もたれと前腕支持、頭中間位。",
       "clinicalStatus": "pending_review",
-      "sha256": "558d1a8f4f5633606be4ae35b962618e09a0d7f9ffcd3bca274f175bb55b9dc7"
+      "sha256": "29c6b2ff20c5bae2bd4ac7d369bd30d635ddb6c2e3be411f7122a6b09515e617"
     },
     "N02": {
       "id": "N02",
@@ -1019,12 +1019,12 @@ const data={
       "equipment": "椅子",
       "gates": "G5該当時",
       "pose": "正面と斜め上。体幹固定、頚部小回旋。大きな円運動なし",
-      "image": "images/N02.png",
+      "image": "images/N02.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "体幹正面固定で頚部左回旋例、両側運動に整合。",
       "clinicalStatus": "pending_review",
-      "sha256": "bc2e045511b7d365aa0d6664ab45efc0c81951baafbc85b17bb66a187ea1cde3"
+      "sha256": "c5e67280267efb8b2d9c14e67b54b90ea493af78ebf8df3690b300a91d27dc56"
     },
     "N03": {
       "id": "N03",
@@ -1039,12 +1039,12 @@ const data={
       "equipment": "椅子",
       "gates": "G5該当時",
       "pose": "正面。肩水平、頚部の小側屈、手で頭を引かない",
-      "image": "images/N03.png",
+      "image": "images/N03.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "肩概ね水平で小側屈、手で引かない。",
       "clinicalStatus": "pending_review",
-      "sha256": "437af47534d2d09b9bb5a23fb553330fb0e8ffd098699a8546c1f8e3318137d7"
+      "sha256": "451e7c18375b6ccbd5f7d1a9dc7b071ffa84c0f0935b03606b4ea6ade9270938"
     },
     "N04": {
       "id": "N04",
@@ -1059,12 +1059,12 @@ const data={
       "equipment": "薄い枕",
       "gates": "G0",
       "pose": "側面。後頭部は枕上、上位頚椎の小屈曲",
-      "image": "images/N04.png",
+      "image": "images/N04.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "後頭部枕上でうなずき、頭持上げなし。",
       "clinicalStatus": "pending_review",
-      "sha256": "9d8c333422ed72f97d362f8f8df6c901e4d585fbb533c95b4d8430a8ba901b1f"
+      "sha256": "5501d874d5069510d8a3353e7e5fef8c888032fe35c95ca8685a7dbdbebc911d"
     },
     "N05": {
       "id": "N05",
@@ -1080,12 +1080,12 @@ const data={
       "equipment": "薄い枕",
       "gates": "G0",
       "pose": "N04保持variant。頭部挙上なし",
-      "image": "images/N05.png",
+      "image": "images/N05.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "枕上保持で頭持上げなし、保持時間は文。",
       "clinicalStatus": "pending_review",
-      "sha256": "b1df69867065683494a314b8e02848c07d1f758894f6f2205fa16a4060f6176e",
+      "sha256": "f2a92296df5a8b356da5e8e7b7620160f86db3e1ae54a5b7e8ee777f284638fc",
       "baseExerciseId": "N04"
     },
     "N06": {
@@ -1101,12 +1101,12 @@ const data={
       "equipment": "なし",
       "gates": "G5該当時",
       "pose": "正面。右掌は右側頭部、左右の対向力のみ",
-      "image": "images/N06.png",
+      "image": "images/N06.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右手側頭部接触・頭正面静止、抵抗力は文。",
       "clinicalStatus": "pending_review",
-      "sha256": "102dff3eef8cd36e7c95a8747af876f82bbcfcd4a359e9b737b324217225fbb2"
+      "sha256": "9c5347263908ccdd0765438147c8efb163221978b49e3aee5708a4e5b286bed3"
     },
     "N07": {
       "id": "N07",
@@ -1121,12 +1121,12 @@ const data={
       "equipment": "なし",
       "gates": "G5該当時",
       "pose": "斜め上。手が頬の側面で回旋抵抗、頚部は動かない",
-      "image": "images/N07.png",
+      "image": "images/N07.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右手頬側面・頭正面静止、強い圧の有無は静止画では不可。",
       "clinicalStatus": "pending_review",
-      "sha256": "83edb816ed2e9fa91375e920ce673d8279b92e107e4e63a6b815dc69a415ab84"
+      "sha256": "3c6c433edee5eb8ae1adf29f787f9154659d835dd8160f90a6daeabad5d6312f"
     },
     "N08": {
       "id": "N08",
@@ -1141,12 +1141,12 @@ const data={
       "equipment": "なし",
       "gates": "G1該当時",
       "pose": "側面。顔は正面、腕胸高まで、肩すくめの誇張なし",
-      "image": "images/N08.png",
+      "image": "images/N08.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両腕胸高・顔正面・首過伸展なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "28570604c2c3987f3c303b4fdf98d4869ec3fdf13f0d31ddd581900468fa6b0e"
+      "sha256": "8bf130a126a52cfc32122040c92e9976fe9c46468bd1733dcdb015183105d6ab"
     },
     "N09": {
       "id": "N09",
@@ -1161,12 +1161,12 @@ const data={
       "equipment": "マット",
       "gates": "G0",
       "pose": "側面。視線床、顎軽く引く。過伸展/深屈曲なし",
-      "image": "images/N09.png",
+      "image": "images/N09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "四つ這い四肢支持、床視線・頚部自然な延長。",
       "clinicalStatus": "pending_review",
-      "sha256": "93970694606831adf7c7fe4b9925d3edf5d53dd6bebc8c5face770a680319e75"
+      "sha256": "8d9530a37fdc184f641924b90d34bc1c5e33c72fddeb9e5f26f9705cff67a70c"
     },
     "N10": {
       "id": "N10",
@@ -1181,12 +1181,12 @@ const data={
       "equipment": "椅子、机",
       "gates": "G0",
       "pose": "側面。両前腕支持→前方リーチ、頭部過前突なし",
-      "image": "images/N10.png",
+      "image": "images/N10.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両前腕机上から前方リーチ、頭過前突目立たず。",
       "clinicalStatus": "pending_review",
-      "sha256": "bdcced5c3c3536b469384b3c9221ef3e44efbfe17f70ff79cb58af9c1fef7a8c"
+      "sha256": "f4c237d1cd6c61292b81cbc4e1ee509d02971b2a26866540bdcc4ffb7daf916b"
     },
     "K01": {
       "id": "K01",
@@ -1201,12 +1201,12 @@ const data={
       "equipment": "タオル、ベッド等",
       "gates": "G4該当時",
       "pose": "右側面。かかと支持、膝裏は支えなし。強制的な過伸展なし",
-      "image": "images/K01.png",
+      "image": "images/K01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手前右踵タオル・膝裏別支持なし。左右適合。",
       "clinicalStatus": "pending_review",
-      "sha256": "4272bd9620898e70ffdab21be4c520118c5787c903b6497824cb64b9510fab1f"
+      "sha256": "4b0f3b2b9d6f2dd9f1b302023e10ee2c1ab342632cfaccb92bf87523df29c638"
     },
     "K02": {
       "id": "K02",
@@ -1221,12 +1221,12 @@ const data={
       "equipment": "マット、滑るタオル可",
       "gates": "G4該当時",
       "pose": "側面。かかと接地、膝伸展→屈曲。空中で自転車こぎにしない",
-      "image": "images/K02.png",
+      "image": "images/K02.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手前右踵がタオル上を滑り膝屈曲。左右適合。奥脚終末は遮蔽。",
       "clinicalStatus": "pending_review",
-      "sha256": "b36fc546859683f979af3e918b28f382bdc5031a4a210fb93bef71775173eeff"
+      "sha256": "fd397b693a5f611a4773787eb19c6ea7865bf378ae08ebea3ed51e2e65786cc3"
     },
     "K03": {
       "id": "K03",
@@ -1241,12 +1241,12 @@ const data={
       "equipment": "薄いタオル",
       "gates": "G4該当時",
       "pose": "側面。膝下タオル、四頭筋収縮。かかと強制接地の矢印なし",
-      "image": "images/K03.png",
+      "image": "images/K03.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右膝下薄タオル・臀部接地。収縮力は文で補足。",
       "clinicalStatus": "pending_review",
-      "sha256": "cb722e828defa8cd1a8697ea23a6465d4ff3b6e32a178c35b8871e4a182dd1dd"
+      "sha256": "a68e57d345a62058f5ae0cb16d4927514d2db39388ecb623dec748c3615519fc"
     },
     "K04": {
       "id": "K04",
@@ -1261,12 +1261,12 @@ const data={
       "equipment": "マット",
       "gates": "G4該当時",
       "pose": "側面。左足床、右膝伸展保持で20〜30cm挙上。高すぎない",
-      "image": "images/K04.png",
+      "image": "images/K04.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右膝伸展挙上・左膝屈曲足床、左右適合。",
       "clinicalStatus": "pending_review",
-      "sha256": "40a391992cc7d795b6468f0891fd27baf463c824ab28a9b7902363b6d5407faf"
+      "sha256": "235c6cdaff589f7079a26704632197627b4f4dcf60da3122bb14fe7fa611ac1b"
     },
     "K05": {
       "id": "K05",
@@ -1281,12 +1281,12 @@ const data={
       "equipment": "椅子",
       "gates": "G4該当時",
       "pose": "右側面。大腿座面支持、膝約90°→許可伸展。足首を重りで縛らない",
-      "image": "images/K05.png",
+      "image": "images/K05.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右大腿座面支持、右膝屈伸・左足床、重りなし。",
       "clinicalStatus": "pending_review",
-      "sha256": "cbf522d6935816fd79ea96d8bb50082d0e5f5e2a90bab8a1d7eed795d85fc52e"
+      "sha256": "8b38c71e5ed93e84844058c507d442e7917b8a75f5ce865b083ca2176b84fd22"
     },
     "K06": {
       "id": "K06",
@@ -1301,12 +1301,12 @@ const data={
       "equipment": "安定椅子",
       "gates": "G4該当時",
       "pose": "側面。座位→体を少し前へ→立位。後方に倒れない足位置",
-      "image": "images/K06.png",
+      "image": "images/K06.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "椅子上前傾から立位、足位置成立。",
       "clinicalStatus": "pending_review",
-      "sha256": "ac0ceaa99b5bae07b4584706ce0d3e0471f169a04189bfdd34a5bd541038c5e0"
+      "sha256": "cccc0067bd811aa7a87c66fd599d9d270e3d94aac21f9b039692396367cab0b7"
     },
     "K07": {
       "id": "K07",
@@ -1321,12 +1321,12 @@ const data={
       "equipment": "頑丈な支持台",
       "gates": "G4該当時",
       "pose": "前斜め。両手支持、股膝軽い屈曲、踵接地",
-      "image": "images/K07.png",
+      "image": "images/K07.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手支持・浅い股膝屈曲・踵接地。",
       "clinicalStatus": "pending_review",
-      "sha256": "6d1e2cff2566bebddd8657151b9c26d5d6ba4da3f7d465dd5b99b7474742aff2"
+      "sha256": "a9d1d58ad6f0a0284eb1b7cc1bddcfa70e737efac3e169cd38d6e572747697cc"
     },
     "K08": {
       "id": "K08",
@@ -1341,12 +1341,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4該当時",
       "pose": "後斜め。両前足部支持、踵の垂直移動",
-      "image": "images/K08.png",
+      "image": "images/K08.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両前足部で踵上げ、両手支持・足首外倒し目立たず。",
       "clinicalStatus": "pending_review",
-      "sha256": "c136f824a3698309048bfb2b946028aaeb6a2ef65570acccb2f6ad17a04de245"
+      "sha256": "443ae808508df1db3aac378da1869967410355c53a9394a810c781ec38b91cc7"
     },
     "K09": {
       "id": "K09",
@@ -1361,12 +1361,12 @@ const data={
       "equipment": "固定段、手すり",
       "gates": "G4+G8",
       "pose": "右前斜め。右足段上、左足床→両足段→左足床。上り下りの先行足を明示",
-      "image": "images/K09.png",
+      "image": "images/K09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右足段上→両足→左足床、手すり一貫。",
       "clinicalStatus": "pending_review",
-      "sha256": "55bba7b6a3f6d20dbd913feeb1b1de4bb6953d4133f8029c836ef59ffb81db1b"
+      "sha256": "0dfe0fb9f7f2c2b32fe57dfb93b4880a227d7193d341b5a823bbea673b77e3ba"
     },
     "K10": {
       "id": "K10",
@@ -1381,12 +1381,12 @@ const data={
       "equipment": "支持台沿いの空間",
       "gates": "G4該当時",
       "pose": "正面。足を交差しない横移動、軽い膝屈曲。バンドなし",
-      "image": "images/K10.png",
+      "image": "images/K10.webp",
       "imageCaption": "台へ手を添え、小さく横へ移動して戻ります。",
       "assetStatus": "説明補強",
       "assetNotes": "非交差の横開き追い足、机支持適合。背景に対する全身移動小さく説明補強。",
       "clinicalStatus": "pending_review",
-      "sha256": "6eca509b8135f8209a46a8c126484f89b6b6c9641da0f34bc761fad5998bd219"
+      "sha256": "bc072bfc3013c279e9852ca0b163e4af1e36b90b826f686f2b70dd06b7cb8cff"
     },
     "K11": {
       "id": "K11",
@@ -1401,12 +1401,12 @@ const data={
       "equipment": "固定支持台",
       "gates": "G4該当時",
       "pose": "正面。右足床、左足わずかに浮く、手は台へ",
-      "image": "images/K11.png",
+      "image": "images/K11.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右足支持・左足少し浮き・右手台、整合。",
       "clinicalStatus": "pending_review",
-      "sha256": "631bfe8435aa1ee9e16c453ef1da53b92b830a6d77ddf61e7b0345ffffeeb549"
+      "sha256": "82ff8f72c8966d049f6972f0a497fa3ac9ab91f6e64ffbc349502c4c89a20fe3"
     },
     "K12": {
       "id": "K12",
@@ -1422,12 +1422,12 @@ const data={
       "equipment": "椅子、安全な足首重り",
       "gates": "G4該当時",
       "pose": "K05の抵抗variant。足首重りの位置明瞭",
-      "image": "images/K12.png",
+      "image": "images/K12.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右足首重りのK05動作、大腿支持。",
       "clinicalStatus": "pending_review",
-      "sha256": "920d4855f4c3335e949a4d7ed508cf54dfe208e0ed389cfd4df77cc3e9de3cd4",
+      "sha256": "d2f463a9e2eb490c9295b463503991a17f9d8b1ba26b43c04f47478ce61a6e70",
       "baseExerciseId": "K05"
     },
     "K13": {
@@ -1443,12 +1443,12 @@ const data={
       "equipment": "固定段、手すり",
       "gates": "G4+G8",
       "pose": "正面斜め。右足は段に残る、左踵床へ。左脚へ完全に乗り換えない",
-      "image": "images/K13.png",
+      "image": "images/K13.webp",
       "imageCaption": "右足を段に残し、左かかとを床へ軽く触れさせて戻します。",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：奥右足が段上、手前左踵が床へ、手すり支持。2コマの変化は小さく、下降と戻しは本文併用。左右例示は適合。",
       "clinicalStatus": "pending_review",
-      "sha256": "68711ba4ee46d05fa2ddc3c4c86907521212d0bb8c3fff6f31b582fd5be1274c"
+      "sha256": "3c27a000abff977b2ecb025b9f4f100abeab9dd9e9ff14f3e393f9d363123b38"
     },
     "K14": {
       "id": "K14",
@@ -1463,12 +1463,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4該当時",
       "pose": "側面。右足前、左足後、両足その場、前膝軽い屈曲",
-      "image": "images/K14.png",
+      "image": "images/K14.webp",
       "imageCaption": "指定された脚の位置で、小さく膝を曲げて戻します。前後の脚の位置は担当者と確認してください。",
       "assetStatus": "説明補強",
       "assetNotes": "開始右脚後ろに見えるが終末との左右追跡不確実。目的は支持付き浅い前後開きスクワットに適合。",
       "clinicalStatus": "pending_review",
-      "sha256": "c1e8e0661137f869e2f13fa63c594853f3107709a73ec9e675089c131a68fd8e"
+      "sha256": "92b6d3d1d9f2613748211dbb4a02dc83e3a2bb4396c210a546665eeb9e5a62c5"
     },
     "K15": {
       "id": "K15",
@@ -1483,12 +1483,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4該当時",
       "pose": "前斜め。右脚荷重、左足浮く、両手支持。深屈曲なし",
-      "image": "images/K15.png",
+      "image": "images/K15.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右脚荷重・左足浮き・両手支持・浅い屈曲。",
       "clinicalStatus": "pending_review",
-      "sha256": "57e5b02628cdb1f5deb71f971ef4313536ebdfcfca1de137bb6d169fd117d7ab"
+      "sha256": "6a601b84ca1a2446c21d70bff9143499a2fc8a962a7183dc16e6d002aaec5a15"
     },
     "K16": {
       "id": "K16",
@@ -1503,12 +1503,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4該当時",
       "pose": "後斜め。右前足部支持、左足浮く、踵垂直挙上",
-      "image": "images/K16.png",
+      "image": "images/K16.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右前足部支持・左足浮き、両手台、踵上げ。",
       "clinicalStatus": "pending_review",
-      "sha256": "efd0e61e2f7cafe786b366034d9b59024e932c4cf007ff510cd59f52bbc30929"
+      "sha256": "ef607f328336e0aa7f43ca6ffeab528a03132b3628e11952d7691b55561953e4"
     },
     "K17": {
       "id": "K17",
@@ -1523,12 +1523,12 @@ const data={
       "equipment": "ゴム、安全な空間",
       "gates": "G4該当時+G8",
       "pose": "正面。バンドは大腿遠位の膝より上、両足を開いたまま横移動",
-      "image": "images/K17.png",
+      "image": "images/K17.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "膝上バンドと非交差の開く・追う連続。横移動量は静止画から未確定。",
       "clinicalStatus": "pending_review",
-      "sha256": "258321ef16bb355df6d0db2d6e41da42dd2edeac7fc6379321aff015448810b0"
+      "sha256": "4ae570da575464997e10a321890982672ce9c0249cf03552666818898e28399d"
     },
     "K18": {
       "id": "K18",
@@ -1543,12 +1543,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4該当時",
       "pose": "右側面。右膝軽屈曲、左脚は後方、右股関節屈曲。手支持明瞭",
-      "image": "images/K18.png",
+      "image": "images/K18.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右脚支持で股関節から前傾し左脚を後方へ。手支持と四肢の連続性を確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "c548bc054fb3e8d78430dd98550f60953b4762dd925e4ed4cdcdf3febed9368b"
+      "sha256": "9b97a1e18ac6e3eff7ae086d28306fc98638a25df2f2c8665afc75d70460cee9"
     },
     "K19": {
       "id": "K19",
@@ -1563,12 +1563,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4該当時",
       "pose": "正面。左脚支持、右股外転、足先ほぼ前向き。腰の反りなし",
-      "image": "images/K19.png",
+      "image": "images/K19.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "左脚支持・左手台支持で右脚を外へ。体幹の大きな側屈なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "b85377df3779674270e1c3467d70c0584219a196d8d31d010ab696cb0e784411"
+      "sha256": "72c778acaca84088acbcb6ab006163690625e0e8fbcfe5b611cb448c66d13e44"
     },
     "K20": {
       "id": "K20",
@@ -1583,12 +1583,12 @@ const data={
       "equipment": "普段の歩行補助具",
       "gates": "G4該当時",
       "pose": "側面。平地の歩行1周期。杖variantは実際の指示と一致",
-      "image": "images/K20.png",
+      "image": "images/K20.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右向き歩行。手前右腕は前方、手前右大腿は奥脚を覆って後方へ連続し踵が浮く。奥左脚が前方接踵。同側腕脚前方という旧判定は支持しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "1a06bafc23039706bdad0cbf7c546175c9953933ef227bc1372165325f626905"
+      "sha256": "d451478d657378098014ec1c2d1146b9f901d4e8e12eff5368fdc5737ceeb9a0"
     },
     "K21": {
       "id": "K21",
@@ -1603,12 +1603,12 @@ const data={
       "equipment": "固定式自転車",
       "gates": "G4該当時+G8",
       "pose": "側面。サドル高で最大屈曲を調整、深屈曲を強制しない",
-      "image": "images/K21.png",
+      "image": "images/K21.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "自転車の足とペダルの対応は自然。機器に隠れた奥脚を欠損とは判定しない。個別の膝屈曲許容範囲は図から確定不可。",
       "clinicalStatus": "pending_review",
-      "sha256": "1054d93c36efbae0c1f28ce65cacbf66223470e20bd2b2fea32cac1b621b43b5"
+      "sha256": "171913a22b1b4f1c671dcc5f6db731b53542a20eb50d486d7e24dde110e58e59"
     },
     "K22": {
       "id": "K22",
@@ -1623,12 +1623,12 @@ const data={
       "equipment": "安全な道、椅子",
       "gates": "G0",
       "pose": "歩行と椅子休息の2コマ。連続歩行の競争表現なし",
-      "image": "images/K22.png",
+      "image": "images/K22.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "歩行と椅子休息を表示。四肢連続性と対角の腕振りを確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "3ccf9f104fc33aab172dc63180a23c69bfdb6163539ca593f2b58bc9c64b7cd2"
+      "sha256": "5518662f3a800c0763337b622525183af50ba523442111375237577d9d08b202"
     },
     "K23": {
       "id": "K23",
@@ -1643,12 +1643,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4",
       "pose": "正面。両足接地のまま小さな左右移動。片脚へ全荷重の図にしない",
-      "image": "images/K23.png",
+      "image": "images/K23.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手台支持・両足接地の小さな荷重移動。静止画で移動量は確定不可。",
       "clinicalStatus": "pending_review",
-      "sha256": "b5c68272526d7dc3e6fa85bc052a8d46cb089c011e9a416166f12a5d5eec1abd"
+      "sha256": "26b467484634cb102fc81204b8ee10608ebd29317115b85589946ecbb68c2ae1"
     },
     "K24": {
       "id": "K24",
@@ -1663,12 +1663,12 @@ const data={
       "equipment": "長い支持台",
       "gates": "G4該当時",
       "pose": "正面。セミタンデム歩行、手支持。閉眼や不安定面なし",
-      "image": "images/K24.png",
+      "image": "images/K24.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：10 cmと寸法線が消え、左右交互のセミタンデムと手すり支持が維持。足幅の固定値なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "b8e8e74fcd827d2cb18279e3aeb9b069890996d413c8967101cd980f2553aa86"
+      "sha256": "ae10c798ea1f2914fd442aa72acf6d612f8fc8632fefed97a1575d55f952f720"
     },
     "E01": {
       "id": "E01",
@@ -1683,12 +1683,12 @@ const data={
       "equipment": "机",
       "gates": "G0",
       "pose": "右側面。前腕回内、右手背に左掌、伸展方向の力のみ",
-      "image": "images/E01.png",
+      "image": "images/E01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右前腕を台で支持し左手が右手背を押さえる。手首ほぼ中間位。",
       "clinicalStatus": "pending_review",
-      "sha256": "b06bc997a924d7010a6f6f790c91a0860b1469bc2e5237b120251568939dea3b"
+      "sha256": "adb1c0365d45a131decb446704376c109ff5eb19dd40c0b0e25f3bde4952fbe3"
     },
     "E02": {
       "id": "E02",
@@ -1703,12 +1703,12 @@ const data={
       "equipment": "机",
       "gates": "G0",
       "pose": "側面。右手首だけ机端から出し、小屈伸",
-      "image": "images/E02.png",
+      "image": "images/E02.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右前腕と肘を台支持、手首のみ屈伸。四肢の対応は連続。",
       "clinicalStatus": "pending_review",
-      "sha256": "e40ae13158f67540aad063229a59a9ffe3b200fbcd5bf63bc0586789a0dc9180"
+      "sha256": "63eb24d0df1810a0f06e37f7d0ea8d7177448ac89c3f7bb79030e69cc6debcf0"
     },
     "E03": {
       "id": "E03",
@@ -1723,12 +1723,12 @@ const data={
       "equipment": "なし",
       "gates": "G0",
       "pose": "正面斜め。肘90°体側、回外→回内。手首橈尺屈でない",
-      "image": "images/E03.png",
+      "image": "images/E03.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右肘体側で曲げたまま手掌を上・下に返す。投影による角度差を異常とは判定しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "09e428489f7a9af39332346c24fa226a41ca29a5a46cf022f06cd875c28ae1d6"
+      "sha256": "08f87495ee9552940e73e9074bee8e80e38b6b5bdbefde218e0dd1b47c1373fb"
     },
     "E04": {
       "id": "E04",
@@ -1743,12 +1743,12 @@ const data={
       "equipment": "机",
       "gates": "G0",
       "pose": "側面。右前腕回内、肘軽屈曲、左手が手背を軽く屈曲",
-      "image": "images/E04.png",
+      "image": "images/E04.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手前右前腕を支持し奥左手が右手背を軽く曲げる。肘の完全伸展なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "ee652f9bb186c8c4db0f1b9e7f3c18e57d78f23919a4cece72536f8c494d1915"
+      "sha256": "07fb1afa7a9715a2cd0f3beba5001d6392b45b777c2424884fc4694fed142b2b"
     },
     "E05": {
       "id": "E05",
@@ -1763,12 +1763,12 @@ const data={
       "equipment": "タオル",
       "gates": "G0",
       "pose": "手の接写と肘の位置。手首ほぼ中間位、強い屈曲なし",
-      "image": "images/E05.png",
+      "image": "images/E05.webp",
       "imageCaption": "",
       "assetStatus": "修正後採用候補",
       "assetNotes": "生成後実見：奥側の解剖学的右手でタオルを保持、手前左手は左大腿上。両コマで同側、手首ほぼ中間位。小さな握りの差は本文併用。",
       "clinicalStatus": "pending_review",
-      "sha256": "999f4c508bfa413c4fd3dda573e7382816b4db03f3f37dfef92faa6ab6fc495e"
+      "sha256": "1f7f2815a999fade7a933a51d5b4bb3ceb84adbcd83fb849d51b01e2d15599c4"
     },
     "E06": {
       "id": "E06",
@@ -1783,12 +1783,12 @@ const data={
       "equipment": "机、軽い重り",
       "gates": "G0",
       "pose": "側面。前腕回内、手首のみ屈曲から伸展。肘は動かさない",
-      "image": "images/E06.png",
+      "image": "images/E06.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "前腕回内・机支持を保ち手首のみ屈曲から伸展。",
       "clinicalStatus": "pending_review",
-      "sha256": "af30231a82f84490a35a3e254911e8656969cb8a835a4663af7b444d1ef3155d"
+      "sha256": "7f04a246052e8bd928e5a0bd667041efa825925a5cb895296e993e21188cfe0b"
     },
     "E07": {
       "id": "E07",
@@ -1803,12 +1803,12 @@ const data={
       "equipment": "机、軽い重り",
       "gates": "G0",
       "pose": "3コマ。左手介助上げ→左手離す→右手下降。左手が常に支え続けない",
-      "image": "images/E07.png",
+      "image": "images/E07.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "3コマで左手介助、手を離す、右手単独下降を確認。介助手は最終コマで隠れるが常時支えていない。",
       "clinicalStatus": "pending_review",
-      "sha256": "f13fb4ed8544a1a84cfb466a04d18ce4c4d7e902c28fc992e444cacaa65e9407"
+      "sha256": "4f9de407845b86cc27a0cd401d3b5fdf7bcd5629fbf5ed84a3e0337fb3a70034"
     },
     "E08": {
       "id": "E08",
@@ -1823,12 +1823,12 @@ const data={
       "equipment": "軽い棒または短レバー重り",
       "gates": "G0",
       "pose": "正面斜め。肘90°固定、棒の重心は手に近い。勢いを使わない",
-      "image": "images/E08.png",
+      "image": "images/E08.webp",
       "imageCaption": "肘を体側で90度に保ち、前腕だけをゆっくり回して棒の向きを変えます。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "共通人物で統一。右肘の体側固定、棒の垂直位から水平位への前腕回旋、正常な両上肢を目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "6bb19ba6a6baae85411cc5ad22f71fee7edc0e9e6f948bbc8bc38729dabc0237"
+      "sha256": "62fa591b658e64577864f35bcd6728c44aebc096cfd5e0fc19e66e2c26640964"
     },
     "E09": {
       "id": "E09",
@@ -1843,12 +1843,12 @@ const data={
       "equipment": "机、タオル",
       "gates": "G0",
       "pose": "手首中間位の静止。E05との違いは支持と保持時間",
-      "image": "images/E09.png",
+      "image": "images/E09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "前腕机支持で中間位の手首とタオル保持。左右指定はなく左手例示でも矛盾なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "de33bd46fdcc9040e272e4dfab8c3a1abd14937c2f844ab1724756b55036c8bf"
+      "sha256": "e52869afb69b959fa1a24c9cb73c53ef4c537696f1f38eb3c2f4d6c5dbbb6dcd"
     },
     "E10": {
       "id": "E10",
@@ -1864,12 +1864,12 @@ const data={
       "equipment": "机、指定重り",
       "gates": "G0",
       "pose": "E06の負荷variant。手首角度は同じ",
-      "image": "images/E10.png",
+      "image": "images/E10.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "E06と同様の支持・手首運動。重量を数値で固定していない。",
       "clinicalStatus": "pending_review",
-      "sha256": "6754f812c1b6341a44bbfb7c0c3b5219aa805034da0a8c1a71389012073e217e",
+      "sha256": "d168c2fb5c4033bf7c4b878f67f7b592e89ded91d2c244785a122405f0c53aa5",
       "baseExerciseId": "E06"
     },
     "A01": {
@@ -1885,12 +1885,12 @@ const data={
       "equipment": "椅子、脚支持",
       "gates": "G4該当時",
       "pose": "側面。踵支持、足関節底背屈のみ、円軌道なし",
-      "image": "images/A01.png",
+      "image": "images/A01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "脚・踵支持の足関節底背屈。底屈終点で踵の接触が弱く見えるが支持台上であり円運動や内返しではない。",
       "clinicalStatus": "pending_review",
-      "sha256": "e6f91b1ba78eef1bbcec3ae48faa97b6a8263954a7e10166aea30cec9a7a05bf"
+      "sha256": "7b383f895bffcb83597d7c16d268da1d2aac59abdc0af0f580f10db1c98e0a99"
     },
     "A02": {
       "id": "A02",
@@ -1905,12 +1905,12 @@ const data={
       "equipment": "椅子",
       "gates": "G4該当時",
       "pose": "側面。右足底接地、踵が手前へ、足関節背屈。膝も許可範囲",
-      "image": "images/A02.png",
+      "image": "images/A02.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手前右足底接地で椅子側へ少し引く。踵の接地と後方向矢印を確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "f5bc5b29f8359fd4323ce2cdbc9b7750b12fd386cc542c9c1b62adf9e0f77a66"
+      "sha256": "4ef4a18b26809d9d5f3109c9415330c4f3d8077fff88b6382ddd7d4428662a05"
     },
     "A03": {
       "id": "A03",
@@ -1925,12 +1925,12 @@ const data={
       "equipment": "椅子",
       "gates": "G0",
       "pose": "内側接写。踵と母趾球接地、趾は伸びたまま、内側縦アーチ小挙上",
-      "image": "images/A03.png",
+      "image": "images/A03.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "踵と前足部を接地し趾の強い屈曲なく小さなアーチ挙上。接写で動きの小ささを確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "065c4e0636b00592406c832653d98ff0ee5e05fef4cd820d0584075f06141d31"
+      "sha256": "865c7bd90354a09b58530e9c64340e3fae649765266cae28444f0af2bcfe8ccb"
     },
     "A04": {
       "id": "A04",
@@ -1945,12 +1945,12 @@ const data={
       "equipment": "安定したクッション付き支え",
       "gates": "G4該当時",
       "pose": "正面足部。右外側に抵抗、外反方向の力のみ。内返しの矢印なし",
-      "image": "images/A04.png",
+      "image": "images/A04.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "正面で右足外側（画面左）に壁固定クッション。膝は前向き、内返し矢印なし。",
       "clinicalStatus": "pending_review",
-      "sha256": "87dc65eed3df337ecbabba9908cf1172e881ebfcc8bf651550cc76ed2913fe01"
+      "sha256": "71533a266122aa22608c7220b96c91a6c3f9894fe5a43c58cf9c63a2e8e09088"
     },
     "A05": {
       "id": "A05",
@@ -1965,12 +1965,12 @@ const data={
       "equipment": "椅子",
       "gates": "G4該当時",
       "pose": "側面。両膝約90°、座位保持、両踵のみ上",
-      "image": "images/A05.png",
+      "image": "images/A05.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "座位・両前足部接地で両踵を挙上。外側だけに偏る描写はない。",
       "clinicalStatus": "pending_review",
-      "sha256": "7963e339e38f8d54ec38e9fc1dfbf61a912d80a65e7d9aabe00c6e0f3b02d89f"
+      "sha256": "9c8c2e3bd83e5ce10c2fcf5b7bde4de2d4bca15f62f342c247505ee41b389436"
     },
     "A06": {
       "id": "A06",
@@ -1985,12 +1985,12 @@ const data={
       "equipment": "壁",
       "gates": "G4",
       "pose": "側面。右足前、右膝前方へ、踵接地。壁との距離は個別設定",
-      "image": "images/A06.png",
+      "image": "images/A06.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手前右脚が前、踵接地のまま右膝を壁へ。距離を数値固定していない。",
       "clinicalStatus": "pending_review",
-      "sha256": "f2b0bd1af0b34220b075adedf05f94e31b1c77a231765829595bd665ce2c976c"
+      "sha256": "b6d1607efd6203d658300dcc69efef6e06278a8db5967dae95205a8d5cc9fc50"
     },
     "A07": {
       "id": "A07",
@@ -2005,12 +2005,12 @@ const data={
       "equipment": "ゴム、安全な内側固定点",
       "gates": "G4+G8",
       "pose": "足側上方。右足の内側にアンカー、外反でゴム伸長。左右固定方向を検査",
-      "image": "images/A07.png",
+      "image": "images/A07.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "右足先のバンドが内側（画面右）固定点へ連続。右足は外方へ、膝は前向き。",
       "clinicalStatus": "pending_review",
-      "sha256": "e9beaa5efbdf8b7544a3c95e1ac65040286941f098d021de316c9b8e74dff3b1"
+      "sha256": "f1f543ddce14cf620473cf28f57e63ab9d5a7fc2a1561bc20327792943886e2b"
     },
     "A08": {
       "id": "A08",
@@ -2025,12 +2025,12 @@ const data={
       "equipment": "支持台、床の印",
       "gates": "G4",
       "pose": "上方斜め。右足固定、左つま先3方向。跳躍なし",
-      "image": "images/A08.png",
+      "image": "images/A08.webp",
       "imageCaption": "図は左つま先を横へ触れる例です。右脚で支え、左つま先を前・横・後ろへ軽く触れて戻します。",
       "assetStatus": "説明補強",
       "assetNotes": "右脚と右手で支持、左つま先の横リーチとして適合。前・後リーチは図にないため本文で3方向を説明する必要。",
       "clinicalStatus": "pending_review",
-      "sha256": "bafaf034f6b4655651ba1caa36d71f73e018f298adaf71f584fdaf349d310576"
+      "sha256": "31001e1f35e2f13a997be8eef629ad57b4f11f44bfa29125894eb513b3219019"
     },
     "A09": {
       "id": "A09",
@@ -2045,12 +2045,12 @@ const data={
       "equipment": "手すり、柔らかい低い目印",
       "gates": "G4+G8",
       "pose": "側面。低いフォーム材、手支持、片足ずつ通過",
-      "image": "images/A09.png",
+      "image": "images/A09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手すり支持で低い柔らかい目印を片足ずつ通過。高い硬い障害物や跳躍ではない。",
       "clinicalStatus": "pending_review",
-      "sha256": "d9f776054b94527561a7f4fe80a5c039a299be8a88fb83aa92e2aa1273166fba"
+      "sha256": "8cf51271506fe27298c78a64916aa2d8bc72e49a96381b2f17b120988dfa8dbe"
     },
     "A10": {
       "id": "A10",
@@ -2065,12 +2065,12 @@ const data={
       "equipment": "支持台",
       "gates": "G4",
       "pose": "正面。左右交互の小さな足浮上、手支持。走る図にしない",
-      "image": "images/A10.png",
+      "image": "images/A10.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "台支持のまま右・左を交互に小さく挙上。走行や高い腿上げではない。",
       "clinicalStatus": "pending_review",
-      "sha256": "e10b3cc4564064f75628e46f33ebd9854e8c318e978dd0bcb34b9a537b5e03ca"
+      "sha256": "7a035b6155b4a293ac2742e5eeca5411e9d863a8020af3c0af6a1bef397d091b"
     },
     "P01": {
       "id": "P01",
@@ -2085,12 +2085,12 @@ const data={
       "equipment": "安全な壁、軽い球、空間",
       "gates": "G2該当時+G7+G8",
       "pose": "側面。両手胸前→肘伸ばす短いパス→両手受球。頭上投げにしない",
-      "image": "images/P01.png",
+      "image": "images/P01.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両手胸前パス・肘伸展・両手受球。重さと速度は静止画では保証不可。",
       "clinicalStatus": "pending_review",
-      "sha256": "c6387361d7ab432bc3993a3490b248e5774780fb6c0fcdd44830f3b90a3a70ef"
+      "sha256": "507425b6260c3fe2de6f017098ceada69a6bf731f36297a6dc32167ed1a81253"
     },
     "P02": {
       "id": "P02",
@@ -2147,12 +2147,12 @@ const data={
       "equipment": "滑らない平地",
       "gates": "G4+G6該当時+G7",
       "pose": "正面斜め。両足離地→両足着地、股膝屈曲で止まる。台から落とさない",
-      "image": "images/P04.png",
+      "image": "images/P04.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "両足の小さな離地から両足接地・股膝屈曲。静止と反復間休止は本文併用。",
       "clinicalStatus": "pending_review",
-      "sha256": "489514741c03bd1835b1644fac96be4f728321669c6e0977390ccd6441c56976"
+      "sha256": "58607c287f9037a3ceb1e8275fba16cd5944244a939ad6cf88b9967054e49a58"
     },
     "P05": {
       "id": "P05",
@@ -2167,12 +2167,12 @@ const data={
       "equipment": "平地、近くに監督者",
       "gates": "G4+G7",
       "pose": "前斜め。右足離地→右足着地、左足は終始浮く",
-      "image": "images/P05.png",
+      "image": "images/P05.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "手前右足で離地・着地、奥左足は終始後方浮上。四肢の連続性あり。",
       "clinicalStatus": "pending_review",
-      "sha256": "f45f75cd725eb1f40052c98082fd1a78749191b42c11a42680248ffe091c72c2"
+      "sha256": "99b2e67e14a283aa070507d010a354c472ef59846d90f164058cf048578f9617"
     },
     "P06": {
       "id": "P06",
@@ -2187,12 +2187,12 @@ const data={
       "equipment": "平地、床印",
       "gates": "G4+G6該当時+G7",
       "pose": "側面3コマ。小前方跳躍→両脚股膝屈曲→2秒静止",
-      "image": "images/P06.png",
+      "image": "images/P06.webp",
       "imageCaption": "両足で少し前へ跳び、両足で着地して2秒止まります。",
       "assetStatus": "説明補強",
       "assetNotes": "両足小前跳躍と屈曲着地は適合。2秒静止は図だけで読めないため本文併用。",
       "clinicalStatus": "pending_review",
-      "sha256": "5b770d03ec368bd48c00a829005783c6c3b1a9dfa6ba479d7fd98f17f8d82e89"
+      "sha256": "7a8281805a96fe4f8a40db9339880b63ca7f085d90ef5bace333bab6d585a0e7"
     },
     "P07": {
       "id": "P07",
@@ -2207,12 +2207,12 @@ const data={
       "equipment": "広い安全な平地",
       "gates": "G4該当時+G6該当時+G7+G8",
       "pose": "側面。低速走→複数歩で減速→停止。1歩で急停止の図にしない",
-      "image": "images/P07.png",
+      "image": "images/P07.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "4段階で軽走→減速→歩幅を小さく→停止。複数歩で減速する意図が明確。",
       "clinicalStatus": "pending_review",
-      "sha256": "9d12ad818f0cc72839aaffa888c74563cd6938569e96867e04baa00472f258f1"
+      "sha256": "1f70e2fafb801d5f2730950a646303c285583dd10a1bdc8f32e7e3090935b076"
     },
     "P08": {
       "id": "P08",
@@ -2227,12 +2227,12 @@ const data={
       "equipment": "床印、広い平地",
       "gates": "G4該当時+G6該当時+G7+G8",
       "pose": "斜め上。低速で約30°の予定コース。固定足上の急な膝ねじりでない",
-      "image": "images/P08.png",
+      "image": "images/P08.webp",
       "imageCaption": "床印に沿って低速で進み、予定した方向へ数歩かけて緩やかに曲がります。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "共通人物の3時点で統一。予定された緩い曲線を歩行し、固定足上の急な膝ねじりを描いていないことを目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "0b4b96ea25ff22efde3bd6975235aa8b0a5287f87c897371e7f0ac1140012499"
+      "sha256": "3a2aceddf551a1d98c6333ecfd23410c931a856b5de9f89b88bc000a38d89f6b"
     },
     "P09": {
       "id": "P09",
@@ -2247,12 +2247,12 @@ const data={
       "equipment": "平らな安全なコース",
       "gates": "G6該当時+G7+G8",
       "pose": "歩行→軽走の2コマ。傾斜や全力走なし",
-      "image": "images/P09.png",
+      "image": "images/P09.webp",
       "imageCaption": "",
       "assetStatus": "採用候補",
       "assetNotes": "歩行と軽走の2コマ。対角の腕振り、四肢連続性に問題を認めない。時間と負荷は本文併用。",
       "clinicalStatus": "pending_review",
-      "sha256": "528c851cf514ee600ade7143a3e5450dc07ffb7c881f75055a1c3fb2491c4371"
+      "sha256": "5c6450bfe3becdca6e645675246938d9885627890863d3f5bb2dffee03d80a76"
     },
     "P10": {
       "id": "P10",
@@ -2288,12 +2288,12 @@ const data={
       "equipment": "軽いゴム、専用固定点",
       "gates": "G1+G8",
       "pose": "正面。右肘体側90°、固定点は右側方腰高、前腕が腹側へ",
-      "image": "images/S30.png",
+      "image": "images/S30.webp",
       "imageCaption": "肘を体の横で保ち、前腕をお腹側へ回します。ゴムの固定点と抵抗の強さは担当者と確認してください。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "fecdd92336d87089f3005dd3755b4a55f31e2f4051eaa155f298e70ff87e9181",
+      "sha256": "fce1fb6e20209bb16bffa9f8f44b340460693e38f3063f1df9e1ea41f5ed5821",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R5",
@@ -2313,12 +2313,12 @@ const data={
       "equipment": "マット",
       "gates": "G1",
       "pose": "側面。膝つき腕立て、肘伸展一定、肩甲骨の小さな前方突出",
-      "image": "images/S37.png",
+      "image": "images/S37.webp",
       "imageCaption": "両手と両膝で支えます。肘を曲げる腕立てではなく、肘を伸ばしたまま肩甲骨を動かします。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "1b34a9b5987b371c1f0d36b2a73cbc9dcbdbc10e18b988ca312a8c7b219f1306",
+      "sha256": "fbd475b8e6dacc89f84cdf0719e1352fae916c4dd1f02cefcae4bfebfee2905b",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R5",
@@ -2338,12 +2338,12 @@ const data={
       "equipment": "なし",
       "gates": "G5該当時",
       "pose": "正面と側面。手掌が額／後頭部、頭部静止",
-      "image": "images/N12.png",
+      "image": "images/N12.webp",
       "imageCaption": "額と後頭部で、それぞれ手と頭を軽く押し合います。頭は動かさず、息を止めません。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "共通人物で統一。額／後頭部への手掌接触、頭頚部中間位、反対手の大腿支持、正常な両上肢を目視確認。",
       "clinicalStatus": "pending_review",
-      "sha256": "60ced3bc002ab036dc14796f1c57d779edfe41626f16701824d4cb42014c4aba",
+      "sha256": "cd015a8121142b0cf7fc3e6c7ac894bd40b841b79c5c780923b07cf52a445215",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R9"
@@ -2362,12 +2362,12 @@ const data={
       "equipment": "マット",
       "gates": "G5該当時+G6該当時",
       "pose": "側面。前腕・膝支持、体幹一直線",
-      "image": "images/T25.png",
+      "image": "images/T25.webp",
       "imageCaption": "前腕と膝で支え、腰を反らさず自然に呼吸します。保持時間は処方の指示に従ってください。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "d98a629857e6ea68f6b1a2940665c094d95c3cecc539049d8ea914a0fac5d94a",
+      "sha256": "2359f3e4c2db6ebf2b8d22f1b68cabb2679b0732e9f95f04378b8e9e6c6c7c05",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R3"
@@ -2386,12 +2386,12 @@ const data={
       "equipment": "マット",
       "gates": "G5該当時+G6該当時",
       "pose": "側面。前腕・つま先支持、体幹一直線",
-      "image": "images/T26.png",
+      "image": "images/T26.webp",
       "imageCaption": "前腕とつま先で支えます。腰が落ちる前に終え、難しい場合は膝つきに戻します。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "79b4dc21c1fc3bb8c03ed0eb2b4e005737ba009330ea864ecd98343ac93fab51",
+      "sha256": "c5a72e8029343177a91b016fd513e5185ed28089b6feb6ee413d34fd15a3908b",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R3"
@@ -2410,12 +2410,12 @@ const data={
       "equipment": "マット",
       "gates": "G4該当時+G6該当時",
       "pose": "正面。側臥位、上側脚の外転、骨盤垂直",
-      "image": "images/K26.png",
+      "image": "images/K26.webp",
       "imageCaption": "図は右脚の例です。下側の膝を曲げ、上の脚は伸ばして少し上げます。骨盤を後ろに倒さないでください。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "dcb0bf5190066d9918c9d794c77b5be397799e5919258410c3fd8c84d3f1efc4",
+      "sha256": "9756a4da63903135097734dc6cf257a613a726e2eb52cec2a3ea4f38f0a926d7",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R4",
@@ -2435,12 +2435,12 @@ const data={
       "equipment": "安全な歩行路",
       "gates": "G4該当時",
       "pose": "側面。早歩きのストライドと腕振り",
-      "image": "images/K38.png",
+      "image": "images/K38.webp",
       "imageCaption": "左は少し速い歩行、右は楽な歩行の例です。走らず、時間とセット数は処方の指示に従ってください。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "e8bd1236b179eedbe7b27d17c83708f181844002b2aad493275a88121fbddbc6",
+      "sha256": "304639a0f6dda6d4c7be696cead891adbc891b95b9b547d136c5e28a4bc8b1b1",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R4",
@@ -2460,12 +2460,12 @@ const data={
       "equipment": "ゴム、前方の固定点",
       "gates": "G4該当時+G8",
       "pose": "側面。座位、右足背にゴム、足関節背屈",
-      "image": "images/A11.png",
+      "image": "images/A11.webp",
       "imageCaption": "図は右足の例です。かかとを支えたまま、つま先を手前へ引きます。ゴムの固定を確認してください。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "b56d43a767337408b4200bce538dcc9c1c45f61ea3a4a8617bb4038f752a4030",
+      "sha256": "e35abf6af9f77423d5f1ecd139d170144d16b379e192b4d1301483d77dbdf660",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R14"
@@ -2484,12 +2484,12 @@ const data={
       "equipment": "ゴム",
       "gates": "G4該当時",
       "pose": "側面。長座、足底にゴム、底屈",
-      "image": "images/A13.png",
+      "image": "images/A13.webp",
       "imageCaption": "図は右足の例です。ゴムを両手で保ち、足首を内へ倒さずつま先を前へ押します。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "1b212d5dece207bea331983a2ee2e025fa0fcc2935005e3b1e62be3dfb7a10ce",
+      "sha256": "a304dbaf4b952ef8514be7b01735d2e7ce6ee8e2d03f3ea46b918977329dfcf2",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R14"
@@ -2508,12 +2508,12 @@ const data={
       "equipment": "床の印、近くの支持台",
       "gates": "G4",
       "pose": "上方。右脚支持、左つま先3方向、手は腰",
-      "image": "images/A15.png",
+      "image": "images/A15.webp",
       "imageCaption": "図は右脚で支える例です。動かす足は前・横・後ろへ。ふらついたらすぐ台につかまります。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "d317eab603b7dee2368aea43ef2a824c8c7b36bfd4f6b20d8a12799c021d29d0",
+      "sha256": "d377e9a59c77102fdd50fdb69f7739d2f4a4a1f4770822199f5483ae50d7dd32",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R14",
@@ -2533,12 +2533,12 @@ const data={
       "equipment": "床の線",
       "gates": "G4+G7",
       "pose": "正面。両足で線の左右へ跳躍",
-      "image": "images/P12.png",
+      "image": "images/P12.webp",
       "imageCaption": "左右への小さな両脚跳びです。片道の着地で1回と数えます。着地が不安定なら毎回止まります。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "0d3cddf550c3b8e3bbf3615639c543e501523830c1f4c8c515161d50273a8fa0",
+      "sha256": "19cd646f41804722b9fa8fc8c6d920e929e178a2c4686b07cb3c3cc90957dadb",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R23",
@@ -2558,12 +2558,12 @@ const data={
       "equipment": "平地",
       "gates": "G4+G7",
       "pose": "正面。左→右の横跳び、右脚片脚着地・股膝屈曲",
-      "image": "images/P13.png",
+      "image": "images/P13.webp",
       "imageCaption": "左右それぞれ、片脚で着地して2秒止まります。距離は担当者と確認し、止まれる短い距離から始めます。",
       "assetStatus": "生成画像・姿勢確認済み",
       "assetNotes": "AI生成後に支持面・左右・動作方向を目視照合。動きの量と条件は本文・担当者の指示を併用。臨床承認を意味しない。",
       "clinicalStatus": "pending_review",
-      "sha256": "d268a5e5ef109f5cf21791ea6f33f50bfb89ec2c1e4e2f26571396d01bb2803d",
+      "sha256": "fa41e31a176421cd36c132655209f9a021f6c4680bac9707f2c97e3ed894f35c",
       "addedIn": "0.3",
       "evidenceRefs": [
         "R14",
@@ -2574,104 +2574,104 @@ const data={
       "id": "P14", "key": "v02_P14", "name": "椅子で股関節を内外へ回す", "purpose": "股関節回旋の可動域",
       "steps": ["椅子に浅く座り、太ももと骨盤を保ったまま片足先を外、内へゆっくり動かします。反対側も行います。"],
       "doseProposal": "R：左右各5回×1セット", "caution": "膝を手でねじらないでください。股関節前面の挟まり感や痛みが出る範囲へ動かしません。", "equipment": "安定した椅子", "gates": "G0",
-      "pose": "正面斜め。座位で大腿を固定し、下腿を外・内へ動かす", "image": "images/P14.png", "imageCaption": "足先を外へ動かすと股関節は内旋、内へ動かすと外旋します。太ももと骨盤は保ちます。",
-      "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "青い足首バンド側を例示。中間位、下腿を外、下腿を内の3姿勢。", "clinicalStatus": "pending_review", "sha256": "db00130d30cd94554a190509b4cf0b6aebd6fbadbf78791e5f5fd7538904f543", "addedIn": "0.4"
+      "pose": "正面斜め。座位で大腿を固定し、下腿を外・内へ動かす", "image": "images/P14.webp", "imageCaption": "足先を外へ動かすと股関節は内旋、内へ動かすと外旋します。太ももと骨盤は保ちます。",
+      "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "青い足首バンド側を例示。中間位、下腿を外、下腿を内の3姿勢。", "clinicalStatus": "pending_review", "sha256": "f4931e726207d79d8d0fd946f6136f2fd4f610398ca3ad64eb15596c816fb097", "addedIn": "0.4"
     },
     "P15": {
       "id": "P15", "key": "v02_P15", "name": "支持つき90/90切り替え", "purpose": "股関節内外旋の動的可動域",
       "steps": ["両膝を曲げて座り、両手を後ろにつきます。両膝をゆっくり左右へ倒し、楽な範囲で脚の向きを切り替えます。"],
       "doseProposal": "R：左右各4回×1セット", "caution": "膝を床へ押しつけず、90度を強制しません。股関節前面や膝の痛みが出たら中止します。", "equipment": "床、必要なら座面クッション", "gates": "G0",
-      "pose": "床座位、後方手支持。両膝を左右のシンボックス位へ切替", "image": "images/P15.png", "imageCaption": "手で身体を支え、前脚と後脚を重ねずに左右の90/90姿勢を切り替えます。", "assetStatus": "生成画像・姿勢確認済み", "assetNotes": "共通人物で統一。前脚の股関節外旋と後脚の股関節内旋を、左右反転した2姿勢で表示。両脚・両足の連続性を目視確認。", "clinicalStatus": "pending_review", "sha256": "e93d711a26a3869f9e823057c211d82af1d5f3d3d72b73a41da9f506bbf0cb49", "addedIn": "0.4"
+      "pose": "床座位、後方手支持。両膝を左右のシンボックス位へ切替", "image": "images/P15.webp", "imageCaption": "手で身体を支え、前脚と後脚を重ねずに左右の90/90姿勢を切り替えます。", "assetStatus": "生成画像・姿勢確認済み", "assetNotes": "共通人物で統一。前脚の股関節外旋と後脚の股関節内旋を、左右反転した2姿勢で表示。両脚・両足の連続性を目視確認。", "clinicalStatus": "pending_review", "sha256": "fda5f3aaae7f3d1392c167c2533de8b5d07fffa460e3ec8551758f16dfa020dc", "addedIn": "0.4"
     },
     "P16": {
       "id": "P16", "key": "v02_P16", "name": "支持つき90/90前傾", "purpose": "前脚側の股関節外旋可動域",
       "steps": ["前後の膝を楽な角度に曲げて座り、必要ならお尻をクッションで支えます。背中を保ったまま前脚側へ少し前傾します。反対側も行います。"],
       "doseProposal": "S：左右15秒×2回", "caution": "手で膝を押さず、強い前屈をしません。股関節前面の挟まり感や膝痛が出たら中止します。", "equipment": "床、クッション", "gates": "G0",
-      "pose": "90/90座位、指先支持、股関節から小さく前傾", "image": "images/P16.png", "imageCaption": "背中を丸めず、前脚側へ小さく前傾します。90度や床への接地は強制しません。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "クッション支持の開始と小さな前傾を2姿勢で表示。", "clinicalStatus": "pending_review", "sha256": "4cb45a17f904bc044f8d684bca21db9cfe424075d495d36aa79c964d8d442d2c", "addedIn": "0.4"
+      "pose": "90/90座位、指先支持、股関節から小さく前傾", "image": "images/P16.webp", "imageCaption": "背中を丸めず、前脚側へ小さく前傾します。90度や床への接地は強制しません。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "クッション支持の開始と小さな前傾を2姿勢で表示。", "clinicalStatus": "pending_review", "sha256": "10faef7cbf36f8016a31c3025346f28dbb91fc919eaf7e73131c26fd93cfbcfc", "addedIn": "0.4"
     },
     "P17": {
       "id": "P17", "key": "v02_P17", "name": "片膝立ちで股関節前を伸ばす", "purpose": "股関節前面の柔軟性",
       "steps": ["片膝をクッションにつき、骨盤を少し後ろへ傾けます。腰を反らず、身体を小さく前へ移します。反対側も行います。"],
       "doseProposal": "S：左右15秒×2回", "caution": "腰を反らして代用しません。腰痛や膝の圧迫痛が出る場合は変更してください。", "equipment": "膝下クッション", "gates": "G0",
-      "pose": "片膝立ち、両手腰、骨盤後傾を保って小さく前方移動", "image": "images/P17.png", "imageCaption": "腰を反らず、骨盤と身体を一緒に少し前へ移します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "片膝立ちの開始と小さな前方移動を表示。", "clinicalStatus": "pending_review", "sha256": "8557401799de3eb226756a90af7eb8e745152c98489442f822d0f47449e0ddfd", "addedIn": "0.4"
+      "pose": "片膝立ち、両手腰、骨盤後傾を保って小さく前方移動", "image": "images/P17.webp", "imageCaption": "腰を反らず、骨盤と身体を一緒に少し前へ移します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "片膝立ちの開始と小さな前方移動を表示。", "clinicalStatus": "pending_review", "sha256": "8bd4c4e2aba1e1c35e11a409553b4d7b824b9e17427602f6b8656f43a8c2b774", "addedIn": "0.4"
     },
     "P18": {
       "id": "P18", "key": "v02_P18", "name": "内ももロックバック", "purpose": "股関節内転筋の動的可動域",
       "steps": ["四つ這いから片脚を横へ伸ばします。背中を保ち、お尻を少し後ろへ引いて戻します。反対側も行います。"],
       "doseProposal": "R：左右各5回×1セット", "caution": "鼠径部の痛みを越えて動かしません。支持する手首や膝が痛む場合は中止します。", "equipment": "運動マット", "gates": "G0",
-      "pose": "四つ這いから片脚を側方伸展、骨盤を後方へ移動", "image": "images/P18.png", "imageCaption": "横へ伸ばした脚を保ち、お尻を小さく後ろへ引きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "開始と後方移動の2姿勢。支持点と脚の分離を確認。", "clinicalStatus": "pending_review", "sha256": "b550263950a3ef20a21c395347132c8ad824d3485464661186616302d65b92e1", "addedIn": "0.4"
+      "pose": "四つ這いから片脚を側方伸展、骨盤を後方へ移動", "image": "images/P18.webp", "imageCaption": "横へ伸ばした脚を保ち、お尻を小さく後ろへ引きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "開始と後方移動の2姿勢。支持点と脚の分離を確認。", "clinicalStatus": "pending_review", "sha256": "525d703bf4f18cdc13841e043bce7477363b9ba52d5e77f69ce0303dc435f08c", "addedIn": "0.4"
     },
     "P19": {
       "id": "P19", "key": "v02_P19", "name": "仰向けでもも裏を伸ばす", "purpose": "ハムストリングスの柔軟性",
       "steps": ["仰向けで片ももを両手で支えます。太ももの位置を保ち、膝をゆっくり伸ばします。反対側も行います。"],
       "doseProposal": "S：左右15秒×2回", "caution": "膝は少し曲がっていて構いません。しびれを伴う伸びや腰痛が出たら中止します。", "equipment": "運動マット", "gates": "G0",
-      "pose": "仰向け、反対膝屈曲、両手で大腿後面支持、膝伸展", "image": "images/P19.png", "imageCaption": "太ももを支えたまま、膝を無理のない範囲で伸ばします。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "膝屈曲位から伸展位への2姿勢。", "clinicalStatus": "pending_review", "sha256": "cde57e52ba1251b52be5a12956471c5f7fcf0475418e582441bc426e7e26d9ed", "addedIn": "0.4"
+      "pose": "仰向け、反対膝屈曲、両手で大腿後面支持、膝伸展", "image": "images/P19.webp", "imageCaption": "太ももを支えたまま、膝を無理のない範囲で伸ばします。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "膝屈曲位から伸展位への2姿勢。", "clinicalStatus": "pending_review", "sha256": "3632c843e6f7e0d06507e7973569d9ae9488193c15cb3fc2ffa5a830849517e8", "addedIn": "0.4"
     },
     "P20": {
       "id": "P20", "key": "v02_P20", "name": "四つ這いで胸を回す", "purpose": "胸椎回旋の可動域",
       "steps": ["四つ這いで片手を耳の後ろへ添えます。骨盤を保ち、肘と胸を床側から天井側へゆっくり回します。反対側も行います。"],
       "doseProposal": "R：左右各5回×1セット", "caution": "首だけを強く回しません。支持側の手首痛やめまいが出たら中止します。", "equipment": "運動マット", "gates": "G0",
-      "pose": "四つ這い、片手後頭部、肘下向きから上向き", "image": "images/P20.png", "imageCaption": "骨盤をなるべく保ち、胸をゆっくり回します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "後方斜めから見た2姿勢。支持手と両膝を保ち、反対の肘を床側から天井側へ動かす。手足の本数を確認済み。", "clinicalStatus": "pending_review", "sha256": "a3d68546d7003c5362460cfc829a8abbda8ce38831815c3f04d7972e099e3e8f", "addedIn": "0.4"
+      "pose": "四つ這い、片手後頭部、肘下向きから上向き", "image": "images/P20.webp", "imageCaption": "骨盤をなるべく保ち、胸をゆっくり回します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "後方斜めから見た2姿勢。支持手と両膝を保ち、反対の肘を床側から天井側へ動かす。手足の本数を確認済み。", "clinicalStatus": "pending_review", "sha256": "dae3757a1fa76bea26ffb8170368676f32d076636a302e694ace444f34f3f562", "addedIn": "0.4"
     },
     "P21": {
       "id": "P21", "key": "v02_P21", "name": "スレッド・ザ・ニードル", "purpose": "胸椎回旋の動的可動域",
       "steps": ["四つ這いから片腕を上へ開き、次に反対の腕の下へ通して戻します。反対側も行います。"],
       "doseProposal": "R：左右各5回×1セット", "caution": "肩へ体重を押しつけず、深く沈み込む必要はありません。首や肩の痛みが出たら中止します。", "equipment": "運動マット", "gates": "G0",
-      "pose": "四つ這い、片腕を上方から反対腕下へ通す", "image": "images/P21.png", "imageCaption": "上へ開いた腕を、反対の腕の下へ楽な範囲で通します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "上方リーチと腕を通した終点を2姿勢で表示。", "clinicalStatus": "pending_review", "sha256": "566b716a085e8dc678c78ddb6f6810abc31226d8d9d7776603a71f70392748e6", "addedIn": "0.4"
+      "pose": "四つ這い、片腕を上方から反対腕下へ通す", "image": "images/P21.webp", "imageCaption": "上へ開いた腕を、反対の腕の下へ楽な範囲で通します。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "上方リーチと腕を通した終点を2姿勢で表示。", "clinicalStatus": "pending_review", "sha256": "73c2ce250c6be430b0df172e107f938f8c43c33814bc1078bdf2d6d69ad3cc43", "addedIn": "0.4"
     },
     "P22": {
       "id": "P22", "key": "v02_P22", "name": "台で胸と肩を伸ばす", "purpose": "胸椎伸展と両肩挙上の可動域",
       "steps": ["安定した台に両肘を置き、お尻を後ろへ引きます。腰を反らず、胸を少し下げて戻します。"],
       "doseProposal": "S：10秒×2回", "caution": "肩の挟まり感があれば、腕の高さと範囲を下げます。台が動かないことを確認します。", "equipment": "安定した台、膝下クッション", "gates": "G0",
-      "pose": "両膝立ち、台に両肘支持、骨盤後方移動と胸部下降", "image": "images/P22.png", "imageCaption": "両肘を台で支え、腰を反らずにお尻を少し後ろへ引きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "両上肢を対称に支持した開始と終点。", "clinicalStatus": "pending_review", "sha256": "886e86a0010ce7cfb34e770696417d584c5ba30e48542b71eaef8369f989dfd4", "addedIn": "0.4"
+      "pose": "両膝立ち、台に両肘支持、骨盤後方移動と胸部下降", "image": "images/P22.webp", "imageCaption": "両肘を台で支え、腰を反らずにお尻を少し後ろへ引きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "両上肢を対称に支持した開始と終点。", "clinicalStatus": "pending_review", "sha256": "96d8ee0c767b0e8acaebdfc77a8898acf4df4176bc240aee37cb765a2d144132", "addedIn": "0.4"
     },
     "P23": {
       "id": "P23", "key": "v02_P23", "name": "小さなスコーピオン", "purpose": "胸椎・股関節を含む複合回旋",
       "steps": ["うつ伏せで両腕を横へ置きます。右膝を約90度曲げ、右股関節を軽く伸ばして踵を浮かせます。膝の角度を保ち、右踵を身体の左側へ小さく回して戻します。反対側も同様に行います。"],
       "doseProposal": "R：左右各3回×1セット", "caution": "上級の複合動作です。足を床へ着ける目標はありません。腰を反らすと痛む場合、肩・股関節痛、術後は選びません。", "equipment": "運動マット", "gates": "G7",
-      "pose": "腹臥位T字、右膝約90度屈曲、右股関節軽度伸展、右踵を身体の左側へ回旋", "image": "images/P23.png", "imageCaption": "図は右脚の例です。膝を約90度に保ち、浮かせた右踵を身体の左側へ小さく回します。足を床へ着けません。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "真上から見た2姿勢。画面左の患者左脚は伸ばしたまま、画面右の右股関節からつながる右膝を約90度曲げ、右踵が中心線を越えて患者左側へ移動する終点。手足の本数を確認済み。", "clinicalStatus": "pending_review", "sha256": "3a43639c5651ae4d60ec468927c95d3f98190e54965f02b0d3c714fa481e68ab", "addedIn": "0.4"
+      "pose": "腹臥位T字、右膝約90度屈曲、右股関節軽度伸展、右踵を身体の左側へ回旋", "image": "images/P23.webp", "imageCaption": "図は右脚の例です。膝を約90度に保ち、浮かせた右踵を身体の左側へ小さく回します。足を床へ着けません。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "真上から見た2姿勢。画面左の患者左脚は伸ばしたまま、画面右の右股関節からつながる右膝を約90度曲げ、右踵が中心線を越えて患者左側へ移動する終点。手足の本数を確認済み。", "clinicalStatus": "pending_review", "sha256": "2d397283a940003d6119163949ea51a90d2208e2c59421917d3707fb57d10bcf", "addedIn": "0.4"
     },
     "P24": {
       "id": "P24", "key": "v02_P24", "name": "壁で胸の前を伸ばす", "purpose": "胸部・肩前面の柔軟性",
       "steps": ["前腕を壁につけ、身体を少し反対へ向けます。胸の前が軽く伸びる位置で止め、反対側も行います。"],
       "doseProposal": "S：左右15秒×2回", "caution": "肘を肩より高く上げすぎません。肩前面の痛みやしびれが出たら中止します。", "equipment": "壁", "gates": "G0",
-      "pose": "前腕壁支持、肘は肩より低位、体幹を小さく反対へ回旋", "image": "images/P24.png", "imageCaption": "前腕を壁につけたまま、身体を小さく反対へ向けます。反対側も行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "同じ右前腕を壁へ保った開始と回旋終点。", "clinicalStatus": "pending_review", "sha256": "cfc4ee374bdec61f46e7a6a0d7781debfb3f1dcec65e82488816f25420792e21", "addedIn": "0.4"
+      "pose": "前腕壁支持、肘は肩より低位、体幹を小さく反対へ回旋", "image": "images/P24.webp", "imageCaption": "前腕を壁につけたまま、身体を小さく反対へ向けます。反対側も行います。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "同じ右前腕を壁へ保った開始と回旋終点。", "clinicalStatus": "pending_review", "sha256": "348c8130e8d217052878bd5bb1133c4dc89d2a5fb561a034b1fb9831dc0c6c2f", "addedIn": "0.4"
     },
     "P25": {
       "id": "P25", "key": "v02_P25", "name": "小さなアームサークル", "purpose": "運動前の両肩の動的準備",
       "steps": ["両腕を楽な高さへ広げ、小さな円を前、後ろへゆっくり描きます。"],
       "doseProposal": "R：前後各5回×1セット", "caution": "勢いで大きく回さず、肩をすくめません。痛みや不安定感が出たら中止します。", "equipment": "なし", "gates": "G0",
-      "pose": "立位、両腕を肩よりやや低く外転、小円運動", "image": "images/P25.png", "imageCaption": "肩をすくめず、両手で小さな円を描きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "正面立位、左右対称の小さい円矢印。", "clinicalStatus": "pending_review", "sha256": "7e4e9e1195b7c6754722b8e346ee1db9c0b727c0362b900244900d1209aad2e8", "addedIn": "0.4"
+      "pose": "立位、両腕を肩よりやや低く外転、小円運動", "image": "images/P25.webp", "imageCaption": "肩をすくめず、両手で小さな円を描きます。", "assetStatus": "AI生成画像・要臨床確認", "assetNotes": "正面立位、左右対称の小さい円矢印。", "clinicalStatus": "pending_review", "sha256": "ca347e655845f6305bafecf2f27546bc7604416c1db624d6c676d2cf04f1d029", "addedIn": "0.4"
     },
     "P26": {
       "id": "P26", "key": "v02_P26", "name": "修正スリーパーストレッチ", "purpose": "肩後方の柔軟性",
       "steps": ["横向きで下側の上腕をタオルで支え、肩と肘を楽な角度にします。反対の手で前腕を内側へ少し倒します。反対側も担当者の指示で行います。"],
       "doseProposal": "S：左右15秒×1回", "caution": "個別指導後に行います。肩前面の挟まり感、不安定感、痛みが出たら中止します。", "equipment": "ベッド、折ったタオル", "gates": "G1",
-      "pose": "側臥位、肩をタオル支持、肩90度未満・肘90度、前腕を小さく内旋", "image": "images/P26.png", "imageCaption": "図は右肩の例です。右肘をタオル上で保ち、左手で右前腕を小さくマット側へ倒します。", "assetStatus": "生成画像・姿勢確認済み", "assetNotes": "共通人物で統一。右側臥位、右肩約70度、右肘90度を固定し、左手で右前腕だけを小さく内旋する2姿勢。右手と左手を分離して目視確認。", "clinicalStatus": "pending_review", "sha256": "1a72eafa3427dcb63b0d283ac4aa80c3b376135db90d7809183eead5332fbd9a", "addedIn": "0.4"
+      "pose": "側臥位、肩をタオル支持、肩90度未満・肘90度、前腕を小さく内旋", "image": "images/P26.webp", "imageCaption": "図は右肩の例です。右肘をタオル上で保ち、左手で右前腕を小さくマット側へ倒します。", "assetStatus": "生成画像・姿勢確認済み", "assetNotes": "共通人物で統一。右側臥位、右肩約70度、右肘90度を固定し、左手で右前腕だけを小さく内旋する2姿勢。右手と左手を分離して目視確認。", "clinicalStatus": "pending_review", "sha256": "d62698be5ff1d1230ed6934190306981b623cd6564ee6a16099c3c78f5309563", "addedIn": "0.4"
     },
     "P27": {
       "id": "P27", "key": "v02_P27", "name": "足関節サポートテープ", "purpose": "活動時の足関節外部支持",
       "steps": ["担当者が教えた非伸縮テープの方法で貼ります。貼付後に短く歩き、足指の色、温度、感覚と違和感を確認します。"],
       "doseProposal": "T：必要な活動時に1回", "caution": "担当者の指導後のみ。傷・湿疹・アレルギー部位には貼りません。しびれ、冷感、色の変化、灼熱感、水疱が出たら直ちに外します。", "equipment": "指定された非伸縮テープ、皮膚保護材", "gates": "G7+G8",
-      "pose": "足関節の完成テープ概念図。具体的手順は個別指導", "image": "images/P27.png", "imageCaption": "完成位置の概念図です。テープの種類、張力、方向、装着時間は担当者の指示を優先します。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "裸足と完成後の比較。自己流の貼付手順としては使わない。", "clinicalStatus": "pending_review", "sha256": "0fa1dbc2e005e05896b58ac574c14aea5e1423846a16921335d5d9ac7ed68ba2", "addedIn": "0.4"
+      "pose": "足関節の完成テープ概念図。具体的手順は個別指導", "image": "images/P27.webp", "imageCaption": "完成位置の概念図です。テープの種類、張力、方向、装着時間は担当者の指示を優先します。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "裸足と完成後の比較。自己流の貼付手順としては使わない。", "clinicalStatus": "pending_review", "sha256": "3d599883fb350e097656ed5ba4a78b48e99803179f582314ba19c776bc6ba3c9", "addedIn": "0.4"
     },
     "P28": {
       "id": "P28", "key": "v02_P28", "name": "足底アーチサポートテープ", "purpose": "足底症状への短期補助",
       "steps": ["担当者が教えた位置へ貼り、貼付後に短く歩いて症状と皮膚の状態を確認します。"],
       "doseProposal": "T：必要な活動時に1回", "caution": "担当者の指導後のみ。循環を妨げる巻き方をせず、しびれ、冷感、色の変化、かゆみ、水疱が出たら直ちに外します。", "equipment": "指定されたテープ、皮膚保護材", "gates": "G7+G8",
-      "pose": "足底アーチの完成テープ概念図。具体的手順は個別指導", "image": "images/P28.png", "imageCaption": "完成位置の概念図です。貼り方と装着時間は担当者の指示を優先します。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "足底面の裸足と完成後。自己流の貼付手順としては使わない。", "clinicalStatus": "pending_review", "sha256": "92df1db8cf26ea2c651d2058b9e133876b6fbd5cdd319fc9a0b6ffe0aa540da6", "addedIn": "0.4"
+      "pose": "足底アーチの完成テープ概念図。具体的手順は個別指導", "image": "images/P28.webp", "imageCaption": "完成位置の概念図です。貼り方と装着時間は担当者の指示を優先します。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "足底面の裸足と完成後。自己流の貼付手順としては使わない。", "clinicalStatus": "pending_review", "sha256": "02480d46eff202c027ed80ed8bf0a301a3727867b43728a6e387be25eabba32e", "addedIn": "0.4"
     },
     "P29": {
       "id": "P29", "key": "v02_P29", "name": "膝蓋骨周囲サポートテープ", "purpose": "膝前面症状への短期補助",
       "steps": ["担当者が決めた位置へ貼り、浅い膝曲げや階段動作で痛みの変化と皮膚を確認します。"],
       "doseProposal": "T：必要な活動時に1回", "caution": "運動や負荷調整の代わりにはしません。しびれ、冷感、色の変化、かゆみ、水疱、痛みの増加で直ちに外します。", "equipment": "指定されたテープ、皮膚保護材", "gates": "G7+G8",
-      "pose": "膝蓋骨周囲の完成テープ概念図。具体的手順は個別指導", "image": "images/P29.png", "imageCaption": "完成位置の概念図です。症状に合う方向と張力を担当者が決めます。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "裸膝と完成後の比較。全周を強く締める指示ではない。", "clinicalStatus": "pending_review", "sha256": "a1ff3d26881b5f7b681b700a798ed991536c007bbba1ac5e33a257fff1db1164", "addedIn": "0.4"
+      "pose": "膝蓋骨周囲の完成テープ概念図。具体的手順は個別指導", "image": "images/P29.webp", "imageCaption": "完成位置の概念図です。症状に合う方向と張力を担当者が決めます。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "裸膝と完成後の比較。全周を強く締める指示ではない。", "clinicalStatus": "pending_review", "sha256": "4e7fc35018a3de469f862d61ce0b85acc800d2bbff7c7e912aa766020403cc7b", "addedIn": "0.4"
     },
     "P30": {
       "id": "P30", "key": "v02_P30", "name": "肩の補助テープ", "purpose": "肩症状への短期的な補助",
       "steps": ["担当者が決めた肩・肩甲骨周囲の位置へ貼り、腕をゆっくり動かして症状と皮膚を確認します。"],
       "doseProposal": "T：必要な活動時に1回", "caution": "筋力増強、姿勢の恒久矯正、脱臼予防を保証しません。かゆみ、灼熱感、水疱、しびれ、痛みの増加で直ちに外します。", "equipment": "指定された伸縮テープ、皮膚保護材", "gates": "G1+G7+G8",
-      "pose": "肩外側から肩甲帯の完成テープ概念図。具体的手順は個別指導", "image": "images/P30.png", "imageCaption": "完成位置の概念図です。テープは短期補助で、運動療法の代わりではありません。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "右肩の未貼付と完成後の比較。貼付方向・張力は個別指導。", "clinicalStatus": "pending_review", "sha256": "48af1cf4128c27f89bfdba1e5536cada1b4dd41f23edfccfb5b2c31c340697de", "addedIn": "0.4"
+      "pose": "肩外側から肩甲帯の完成テープ概念図。具体的手順は個別指導", "image": "images/P30.webp", "imageCaption": "完成位置の概念図です。テープは短期補助で、運動療法の代わりではありません。", "assetStatus": "AI生成概念図・要臨床確認", "assetNotes": "右肩の未貼付と完成後の比較。貼付方向・張力は個別指導。", "clinicalStatus": "pending_review", "sha256": "ef2bcffdb638f572ed8510ad65f7a8b0421cf1bc86dc6b281e0b64962c118e7e", "addedIn": "0.4"
     }
   },
   "categories": {

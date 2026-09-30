@@ -37,7 +37,7 @@
 
 両文が必ず医学的に矛盾するとは限らないが、患者に「いつ止め、誰と相談して、どう再開するか」が伝わらない。痛みの数字だけで緊急性を自動判定する必要がある、という結論ではない。
 
-証拠：[手首の説明](.test-artifacts/audit-patient1/guide-wrist-eccentric-extension.png)、[ホームの共通中止文](.test-artifacts/audit-patient1/03-home-bottom.png)。関連実装：`exercises.js` の `wrist-eccentric-extension`、`app-v2.js` の `renderToday` / `showGuide`。
+証拠：[手首の説明](.test-artifacts/audit-patient1/guide-wrist-eccentric-extension.webp)、[ホームの共通中止文](.test-artifacts/audit-patient1/03-home-bottom.png)。関連実装：`exercises.js` の `wrist-eccentric-extension`、`app-v2.js` の `renderToday` / `showGuide`。
 
 ### R3 立ち座りの腕組み図が、患者固有の支え方より先に伝わる
 
@@ -45,7 +45,7 @@
 
 「手を使うと運動にならない」と誤解する可能性がある。実際の転倒を観察したわけではなく、腕組み自体を一律に不適切と判定したわけでもない。高齢・初心者が図を先に模倣するリスクを重視し、PT単独評価のP2から統合ではP1へ上げた。
 
-証拠：[立ち座りの図・注意](.test-artifacts/audit-patient1/guide-sit-to-stand.png)、[320px・文字拡大](.test-artifacts/audit-patient2/10-guide320-large-text.png)。関連実装：`exercises.js` の `sit-to-stand`。
+証拠：[立ち座りの図・注意](.test-artifacts/audit-patient1/guide-sit-to-stand.webp)、[320px・文字拡大](.test-artifacts/audit-patient2/10-guide320-large-text.png)。関連実装：`exercises.js` の `sit-to-stand`。
 
 ### R4 共通注意と「担当PTから」が重複し、重要情報が後ろへ流れる
 
