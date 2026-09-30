@@ -28,9 +28,9 @@ async function main(){
   await evaluate(`staffUnlocked=true;openTherapist();window.alert=message=>window.testAlert=message;S.chartId='TEST-PRINT';
     window.completePrintEx=(ex,i)=>({...ex,id:'print_'+i,prescription:{...PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription,side:'右',load:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.load||'担当者が指定した範囲',support:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.support||'安定した台',repetitions:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.repetitions||'5回',hold:PRESCRIPTION_DEFAULTS[ex.exerciseKey]?.prescription.hold||'保持なし'},scheduleConfirmed:true});
     S.menu=TEMPLATES.lowback.menu.slice(0,8).map(completePrintEx);renderTherapist();openExercisePrint();`);
-  await check('returning staff sees current patient and paper-only workflow',`(()=>{
-    const root=$('therapist-content'),banner=root.querySelector('[data-staff-patient-banner]'),paper=root.querySelector('button[onclick="openExercisePrint()"]');
-    return document.querySelector('.header-staff').textContent.includes('スタッフ画面')&&banner.textContent.includes('TEST-PRINT')&&root.querySelector('button[onclick="newPatient()"]').textContent.includes('次の患者')&&paper.classList.contains('btn-pri')&&root.querySelector('button[onclick="showShareQR()"]').hidden&&root.querySelector('button[onclick="showInstallQR()"]').hidden;
+  await check('returning staff sees current patient and both sharing methods',`(()=>{
+    const root=$('therapist-content'),banner=root.querySelector('[data-staff-patient-banner]'),paper=root.querySelector('button[onclick="openExercisePrint()"]'),qr=root.querySelector('button[onclick="showShareQR()"]'),install=root.querySelector('button[onclick="showInstallQR()"]');
+    return document.querySelector('.header-staff').textContent.includes('スタッフ画面')&&banner.textContent.includes('TEST-PRINT')&&root.querySelector('button[onclick="newPatient()"]').textContent.includes('次の患者')&&paper.classList.contains('btn-out')&&!qr.hidden&&qr.classList.contains('btn-pri')&&!install.hidden;
   })()`);
   await check('saved eight exercises initially selected for printing',"document.querySelectorAll('#exercisePrintModal input:checked').length===8");
   await check('printing is allowed without patient name or chart ID',`(()=>{

@@ -26,11 +26,11 @@ async function main(){
   await send('Page.navigate',{url:origin+'/'});
   for(let i=0;i<100;i++){if(await evaluate("typeof RehabCore !== 'undefined' && typeof activeDay !== 'undefined' && document.readyState === 'complete'"))break;await delay(100);}
   await evaluate("window.fillTestPrescription=prefix=>{const values={side:'両側',repetitions:'5回',sets:'1セット',hold:'該当なし',frequency:'1日1回',load:'重りなし',support:'椅子で支える'};for(const [key,value] of Object.entries(values))$(prefix+'-'+key).value=value;$(prefix+'-schedule-confirmed').checked=true;};");
-  await check('staff entry opens directly without PIN and does not persist credentials',`(()=>{
-    const paperOnly=!document.querySelector('#setupOverlay [onclick="startQrScan()"]')&&!document.querySelector('#setupOverlay [onclick="manualImport()"]');openPinModal();const stored=JSON.parse(localStorage.getItem(STORE_KEY));return paperOnly&&staffUnlocked&&$('pinModal').hidden&&!$('pinModal').classList.contains('on')&&$('therapistModal').classList.contains('on')&&localPin===''&&pinRecoveryHash===''&&!('localPin' in stored)&&!('pinRecoveryHash' in stored);
+  await check('staff entry opens directly without PIN and digital sharing is available',`(()=>{
+    const digitalShare=!!document.querySelector('#setupOverlay [onclick="startQrScan()"]')&&!!document.querySelector('#setupOverlay [onclick="manualImport()"]');openPinModal();const stored=JSON.parse(localStorage.getItem(STORE_KEY));return digitalShare&&staffUnlocked&&$('pinModal').hidden&&!$('pinModal').classList.contains('on')&&$('therapistModal').classList.contains('on')&&localPin===''&&pinRecoveryHash===''&&!('localPin' in stored)&&!('pinRecoveryHash' in stored);
   })()`);
   await check('patient name and ID remain optional through menu and print steps',`(()=>{
-    updS('chartId','');updS('patientName','');setTherapistStep('menu',false);const menu=!document.querySelector('[data-therapist-step="menu"]').hidden;setTherapistStep('share',false);const share=!document.querySelector('[data-therapist-step="share"]').hidden;setTherapistStep('patient',false);return menu&&share&&$('therapist-content').textContent.includes('空欄のままでも運動の選択と印刷ができます');
+    updS('chartId','');updS('patientName','');setTherapistStep('menu',false);const menu=!document.querySelector('[data-therapist-step="menu"]').hidden;setTherapistStep('share',false);const pane=document.querySelector('[data-therapist-step="share"]'),share=!pane.hidden&&!!pane.querySelector('button[onclick="showShareQR()"]:not([hidden])')&&!!pane.querySelector('button[onclick="openExercisePrint()"]');setTherapistStep('patient',false);return menu&&share&&$('therapist-content').textContent.includes('空欄のままでも運動の選択、QR・URL共有、印刷ができます');
   })()`);
   await check('therapist mode presents one task step at a time',`(()=>{
     const one=()=>document.querySelectorAll('.therapist-step:not([hidden])').length===1;
