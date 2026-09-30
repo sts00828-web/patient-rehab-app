@@ -28,8 +28,8 @@ function cleanTemplates(raw) {
   }
   return result;
 }
-function packState() { return {version:2,settings:S,logs:L,templates:T,archives,localPin,pinRecoveryHash}; }
-function restoreMemory(data) { S=data.settings;L=data.logs;T=data.templates;archives=data.archives||[];localPin=data.localPin||'';pinRecoveryHash=data.pinRecoveryHash||''; }
+function packState() { return {version:2,settings:S,logs:L,templates:T,archives}; }
+function restoreMemory(data) { S=data.settings;L=data.logs;T=data.templates;archives=data.archives||[];localPin='';pinRecoveryHash=''; }
 function blockConflictingStorage() {
   if(committed) restoreMemory(C.clone(committed));
   storageBlocked=true;storageConflict=true;staffUnlocked=false;
@@ -57,8 +57,8 @@ function loadState() {
       if(data.version!==2) throw Error('未対応のデータ形式です。');
       S=data.settings ? refreshExerciseNames(C.settings(data.settings,uid(),todayKey())) : null;
       L=C.logs(data.logs||{});T=cleanTemplates(data.templates||{});archives=validateArchives(data.archives||[]);
-      localPin=/^\d{4,6}$/.test(data.localPin||'') ? data.localPin : '';
-      pinRecoveryHash=/^[0-9a-f]{64}$/.test(data.pinRecoveryHash||'') ? data.pinRecoveryHash : '';
+      // 試験運用中はスタッフ認証を使用しない。旧版のPIN情報も引き継がない。
+      localPin='';pinRecoveryHash='';
       committed=C.clone(packState());return;
     }
     const legacy={settings:localStorage.getItem('rehab_settings'),logs:localStorage.getItem('rehab_logs'),templates:localStorage.getItem('rehab_templates_custom')};
@@ -66,8 +66,7 @@ function loadState() {
     const oldS=JSON.parse(legacy.settings||'null');
     const migrated=C.migrate(oldS,JSON.parse(legacy.logs||'{}'),uid(),todayKey());
     S=refreshExerciseNames(migrated.settings);L=migrated.logs;T=cleanTemplates(JSON.parse(legacy.templates||'{}'));
-    localPin=/^\d{4,6}$/.test(oldS?.passcode||'') ? oldS.passcode : '';
-    pinRecoveryHash='';
+    localPin='';pinRecoveryHash='';
     persist();
   } catch(e) {storageBlocked=true;alert('保存データを読み込めません。元データは消していません。バックアップまたは担当者による確認が必要です。\n'+e.message);}
 }
@@ -272,33 +271,13 @@ function showReport(){
 
 async function pinRecoveryDigest(value){const bytes=new TextEncoder().encode(value);const digest=await crypto.subtle.digest('SHA-256',bytes);return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,'0')).join('');}
 async function checkPin(){
-  const value=$('pin-input').value;
-  const replacingCredentials=pinRecoveryAuthorized;
-  if(!localPin||replacingCredentials){
-    if(!/^\d{4,6}$/.test(value)){toast('PINは4〜6桁の数字にしてください');return;}
-    if(value!==$('pin-confirm').value){toast('確認用PINが一致しません');return;}
-  }else if(value!==localPin){toast('PINが違います');return;}
-  let nextRecoveryHash=pinRecoveryHash;
-  if(!nextRecoveryHash||replacingCredentials){
-    const recovery=$('pin-recovery').value.trim(),confirmation=$('pin-recovery-confirm').value.trim();
-    if(!/^[A-Za-z0-9]{8,24}$/.test(recovery)){toast('復旧コードは英数字8〜24文字にしてください');return;}
-    if(recovery!==confirmation){toast('確認用の復旧コードが一致しません');return;}
-    if(recovery===value){toast('復旧コードはPINと別の文字列にしてください');return;}
-    try{nextRecoveryHash=await pinRecoveryDigest(recovery);}catch{toast('復旧コードを保存できませんでした');return;}
-  }
-  localPin=value;pinRecoveryHash=nextRecoveryHash;
-  try{persist();}catch{return;}
+  localPin='';pinRecoveryHash='';pinRecoveryAuthorized=false;
   staffUnlocked=true;closePinModal();openTherapist();
 }
 async function resetStaffPin(){
-  if(!localPin||!pinRecoveryHash)return;
-  const recovery=prompt('初回設定時に院内保管した復旧コードを入力してください。');if(recovery===null)return;
-  let matches=false;try{matches=(await pinRecoveryDigest(recovery.trim()))===pinRecoveryHash;}catch{}
-  if(!matches){toast('復旧コードが違います');return;}
-  if(!confirm('復旧コードを確認しました。患者データを残したまま、PINと復旧コードを再設定しますか？'))return;
-  pinRecoveryAuthorized=true;openPinModal();toast('新しいPINと復旧コードを入力してください');
+  toast('試験運用中はPINを使用しません');
 }
-function requireStaff(){if(!staffUnlocked){openPinModal();return false;}return true;}
+function requireStaff(){if(!staffUnlocked)staffUnlocked=true;return true;}
 function openTherapist(){
   if(!requireStaff()||storageBlocked)return;
   if(!S){S=C.settings({menu:[],startDate:todayKey(),knownSince:todayKey()},uid(),todayKey());persist();}
@@ -308,8 +287,7 @@ function openTherapist(){
 function closeTherapist(){therapistStep='patient';staffUnlocked=false;$('therapistModal').classList.remove('on');renderHeader();renderToday();}
 function updS(field,val){
   if(!requireStaff())return;
-  if(field==='passcode'){if(val!==''&&!/^\d{4,6}$/.test(val)){toast('PINは空欄、または4〜6桁の数字です');renderTherapist();return;}localPin=val;}
-  else if(field==='affectedSide')S.affectedSide=['right','left','bilateral','none'].includes(val)?val:'';
+  if(field==='affectedSide')S.affectedSide=['right','left','bilateral','none'].includes(val)?val:'';
   else if(['patientName','chartId','age','diagnosis','therapistName'].includes(field))S[field]=C.text(val,field==='age'?3:['patientName','chartId'].includes(field)?80:120);
   else if(['painContext','consultContact','restartInstructions'].includes(field))S[field]=C.text(val,500);
   else if(['startDate','nextVisit'].includes(field)){if(val&&!C.validDate(val)){toast('日付を確認してください');return;}if(field==='startDate'&&Object.keys(L).length){toast('記録後の開始日は変更できません');renderTherapist();return;}S[field]=val|| (field==='startDate'?todayKey():'');if(field==='startDate'){S.knownSince=S.startDate;S.plans=[{from:S.startDate,menu:C.clone(S.menu)}];}}
@@ -346,7 +324,7 @@ function patientSafetyFields(){
 }
 function renderTherapist(){
   if(!S)return;
-  $('therapist-content').innerHTML=`<div class="notice">患者さんの状態に合わせて種目・回数を選び、院内で動作を確認してからお渡しください。</div><button class="btn btn-out" onclick="newPatient()">次の患者の処方を始める</button><p id="new-patient-status" class="notice" role="status" hidden></p><section class="pt-details" id="patient-info"><div>対象患者<br><span id="patient-identity-summary">${escapeHtml([S.chartId,S.patientName].filter(Boolean).join(" / ")||"未入力")}</span></div><p class="hint">患者IDまたは患者名のどちらかを入力してください。入力内容はこの端末とバックアップに保存され、電子カルテへはまだ連携しません。</p><div class="t-sec"><div class="t-sec-ttl">患者情報（この端末内）</div><div class="fld"><label for="patient-chart-id" class="fld-lbl">患者ID・カルテ番号</label><input id="patient-chart-id" class="fld-inp" value="${escapeAttr(S.chartId||'')}" maxlength="80" autocomplete="off" onchange="updS('chartId',this.value)"></div><div class="fld"><label for="patient-name" class="fld-lbl">患者名・呼び名</label><input id="patient-name" class="fld-inp" value="${escapeAttr(S.patientName)}" maxlength="80" onchange="updS('patientName',this.value)"></div><div class="fld"><label for="patient-affected-side" class="fld-lbl">患側</label><select id="patient-affected-side" class="fld-inp" onchange="updS('affectedSide',this.value)">${Object.entries({'':'未選択',right:'右',left:'左',bilateral:'両側',none:'左右指定なし'}).map(([key,label])=>`<option value="${key}" ${S.affectedSide===key?'selected':''}>${label}</option>`).join('')}</select><p class="hint">新しく選ぶ運動の実施側に引き継ぎます。保存済みの指示は変更しません。</p></div><details><summary>その他の患者情報（任意）</summary><div class="fld"><label for="diagnosis" class="fld-lbl">診断名</label><input id="diagnosis" class="fld-inp" value="${escapeAttr(S.diagnosis)}" onchange="updS('diagnosis',this.value)"></div><div class="fld-row">${dateField('start-date','startDate','開始日',S.startDate,Object.keys(L).length>0)}${dateField('next-visit','nextVisit','次回来院日',S.nextVisit)}</div><div class="fld"><label class="fld-lbl" for="therapist-name">担当PT</label><input id="therapist-name" class="fld-inp" value="${escapeAttr(S.therapistName)}" onchange="updS('therapistName',this.value)"></div>${patientSafetyFields()}<div class="hint">アプリ内部の処方識別ID：${escapeHtml(S.patientId)}</div></details></div></section><div class="t-sec"><div class="t-sec-ttl">この患者の処方メニュー ${S.menu.length}種目</div>${menuTimingNotice()}${typeof ExerciseSelection!=='undefined'?ExerciseSelection.warnings(S.menu.map(ex=>ex.exerciseKey).filter(Boolean)):''}${S.menu.map((ex,i)=>`<div class="menu-item"><div class="menu-item-hd"><div class="menu-item-nm">${escapeHtml(ex.name)}</div><button type="button" class="evidence-button" onclick="showExerciseEvidence(S.menu[${i}],S.template)">参考資料</button><button class="menu-item-btn" aria-label="編集" onclick="editEx(${i})">✏</button><button class="menu-item-btn" aria-label="削除" onclick="delEx(${i})">×</button></div><div class="menu-item-pm">${escapeHtml(ex.params||prescriptionSummary(C.prescription(ex.prescription)))} ／ ${scheduleText(ex)}</div>${C.prescriptionIssues(ex).length?`<p class="hint">個別指示の確認が必要：${escapeHtml(C.prescriptionIssues(ex).join('・'))}</p>`:''}</div>`).join('')}<details class="pt-details"><summary>運動セット・独自種目</summary><div class="tpl-grid">${Object.entries(T).filter(([k])=>!k.startsWith('doseDefault_')).map(([k,t])=>`<button class="tpl-card" onclick="applyTemplate('${escapeAttr(k)}','append')">${escapeHtml(t.name)}</button>`).join('')}</div><button class="btn btn-out" onclick="editEx(-1)">独自の種目を入力</button><button class="btn btn-out" onclick="saveCurrentAsTemplate()">現在のメニューをテンプレート保存</button><button class="btn btn-out" onclick="showTemplateManagement()">テンプレートの共有・削除</button></details></div><div class="t-sec"><div class="t-sec-ttl">患者さんへ渡す</div><p class="hint">現在の院内運用では紙の印刷のみ使用します。</p><button class="btn btn-pri" onclick="showShareQR()">患者に渡す（QR・URL）</button><button class="btn btn-out" onclick="openExercisePrint()">紙で渡す（印刷・最大8種目）</button><button class="btn btn-out" onclick="showInstallQR()">アプリ追加用QR（共通）</button></div>${clinicalCatalogHtml()}<button class="btn btn-out" onclick="openBugReport()">不具合を報告</button><details class="pt-details"><summary>端末設定・バックアップ</summary><div class="t-sec"><div class="t-sec-ttl">端末のスタッフPIN</div><input aria-label="端末のPIN" class="fld-inp" type="password" inputmode="numeric" maxlength="6" value="${escapeAttr(localPin)}" onchange="updS('passcode',this.value)"><p class="hint">スタッフ画面を開くための4〜6桁の数字です。空欄に戻すと、次回アクセス時に新しいPINの設定が必要です。</p></div><div class="t-sec"><div class="t-sec-ttl">保存・復元</div><button class="btn btn-out" onclick="exportData()">端末全体をバックアップ</button><button class="btn btn-out" onclick="document.getElementById('restore-file').click()">バックアップを復元</button><input id="restore-file" type="file" accept=".json" hidden onchange="importData(event)"><button class="btn btn-out" onclick="showArchives()">退避した患者記録（${archives.length}件）</button><button class="btn btn-danger" onclick="resetAll()">この患者のデータを削除</button></div></details>`;
+  $('therapist-content').innerHTML=`<div class="notice">患者さんの状態に合わせて種目・回数を選び、院内で動作を確認してからお渡しください。</div><button class="btn btn-out" onclick="newPatient()">次の患者の処方を始める</button><p id="new-patient-status" class="notice" role="status" hidden></p><section class="pt-details" id="patient-info"><div>対象患者<br><span id="patient-identity-summary">${escapeHtml([S.chartId,S.patientName].filter(Boolean).join(" / ")||"未入力（任意）")}</span></div><p class="hint">患者ID・患者名は試験運用中のため任意です。空欄のままでも運動の選択と印刷ができます。</p><div class="t-sec"><div class="t-sec-ttl">患者情報（任意・この端末内）</div><div class="fld"><label for="patient-chart-id" class="fld-lbl">患者ID・カルテ番号（任意）</label><input id="patient-chart-id" class="fld-inp" value="${escapeAttr(S.chartId||'')}" maxlength="80" autocomplete="off" onchange="updS('chartId',this.value)"></div><div class="fld"><label for="patient-name" class="fld-lbl">患者名・呼び名（任意）</label><input id="patient-name" class="fld-inp" value="${escapeAttr(S.patientName)}" maxlength="80" onchange="updS('patientName',this.value)"></div><div class="fld"><label for="patient-affected-side" class="fld-lbl">患側</label><select id="patient-affected-side" class="fld-inp" onchange="updS('affectedSide',this.value)">${Object.entries({'':'未選択',right:'右',left:'左',bilateral:'両側',none:'左右指定なし'}).map(([key,label])=>`<option value="${key}" ${S.affectedSide===key?'selected':''}>${label}</option>`).join('')}</select><p class="hint">新しく選ぶ運動の実施側に引き継ぎます。保存済みの指示は変更しません。</p></div><details><summary>その他の患者情報（任意）</summary><div class="fld"><label for="diagnosis" class="fld-lbl">診断名</label><input id="diagnosis" class="fld-inp" value="${escapeAttr(S.diagnosis)}" onchange="updS('diagnosis',this.value)"></div><div class="fld-row">${dateField('start-date','startDate','開始日',S.startDate,Object.keys(L).length>0)}${dateField('next-visit','nextVisit','次回来院日',S.nextVisit)}</div><div class="fld"><label class="fld-lbl" for="therapist-name">担当PT</label><input id="therapist-name" class="fld-inp" value="${escapeAttr(S.therapistName)}" onchange="updS('therapistName',this.value)"></div>${patientSafetyFields()}<div class="hint">アプリ内部の処方識別ID：${escapeHtml(S.patientId)}</div></details></div></section><div class="t-sec"><div class="t-sec-ttl">この患者の処方メニュー ${S.menu.length}種目</div>${menuTimingNotice()}${typeof ExerciseSelection!=='undefined'?ExerciseSelection.warnings(S.menu.map(ex=>ex.exerciseKey).filter(Boolean)):''}${S.menu.map((ex,i)=>`<div class="menu-item"><div class="menu-item-hd"><div class="menu-item-nm">${escapeHtml(ex.name)}</div><button type="button" class="evidence-button" onclick="showExerciseEvidence(S.menu[${i}],S.template)">参考資料</button><button class="menu-item-btn" aria-label="編集" onclick="editEx(${i})">✏</button><button class="menu-item-btn" aria-label="削除" onclick="delEx(${i})">×</button></div><div class="menu-item-pm">${escapeHtml(ex.params||prescriptionSummary(C.prescription(ex.prescription)))} ／ ${scheduleText(ex)}</div>${C.prescriptionIssues(ex).length?`<p class="hint">個別指示の確認が必要：${escapeHtml(C.prescriptionIssues(ex).join('・'))}</p>`:''}</div>`).join('')}<details class="pt-details"><summary>運動セット・独自種目</summary><div class="tpl-grid">${Object.entries(T).filter(([k])=>!k.startsWith('doseDefault_')).map(([k,t])=>`<button class="tpl-card" onclick="applyTemplate('${escapeAttr(k)}','append')">${escapeHtml(t.name)}</button>`).join('')}</div><button class="btn btn-out" onclick="editEx(-1)">独自の種目を入力</button><button class="btn btn-out" onclick="saveCurrentAsTemplate()">現在のメニューをテンプレート保存</button><button class="btn btn-out" onclick="showTemplateManagement()">テンプレートの共有・削除</button></details></div><div class="t-sec"><div class="t-sec-ttl">患者さんへ渡す</div><p class="hint">現在の院内運用では紙の印刷のみ使用します。</p><button class="btn btn-pri" onclick="showShareQR()">患者に渡す（QR・URL）</button><button class="btn btn-out" onclick="openExercisePrint()">紙で渡す（印刷・最大8種目）</button><button class="btn btn-out" onclick="showInstallQR()">アプリ追加用QR（共通）</button></div>${clinicalCatalogHtml()}<button class="btn btn-out" onclick="openBugReport()">不具合を報告</button><details class="pt-details"><summary>端末設定・バックアップ</summary><div class="t-sec"><div class="t-sec-ttl">保存・復元</div><button class="btn btn-out" onclick="exportData()">端末全体をバックアップ</button><button class="btn btn-out" onclick="document.getElementById('restore-file').click()">バックアップを復元</button><input id="restore-file" type="file" accept=".json" hidden onchange="importData(event)"><button class="btn btn-out" onclick="showArchives()">退避した患者記録（${archives.length}件）</button><button class="btn btn-danger" onclick="resetAll()">この患者のデータを削除</button></div></details>`;
   buildTherapistWizard();
   configureStaffPaperWorkflow();
 }
@@ -355,7 +333,7 @@ function configureStaffPaperWorkflow(){
   const hasExisting=!!(S.menu.length||Object.keys(L).length||['patientName','chartId','age','diagnosis','therapistName','affectedSide','painContext','consultContact','restartInstructions','nextVisit'].some(field=>S[field]));
   const patientLabel=[S.chartId,S.patientName].filter(Boolean).join(' ／ ')||'患者情報未入力';
   const notice=patientPane?.querySelector('.notice');
-  if(notice)notice.innerHTML=hasExisting?`<strong>前回の患者データが残っています</strong><br>${escapeHtml(patientLabel)} ／ 運動 ${S.menu.length}種目<br>同じ患者を編集する場合はそのまま進み、別の患者では下のボタンを押してください。`:'<strong>新しい患者の処方です</strong><br>患者IDまたは患者名を入力し、対象患者を確認してください。';
+  if(notice)notice.innerHTML=hasExisting?`<strong>前回の患者データが残っています</strong><br>${escapeHtml(patientLabel)} ／ 運動 ${S.menu.length}種目<br>同じ患者を編集する場合はそのまま進み、別の患者では下のボタンを押してください。`:'<strong>新しい患者の処方です</strong><br>患者ID・患者名は任意です。空欄のままでも次へ進めます。';
   const newButton=patientPane?.querySelector('button[onclick="newPatient()"]');
   if(newButton){newButton.hidden=!hasExisting;newButton.textContent='次の患者の処方を始める';newButton.className='btn btn-pri';}
   const paperButton=sharePane?.querySelector('button[onclick="openExercisePrint()"]');
@@ -369,8 +347,8 @@ function configureStaffPaperWorkflow(){
 function updateStaffPatientBanner(){
   const banner=document.querySelector('[data-staff-patient-banner]');if(!banner||!S)return;
   const identity=[S.chartId,S.patientName].filter(Boolean).join(' ／ ');
-  banner.innerHTML=identity?`<strong>現在の患者</strong><span>${escapeHtml(identity)}</span><small>運動 ${S.menu.length}種目</small>`:'<strong>患者を確認してください</strong><span>患者IDまたは患者名を入力してください</span>';
-  banner.classList.toggle('is-warning',!identity);
+  banner.innerHTML=identity?`<strong>現在の患者</strong><span>${escapeHtml(identity)}</span><small>運動 ${S.menu.length}種目</small>`:`<strong>患者情報は未入力です</strong><span>試験運用中は任意入力です</span><small>運動 ${S.menu.length}種目</small>`;
+  banner.classList.remove('is-warning');
 }
 let therapistStep='patient';
 function buildTherapistWizard(){
@@ -399,14 +377,6 @@ function buildTherapistWizard(){
 }
 function setTherapistStep(step,focus=true){
   if(!['patient','menu','share'].includes(step))step='patient';
-  if(step!=='patient'&&!String(S?.chartId||'').trim()&&!String(S?.patientName||'').trim()){
-    therapistStep='patient';
-    document.querySelectorAll('[data-therapist-step]').forEach(pane=>pane.hidden=pane.dataset.therapistStep!=='patient');
-    document.querySelectorAll('[data-staff-step]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.staffStep==='patient')));
-    toast('患者IDまたは患者名を入力して、対象患者を確認してください');
-    if(focus)$('patient-chart-id')?.focus({preventScroll:true});
-    return;
-  }
   therapistStep=step;
   document.querySelectorAll('[data-therapist-step]').forEach(pane=>pane.hidden=pane.dataset.therapistStep!==step);
   document.querySelectorAll('[data-staff-step]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.staffStep===step)));
@@ -654,7 +624,7 @@ function newPatient(){
   S=C.settings({menu:[],startDate:todayKey(),knownSince:todayKey()},uid(),todayKey());L={};
   try{persist();}catch(e){return;}
   renderTherapist();renderHeader();
-  const status=$('new-patient-status');status.hidden=false;status.textContent='新しい処方を作成しました。患者IDまたは患者名を入力してください。';
+  const status=$('new-patient-status');status.hidden=false;status.textContent='新しい処方を作成しました。患者ID・患者名は必要な場合だけ入力してください。';
   $('patient-chart-id').focus({preventScroll:true});
   status.scrollIntoView({block:'nearest',behavior:'instant'});
 }

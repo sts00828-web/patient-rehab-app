@@ -45,11 +45,10 @@ const RehabPrint = (() => {
 function openExercisePrint(){
   if(!requireStaff())return;
   if(!S?.menu.length){toast('先に運動を選んで保存してください');return;}
-  modal('exercisePrintModal','紙で渡す運動を選ぶ',`<p>A4縦・1ページ3種目、最大8種目で3ページです。両面印刷なら用紙2枚（最後の裏面は空白）です。処方済みの運動から印刷するものを選んでください。</p>${S.menu.map((ex,i)=>`<label class="pick-label" style="padding:12px 0"><input type="checkbox" name="print-exercise" value="${i}" ${S.menu.length<=8?'checked':''}>${escapeHtml(ex.name)}</label>`).join('')}<p class="hint">印刷内容は、対象患者、運動名、イラスト、回数、セット数、保持時間、実施側、頻度、負荷・支え、やり方、注意です。実施記録は印刷しません。</p><button class="btn btn-pri" onclick="previewExercisePrint()">印刷用画面を開く</button>`);
+  modal('exercisePrintModal','紙で渡す運動を選ぶ',`<p>A4縦・1ページ3種目、最大8種目で3ページです。両面印刷なら用紙2枚（最後の裏面は空白）です。処方済みの運動から印刷するものを選んでください。</p>${S.menu.map((ex,i)=>`<label class="pick-label" style="padding:12px 0"><input type="checkbox" name="print-exercise" value="${i}" ${S.menu.length<=8?'checked':''}>${escapeHtml(ex.name)}</label>`).join('')}<p class="hint">印刷内容は、運動名、イラスト、回数、セット数、保持時間、実施側、頻度、負荷・支え、やり方、注意です。患者ID・患者名を入力した場合だけ対象患者も表示します。実施記録は印刷しません。</p><button class="btn btn-pri" onclick="previewExercisePrint()">印刷用画面を開く</button>`);
 }
 function previewExercisePrint(){
   if(!requireStaff())return;
-  if(!String(S.chartId||'').trim()&&!String(S.patientName||'').trim()){toast('印刷前に患者IDまたは患者名を入力してください');setTherapistStep('patient');$('patient-chart-id')?.focus({preventScroll:true});return;}
   const items=[...document.querySelectorAll('#exercisePrintModal input:checked')].map(input=>S.menu[Number(input.value)]);
   if(!items.length||items.length>8){toast('1〜8種目を選んでください');return;}
   const incomplete=items.filter(ex=>C.prescriptionIssues(ex).length);

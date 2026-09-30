@@ -33,6 +33,9 @@ async function main(){
     return document.querySelector('.header-staff').textContent.includes('スタッフ画面')&&banner.textContent.includes('TEST-PRINT')&&root.querySelector('button[onclick="newPatient()"]').textContent.includes('次の患者')&&paper.classList.contains('btn-pri')&&root.querySelector('button[onclick="showShareQR()"]').hidden&&root.querySelector('button[onclick="showInstallQR()"]').hidden;
   })()`);
   await check('saved eight exercises initially selected for printing',"document.querySelectorAll('#exercisePrintModal input:checked').length===8");
+  await check('printing is allowed without patient name or chart ID',`(()=>{
+    S.chartId='';S.patientName='';const html=RehabPrint.documentHtml(S,S.menu.slice(0,1),S.menu.slice(0,1).map(mediaFor),location.href);return !html.includes('class="patient-label"')&&html.includes('ご自宅で行う運動');
+  })()`);
   await check('zero and nine selections rejected without opening popup',`(()=>{
     const original=window.open;let opens=0;window.open=()=>{opens++;return null};
     document.querySelectorAll('#exercisePrintModal input').forEach(e=>e.checked=false);previewExercisePrint();

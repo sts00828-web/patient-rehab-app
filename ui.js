@@ -105,19 +105,9 @@ function bindTitleLongPress() {
 }
 
 function openPinModal() {
-  const replacingCredentials=!!pinRecoveryAuthorized;
-  document.getElementById('pin-input').value = '';
-  document.getElementById('pin-confirm').value = '';
-  document.getElementById('pin-recovery').value = '';
-  document.getElementById('pin-recovery-confirm').value = '';
-  document.getElementById('pin-confirm-wrap').hidden = !!localPin&&!replacingCredentials;
-  document.getElementById('pin-recovery-wrap').hidden = !!pinRecoveryHash&&!replacingCredentials;
-  document.getElementById('pin-help').textContent = replacingCredentials?'新しいPINと、新しい院内復旧コードを設定してください。':localPin?'院内のPINを入力してください。':'初回のみ、スタッフ画面を保護する4〜6桁の院内PINを設定してください。';
-  document.getElementById('pin-submit').textContent = replacingCredentials?'PINと復旧コードを再設定して開く':localPin?(pinRecoveryHash?'確認':'復旧コードを登録して開く'):'PINと復旧コードを設定して開く';
-  document.getElementById('pin-note').textContent = localPin?'この端末だけの誤操作防止PINです。':'PINと復旧コードは患者さんに伝えず、院内スタッフ間で管理してください。';
-  document.getElementById('pin-reset').hidden = replacingCredentials||!localPin||!pinRecoveryHash;
-  document.getElementById('pinModal').classList.add('on');
-  setTimeout(() => document.getElementById('pin-input').focus(), 100);
+  localPin='';pinRecoveryHash='';pinRecoveryAuthorized=false;staffUnlocked=true;
+  document.getElementById('pinModal').classList.remove('on');
+  openTherapist();
 }
 
 function closePinModal() { pinRecoveryAuthorized=false;document.getElementById('pinModal').classList.remove('on'); }

@@ -302,14 +302,14 @@ main{padding:14px 14px 24px;max-width:600px;margin:0 auto}
     <div id="setup-intro-standalone" style="display:none"></div>
     <p id="setup-intro-browser" style="text-align:left"><strong>現在は院内スタッフが患者さん用の運動メニューを作り、紙で印刷するために使用します。</strong><br><br>患者さんへのQRコード・URLでの配布は行いません。</p>
     <button class="btn btn-pri" onclick="openPinModal()">スタッフ画面を開く</button>
-    <p style="font-size:11px;color:#888;text-align:left;margin-top:8px">初回のみ、スタッフ画面を保護する4〜6桁の院内PINを設定します。</p>
+    <p style="font-size:11px;color:#888;text-align:left;margin-top:8px">試験運用中はPIN入力なしでスタッフ画面を開けます。</p>
     <button class="btn btn-out" onclick="openBugReport()">不具合を報告</button>
     <button class="btn btn-out" style="margin-top:6px" onclick="document.getElementById('setupOverlay').hidden=true">閉じる</button>
   </div>
 </div>
 
 <!-- PINモーダル -->
-<div class="t-overlay" id="pinModal">
+<div class="t-overlay" id="pinModal" hidden>
   <div class="t-modal" style="max-width:340px">
     <div class="t-hd">
       <h2>🔐 セラピストモード</h2>
