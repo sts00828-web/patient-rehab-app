@@ -13,7 +13,7 @@ test('hold time is prominent only when it is prescribed',()=>{
 });
 test('print layout gives more room to the illustration and keeps quantity type moderate',()=>{
   const html=render(1);assert.ok(html.includes('grid-template-columns:74mm 1fr'));assert.ok(html.includes('width:74mm;height:56mm'));assert.ok(html.includes('font-size:11.5pt'));
-  assert.ok(html.includes('@page{size:A4 portrait;margin:8mm}'));assert.ok(html.includes('.sheet{width:auto;height:230mm'));assert.ok(html.includes('grid-template-rows:repeat(3,72mm)'));assert.ok(html.includes('.sheet+.sheet{break-before:page;page-break-before:always}'));assert.ok(!html.includes('break-after:page'));
+  assert.ok(html.includes('@page{size:A4 portrait;margin:8mm}'));assert.ok(html.includes('.sheet{width:auto;height:230mm;margin:0 0 0 2.5%;zoom:.95'));assert.ok(html.includes('grid-template-rows:repeat(3,72mm)'));assert.ok(html.includes('.sheet+.sheet{break-before:page;page-break-before:always}'));assert.ok(!html.includes('break-after:page'));
 });
 test('patient identity is repeated while unrelated diagnosis is omitted',()=>{
   const html=render(1,{patientName:'印刷しない患者名',chartId:'SECRET-ID',diagnosis:'印刷しない診断名'});
