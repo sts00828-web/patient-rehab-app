@@ -77,13 +77,14 @@ async function main(){
   }
   await pdf('six',2);
   await send('Emulation.setEmulatedMedia',{media:'print'});
+  await check('print media keeps six exercises inside two compact page groups',"document.querySelectorAll('.sheet').length===2&&[...document.querySelectorAll('.exercise')].every(e=>e.scrollHeight<=e.clientHeight+2)");
   const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(art,'exercise-print-preview.png'),Buffer.from(shot.data,'base64'));
   await send('Emulation.setEmulatedMedia',{media:''});
   for(const [name,expected] of [['one',1],['four',2]]){
     const frame=(await send('Page.getFrameTree')).frameTree.frame.id;
     await send('Page.setDocumentContent',{frameId:frame,html:docs[name]});await ready();await check(name+' fits without clipping',"!document.body.classList.contains('invalid')");await pdf(name,expected);
   }
-  for(const fixture of docs.stock){const frame=(await send('Page.getFrameTree')).frameTree.frame.id;await send('Page.setDocumentContent',{frameId:frame,html:fixture.html});await ready();if(await evaluate("document.body.classList.contains('invalid')"))console.log(await evaluate("JSON.stringify([...document.querySelectorAll('.exercise')].map(e=>({text:e.innerText,height:e.clientHeight,scroll:e.scrollHeight})))"));await check(fixture.name+' standard instructions fit',"!document.body.classList.contains('invalid')");}
+  for(const fixture of docs.stock){const frame=(await send('Page.getFrameTree')).frameTree.frame.id;await send('Page.setDocumentContent',{frameId:frame,html:fixture.html});await ready();if(await evaluate("document.body.classList.contains('invalid')"))console.log(await evaluate("JSON.stringify([...document.querySelectorAll('.exercise')].map(e=>({text:e.innerText,height:e.clientHeight,scroll:e.scrollHeight})))"));await check(fixture.name+' standard instructions fit',"!document.body.classList.contains('invalid')");await send('Emulation.setEmulatedMedia',{media:'print'});await check(fixture.name+' print media has no clipped instructions'," [...document.querySelectorAll('.exercise')].every(e=>e.scrollHeight<=e.clientHeight+2)");await send('Emulation.setEmulatedMedia',{media:''});}
   for(const name of ['long','missing']){
     const frame=(await send('Page.getFrameTree')).frameTree.frame.id;
     await send('Page.setDocumentContent',{frameId:frame,html:docs[name]});await ready();await check(name+' prevents printing instead of silent omission',"document.body.classList.contains('invalid')&&document.getElementById('print').disabled");
