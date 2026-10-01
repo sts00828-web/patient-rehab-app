@@ -23,7 +23,7 @@ const RehabPrint = (() => {
       .exercise.compact{padding:2mm 0;line-height:1.2}.exercise.compact h2{margin-bottom:1mm}.exercise.compact p{margin:1mm 0}.exercise.compact ol{margin:1mm 0}.exercise.compact li{padding-bottom:0.2mm}.exercise.compact .print-details{font-size:7.8pt}.exercise.compact .instructions{font-size:8.5pt;line-height:1.18}.exercise.compact .print-caution{font-size:7.2pt;line-height:1.12}
       @page{size:auto;margin:8mm}
       @media print{html,body{width:100%;overflow-x:hidden}body{background:white}.toolbar{display:none}.sheet{width:99%;height:230mm;margin:0 auto;box-shadow:none;break-inside:avoid;page-break-inside:avoid}.sheet+.sheet{break-before:page;page-break-before:always}.sheet header{height:14mm}.sheet main{height:216mm;grid-template-rows:repeat(3,72mm)}.sheet .exercise{height:72mm;padding:1.5mm 0;line-height:1.22}.sheet h2{font-size:13pt;margin-bottom:1mm}.sheet h3{font-size:9.5pt;margin-top:1mm}.sheet .exercise-body{grid-template-columns:64mm 1fr;gap:4mm}.sheet .picture img{width:64mm;height:48mm}.sheet .dose-grid strong{font-size:10pt}.sheet .print-details{font-size:8pt}.sheet .instructions{font-size:8.5pt;line-height:1.16}.sheet .print-caution{font-size:7.5pt;line-height:1.14}body.invalid .sheet{display:none}body.invalid .toolbar{display:block;position:static}body.invalid .toolbar button{display:none}}
-    </style></head><body class="invalid"><div class="toolbar"><button id="print" disabled>印刷・PDFに保存</button><button onclick="window.close()">閉じる</button><p>A4・縦・倍率100%・余白は既定。ヘッダーとフッターはオフにしてください。両面の場合は「長辺とじ」を選択します（プリンター側の設定）。</p><p id="status" role="status">イラストを読み込んでいます…</p></div>${pages.join('')}<script>
+    </style></head><body class="invalid"><div class="toolbar"><button id="print" disabled>印刷・PDFに保存</button><button onclick="window.close()">閉じる</button><p><strong>正式設定：A4・縦・サイズ調整95%・長辺とじ。</strong>ヘッダーとフッターはオフにしてください。</p><p id="status" role="status">イラストを読み込んでいます…</p></div>${pages.join('')}<script>
       async function ready(){
         await document.fonts.ready;
         const imgs=[...document.images];await Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(r=>{img.onload=r;img.onerror=r})));
@@ -46,6 +46,7 @@ function openExercisePrint(){
   if(!requireStaff())return;
   if(!S?.menu.length){toast('先に運動を選んで保存してください');return;}
   modal('exercisePrintModal','紙で渡す運動を選ぶ',`<p>A4縦・1ページ3種目、最大6種目で2ページです。両面印刷なら用紙1枚です。処方済みの運動から印刷するものを選んでください。</p>${S.menu.map((ex,i)=>`<label class="pick-label" style="padding:12px 0"><input type="checkbox" name="print-exercise" value="${i}" ${S.menu.length<=6?'checked':''}>${escapeHtml(ex.name)}</label>`).join('')}<p class="hint">印刷内容は、運動名、イラスト、回数、セット数、保持時間、実施側、頻度、負荷・支え、やり方、注意です。患者ID・患者名を入力した場合だけ対象患者も表示します。実施記録は印刷しません。</p><button class="btn btn-pri" onclick="previewExercisePrint()">印刷用画面を開く</button>`);
+  const firstParagraph=$('exercisePrintModal')?.querySelector('.t-modal>p');if(firstParagraph){const note=document.createElement('p');note.className='notice';note.innerHTML='<strong>iPhoneの正式設定：A4・縦・サイズ調整95%・長辺とじ</strong>';firstParagraph.after(note);}
 }
 function previewExercisePrint(){
   if(!requireStaff())return;
