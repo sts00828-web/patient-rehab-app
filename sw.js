@@ -2,7 +2,7 @@
 importScripts('./exercises.js');
 importScripts('./clinical-catalog.js');
 const PREFIX = 'patient-rehab-' + encodeURIComponent(self.registration.scope) + '-';
-const CACHE = PREFIX + 'v81';
+const CACHE = PREFIX + 'v82';
 const IMAGE_CACHE = PREFIX + 'clinical-images-v2';
 const IMAGE_URLS = new Set(Object.values(ClinicalCatalog.definitions).filter(d=>d.image).map(d=>new URL(d.image,self.registration.scope).href));
 const REFRESHED_IMAGE_URLS = ['./images/P20.webp','./images/P23.webp','./images/E08.webp','./images/N12.webp','./images/P08.webp','./images/T20.webp','./images/P15.webp','./images/P26.webp'].map(path=>new URL(path,self.registration.scope).href);

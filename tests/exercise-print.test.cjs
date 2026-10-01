@@ -13,8 +13,13 @@ test('hold time is prominent only when it is prescribed',()=>{
 });
 test('print layout gives more room to the illustration and keeps quantity type moderate',()=>{
   const html=render(1);assert.ok(html.includes('grid-template-columns:74mm 1fr'));assert.ok(html.includes('width:74mm;height:56mm'));assert.ok(html.includes('font-size:11.5pt'));
-  assert.ok(html.includes('正式設定：A4・縦・サイズ調整95%・長辺とじ'));
-  assert.ok(html.includes('@page{size:auto;margin:8mm}'));assert.ok(html.includes('html,body{width:100%;overflow-x:hidden}'));assert.ok(html.includes('.sheet{width:99%;height:230mm;margin:0 auto'));assert.ok(!html.includes('zoom:.95'));assert.ok(html.includes('grid-template-rows:repeat(3,72mm)'));assert.ok(html.includes('.sheet+.sheet{break-before:page;page-break-before:always}'));assert.ok(!html.includes('break-after:page'));
+  assert.ok(html.includes('院内PC専用：A4・縦・サイズ調整100%・長辺とじ'));
+  assert.ok(html.includes('@page{size:A4 portrait;margin:10mm}'));assert.ok(html.includes('grid-template-rows:repeat(3,86.66mm)'));assert.ok(html.includes('break-after:page'));assert.ok(!html.includes('width:99%'));assert.ok(!html.includes('zoom:.95'));
+});
+test('iPhone and iPad are blocked from the PC-only print flow',()=>{
+  assert.equal(vm.runInContext("isIOSPrintDevice({userAgent:'Mozilla/5.0 (iPhone)',platform:'iPhone',maxTouchPoints:5})",ctx),true);
+  assert.equal(vm.runInContext("isIOSPrintDevice({userAgent:'Mozilla/5.0 (Macintosh)',platform:'MacIntel',maxTouchPoints:5})",ctx),true);
+  assert.equal(vm.runInContext("isIOSPrintDevice({userAgent:'Mozilla/5.0 (Windows NT 10.0)',platform:'Win32',maxTouchPoints:0})",ctx),false);
 });
 test('patient identity is repeated while unrelated diagnosis is omitted',()=>{
   const html=render(1,{patientName:'印刷しない患者名',chartId:'SECRET-ID',diagnosis:'印刷しない診断名'});

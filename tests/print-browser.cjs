@@ -33,7 +33,7 @@ async function main(){
     return document.querySelector('.header-staff').textContent.includes('スタッフ画面')&&banner.textContent.includes('TEST-PRINT')&&root.querySelector('button[onclick="newPatient()"]').textContent.includes('次の患者')&&paper.textContent.includes('最大6種目')&&paper.classList.contains('btn-out')&&!qr.hidden&&qr.classList.contains('btn-pri')&&!install.hidden;
   })()`);
   await check('saved six exercises initially selected for printing',"document.querySelectorAll('#exercisePrintModal input:checked').length===6");
-  await check('official iPhone print settings are visible',"document.getElementById('exercisePrintModal').textContent.includes('A4・縦・サイズ調整95%・長辺とじ')");
+  await check('PC-only print policy is visible',"document.getElementById('exercisePrintModal').textContent.includes('印刷は院内PC限定')");
   await check('printing is allowed without patient name or chart ID',`(()=>{
     S.chartId='';S.patientName='';const html=RehabPrint.documentHtml(S,S.menu.slice(0,1),S.menu.slice(0,1).map(mediaFor),location.href);return !html.includes('class="patient-label"')&&html.includes('ご自宅で行う運動');
   })()`);
