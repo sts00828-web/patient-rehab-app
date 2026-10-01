@@ -2,10 +2,10 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 const source=fs.readFileSync(path.join(__dirname,'../exercise-print.js'),'utf8');
 const ctx=vm.createContext({URL});vm.runInContext(source,ctx);
 const render=(count,extra={})=>{ctx.input={patientName:'架空患者',chartId:'00123',...extra};ctx.items=Array.from({length:count},(_,i)=>({name:'運動'+i,prescription:{repetitions:'5回',sets:'2セット',frequency:'1日1回'},dows:[1,4]}));return vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.webp',steps:['腰と床の隙間を小さくする'],caution:'お尻を浮かせない'})),'https://example.test/app/')",ctx);};
-test('one to eight exercises split into sheets of at most three with only clear doses and steps',()=>{
-  for(let n=1;n<=8;n++){const html=render(n);assert.equal((html.match(/class="sheet"/g)||[]).length,Math.ceil(n/3));assert.equal((html.match(/class="exercise"/g)||[]).length,n);assert.equal((html.match(/<span>回数<\/span><strong>5回<\/strong>/g)||[]).length,n);assert.equal((html.match(/<span>セット数<\/span><strong>2セット<\/strong>/g)||[]).length,n);assert.ok(!html.includes('月・木曜日'));assert.ok(html.includes('<dt>頻度<\/dt><dd>1日1回<\/dd>'));assert.ok(html.includes('https://example.test/app/assets/exercises/pelvic-tilt.webp'));assert.ok(html.includes('<h3>やり方</h3>'));}
+test('one to six exercises split into sheets of at most three with only clear doses and steps',()=>{
+  for(let n=1;n<=6;n++){const html=render(n);assert.equal((html.match(/class="sheet"/g)||[]).length,Math.ceil(n/3));assert.equal((html.match(/class="exercise"/g)||[]).length,n);assert.equal((html.match(/<span>回数<\/span><strong>5回<\/strong>/g)||[]).length,n);assert.equal((html.match(/<span>セット数<\/span><strong>2セット<\/strong>/g)||[]).length,n);assert.ok(!html.includes('月・木曜日'));assert.ok(html.includes('<dt>頻度<\/dt><dd>1日1回<\/dd>'));assert.ok(html.includes('https://example.test/app/assets/exercises/pelvic-tilt.webp'));assert.ok(html.includes('<h3>やり方</h3>'));}
 });
-test('zero or more than eight exercises are rejected rather than silently omitted',()=>{assert.throws(()=>render(0));assert.throws(()=>render(9));});
+test('zero or more than six exercises are rejected rather than silently omitted',()=>{assert.throws(()=>render(0));assert.throws(()=>render(7));});
 test('hold time is prominent only when it is prescribed',()=>{
   ctx.input={};ctx.items=[{name:'保持あり',prescription:{repetitions:'3回',sets:'2セット',hold:'10秒'}},{name:'保持なし',prescription:{repetitions:'5回',sets:'1セット',hold:'該当なし'}}];
   const html=vm.runInContext("RehabPrint.documentHtml(input,items,items.map(()=>({image:'pelvic-tilt.webp',steps:['姿勢を整える']})),'https://example.test/app/')",ctx);

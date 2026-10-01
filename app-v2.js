@@ -339,7 +339,7 @@ function configureStaffWorkflow(){
   const newButton=patientPane?.querySelector('button[onclick="newPatient()"]');
   if(newButton){newButton.hidden=!hasExisting;newButton.textContent='次の患者の処方を始める';newButton.className='btn btn-pri';}
   const paperButton=sharePane?.querySelector('button[onclick="openExercisePrint()"]');
-  if(paperButton){paperButton.textContent='紙で渡す（印刷・最大8種目）';paperButton.className='btn btn-out';}
+  if(paperButton){paperButton.textContent='紙で渡す（印刷・最大6種目）';paperButton.className='btn btn-out';}
   const qrButton=sharePane?.querySelector('button[onclick="showShareQR()"]');if(qrButton){qrButton.hidden=false;qrButton.className='btn btn-pri';}
   const installButton=sharePane?.querySelector('button[onclick="showInstallQR()"]');if(installButton)installButton.hidden=false;
   const shareHint=sharePane?.querySelector('.hint');
