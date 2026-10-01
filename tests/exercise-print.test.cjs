@@ -26,6 +26,11 @@ test('patient identity is repeated while unrelated diagnosis is omitted',()=>{
   for(const text of ['印刷しない患者名','SECRET-ID'])assert.ok(html.includes(text));
   for(const text of ['印刷しない診断名','開始日','患者ID'])assert.ok(!html.includes(text));
 });
+test('embedded image data is preferred so the print window does not refetch it',()=>{
+  ctx.input={};ctx.items=[{name:'埋め込み画像',prescription:{repetitions:'5回',sets:'1セット'}}];
+  const html=vm.runInContext("RehabPrint.documentHtml(input,items,[{image:'missing.webp',imageData:'data:image/webp;base64,AAAA',steps:['姿勢を整える']}],'https://example.test/app/')",ctx);
+  assert.ok(html.includes('src="data:image/webp;base64,AAAA"'));assert.ok(!html.includes('missing.webp'));
+});
 test('an explicit no-side instruction remains visible on paper',()=>{
   ctx.input={patientName:'架空患者'};ctx.items=[{name:'中央の運動',prescription:{side:'左右指定なし',repetitions:'5回',sets:'1セット'}}];
   const html=vm.runInContext("RehabPrint.documentHtml(input,items,[{image:'pelvic-tilt.webp',steps:['正面を保つ']}],'https://example.test/app/')",ctx);

@@ -14,7 +14,7 @@ const RehabPrint = (() => {
         const quantities=[['回数',p.repetitions||'要確認'],['セット数',p.sets||'要確認'],...(hold?[['保持時間',hold]]:[])];
         const details=[['実施側',p.side==='左右指定なし'?'左右の指定なし':p.side],['頻度',p.frequency],['負荷・範囲',p.load],['支え',p.support]].filter(([,value])=>value&&value!=='該当なし');
         const cautions=[ex.note,ex.diseaseNote,ex.clinicalV02?.constraints,m?.caution].filter(Boolean).filter((value,index,array)=>array.indexOf(value)===index);
-        return `<article class="exercise"><h2>${offset+j+1}. ${esc(ex.name)}</h2><div class="exercise-body"><div class="picture">${m?`<img src="${esc(new URL(m.imagePath||'assets/exercises/'+m.image,baseUrl).href)}" alt="${esc(ex.name)}">`:'<p>イラストなし</p>'}</div><div class="simple-content"><div class="dose-grid">${quantities.map(([label,value])=>`<div><span>${label}</span><strong>${esc(value)}</strong></div>`).join('')}</div>${details.length?`<dl class="print-details">${details.map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`:''}<div class="instructions"><h3>やり方</h3>${steps.length?`<ol>${steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:'<p>院内で確認した動作で行ってください。</p>'}</div>${cautions.length?`<p class="print-caution"><strong>注意：</strong>${cautions.map(esc).join('／')}</p>`:''}</div></div></article>`;
+        return `<article class="exercise"><h2>${offset+j+1}. ${esc(ex.name)}</h2><div class="exercise-body"><div class="picture">${m?`<img src="${esc(m.imageData||new URL(m.imagePath||'assets/exercises/'+m.image,baseUrl).href)}" alt="${esc(ex.name)}">`:'<p>イラストなし</p>'}</div><div class="simple-content"><div class="dose-grid">${quantities.map(([label,value])=>`<div><span>${label}</span><strong>${esc(value)}</strong></div>`).join('')}</div>${details.length?`<dl class="print-details">${details.map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`:''}<div class="instructions"><h3>やり方</h3>${steps.length?`<ol>${steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:'<p>院内で確認した動作で行ってください。</p>'}</div>${cautions.length?`<p class="print-caution"><strong>注意：</strong>${cautions.map(esc).join('／')}</p>`:''}</div></div></article>`;
       }).join('');
       pages.push(`<section class="sheet"><header><div><h1>ご自宅で行う運動</h1>${patientLabel?`<p class="patient-label">対象：${esc(patientLabel)}</p>`:''}</div><div>${pages.length+1} / ${Math.ceil(items.length/perPage)}ページ</div></header><main>${cards}</main></section>`);
     }
@@ -51,15 +51,30 @@ function openExercisePrint(){
 function isIOSPrintDevice(nav=globalThis.navigator||{}){
   return /iPhone|iPad|iPod/i.test(nav.userAgent||'')||((nav.platform||'')==='MacIntel'&&Number(nav.maxTouchPoints)>1);
 }
-function previewExercisePrint(){
+async function embedPrintImage(media,baseUrl){
+  if(!media)return media;
+  const url=new URL(media.imagePath||'assets/exercises/'+media.image,baseUrl).href;
+  const response=await fetch(url);if(!response.ok)throw Error('画像を取得できません');
+  const blob=await response.blob();
+  const imageData=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('画像を変換できません'));reader.readAsDataURL(blob);});
+  return {...media,imageData};
+}
+async function previewExercisePrint(){
   if(!requireStaff())return;
   if(isIOSPrintDevice()){alert('iPhone・iPadからの印刷は禁止です。院内PCで印刷してください。');return;}
   const items=[...document.querySelectorAll('#exercisePrintModal input:checked')].map(input=>S.menu[Number(input.value)]);
   if(!items.length||items.length>6){toast('1〜6種目を選んでください');return;}
   const incomplete=items.filter(ex=>C.prescriptionIssues(ex).length);
   if(incomplete.length){alert('印刷前に個別指示を確認・保存してください。\n'+incomplete.map(ex=>ex.name+'：'+C.prescriptionIssues(ex).join('・')).join('\n'));return;}
-  const html=RehabPrint.documentHtml(S,items,items.map(mediaFor),location.href);
   const win=window.open('about:blank','_blank');
   if(!win){toast('印刷用画面がブロックされました。このサイトのポップアップを許可してください');return;}
-  win.opener=null;win.document.open();win.document.write(html);win.document.close();
+  win.opener=null;win.document.open();win.document.write('<!doctype html><meta charset="utf-8"><title>印刷画像を準備中</title><p style="font-family:sans-serif;padding:24px">印刷画像を準備しています…</p>');win.document.close();
+  try{
+    const media=await Promise.all(items.map(ex=>embedPrintImage(mediaFor(ex),location.href)));
+    const html=RehabPrint.documentHtml(S,items,media,location.href);
+    win.document.open();win.document.write(html);win.document.close();
+  }catch(error){
+    win.document.open();win.document.write('<!doctype html><meta charset="utf-8"><title>印刷準備エラー</title><p style="font-family:sans-serif;padding:24px;color:#a12525">画像を準備できませんでした。通信を確認し、元の画面からもう一度お試しください。</p>');win.document.close();
+    toast('印刷画像を準備できませんでした。通信を確認して再度お試しください');
+  }
 }

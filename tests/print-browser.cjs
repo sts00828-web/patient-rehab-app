@@ -66,7 +66,7 @@ async function main(){
   await send('Emulation.setDeviceMetricsOverride',{width:900,height:1250,deviceScaleFactor:1,mobile:false});
   async function ready(){for(let i=0;i<80;i++){if(await evaluate("!!document.getElementById('status')&&!document.getElementById('status').textContent.includes('読み込んでいます')"))return;await delay(100);}throw Error('Print image load timeout');}
   await ready();
-  await check('six-exercise popup ready with images, explanations and doses',"!document.body.classList.contains('invalid')&&document.querySelectorAll('.sheet').length===2&&document.images.length===6&&document.querySelectorAll('.instructions ol').length===6&&!document.getElementById('print').disabled");
+  await check('six-exercise popup ready with embedded images, explanations and doses',"!document.body.classList.contains('invalid')&&document.querySelectorAll('.sheet').length===2&&document.images.length===6&&[...document.images].every(img=>img.src.startsWith('data:image/'))&&document.querySelectorAll('.instructions ol').length===6&&!document.getElementById('print').disabled");
   await check('print popup cannot access parent window',"window.opener===null");
   async function pdf(name,expected){
     await evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
