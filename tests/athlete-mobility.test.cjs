@@ -4,7 +4,7 @@ const catalog=require('../clinical-catalog.js'),rules=require('../clinical-rules
 const ids=Array.from({length:17},(_,i)=>'P'+(i+14));
 
 test('athlete mobility and taping additions have matching reviewed assets',()=>{
- assert.equal(catalog.version,'0.4-athlete-mobility');
+ assert.equal(catalog.version,'0.5-athlete-stretch');
  for(const id of ids){
   const d=catalog.definitions[id];assert.ok(d,id);assert.equal(d.addedIn,'0.4');assert.equal(d.clinicalStatus,'pending_review');
   assert.equal(d.image,'images/'+id+'.webp');assert.match(d.sha256,/^[0-9a-f]{64}$/);
@@ -16,7 +16,7 @@ test('athlete mobility and taping additions have matching reviewed assets',()=>{
 });
 
 test('four non-disease athlete menus expose unique valid choices',()=>{
- const expected={A12:6,A13:6,A14:6,A15:4};
+ const expected={A12:13,A13:6,A14:8,A15:5};
  for(const [categoryId,count] of Object.entries(expected)){
   const c=catalog.categories[categoryId];assert.ok(c);assert.match(c.name,/^競技：/);
   const listed=Object.values(c.levels).flat();assert.equal(listed.length,count,categoryId);

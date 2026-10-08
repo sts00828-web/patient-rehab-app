@@ -15,6 +15,33 @@ function refreshExerciseNames(settings){
   for(const menu of [settings.menu,...(settings.plans||[]).map(plan=>plan.menu)])for(const ex of menu||[])if(currentExerciseNames[ex.exerciseKey])ex.name=currentExerciseNames[ex.exerciseKey];
   return settings;
 }
+function isStandaloneApp(){
+  return navigator.standalone===true||(typeof window.matchMedia==='function'&&window.matchMedia('(display-mode: standalone)').matches);
+}
+function isAdditiveMenuUpdate(current,next){
+  return next.length>current.length&&current.every(old=>next.some(item=>item.id===old.id&&JSON.stringify(item)===JSON.stringify(old)));
+}
+function isUnrecordedMenuRemovalToday(next){
+  const log=L[todayKey()],current=log?.menuSnapshot;if(!Array.isArray(current)||next.length>=current.length)return false;
+  if(!next.every(item=>current.some(old=>old.id===item.id&&JSON.stringify(old)===JSON.stringify(item))))return false;
+  const kept=new Set(next.map(item=>item.id)),removed=current.filter(item=>!kept.has(item.id));
+  return removed.length>0&&removed.every(item=>!Object.hasOwn(log.status||{},item.id)&&!Object.hasOwn(log.done||{},item.id)&&!(log.events||[]).some(event=>event.prescription_item_id===item.id));
+}
+function rebindImportedMenu(items,patientId){
+  return C.menu(items).map(item=>{
+    const next=C.clone(item),existing=S?.menu.find(old=>item.exerciseKey&&old.exerciseKey===item.exerciseKey);
+    if(existing)next.id=existing.id;
+    if(next.clinicalV02?.patient)next.clinicalV02.patient.patientId=patientId;
+    return next;
+  });
+}
+function updateMenuPreservingToday(next){
+  next=typeof ExerciseSelection==='undefined'?next:ExerciseSelection.ordered(next);
+  const applyToday=!!L[todayKey()]?.menuSnapshot&&(isAdditiveMenuUpdate(S.menu,next)||isUnrecordedMenuRemovalToday(next));
+  const from=C.changeMenu(S,L,next,todayKey(),dk(addDays(new Date(),1)));
+  if(applyToday)C.applyMenuToday(S,L,todayKey(),todayDow());
+  return applyToday?todayKey():from;
+}
 
 for (const key of Object.keys(TEMPLATES)) delete TEMPLATES[key];
 for (const [key,d] of Object.entries(DISEASE_LIBRARY)) TEMPLATES[key] = {...d, menu:getDiseaseExerciseMenu(key)};
@@ -583,7 +610,7 @@ function filterTemplateExercises(){
   $('template-results').textContent=visible?`${visible}種目を表示中`:'該当する種目がありません。絞り込みを変更してください。';
   updateTemplateSelection();
 }
-function commitMenu(next){next=typeof ExerciseSelection==='undefined'?next:ExerciseSelection.ordered(next);const from=C.changeMenu(S,L,next,todayKey(),dk(addDays(new Date(),1)));persist();renderTherapist();return from;}
+function commitMenu(next){const from=updateMenuPreservingToday(next);persist();renderTherapist();return from;}
 function applySelectedTemplate(share=false){
   if(!requireStaff())return;const tpl=getAllTemplates()[selectedTemplate],selected=[];
   for(const [i,m] of tpl.menu.entries())if($('pick-'+i).checked){const dose=readPrescription('dose-'+i,true),issues=C.prescriptionIssues(dose);if(issues.length){toast(`${m.name}：${issues.join('・')}を確認してください`);showPrescriptionErrors('dose-'+i,m.name);return;}selected.push({...m,id:'ex_'+uid(),params:$('dose-'+i).value.trim(),...dose});}
@@ -648,7 +675,7 @@ function buildShareUrl(){
   if(typeof LZString==='undefined'){alert('共有ライブラリを読み込めませんでした。');return null;}
   return `${location.origin}${location.pathname}#d=${encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(C.encodeShare(buildSharePayload()))))}`;
 }
-function handleImportFromHash(){
+function handleImportFromHash(initialLoad=false){
   if(storageBlocked)return false;const compressed=extractImportData();if(!compressed)return false;
   try{
     if(compressed.length>60000)throw Error('設定データが大きすぎます');
@@ -656,12 +683,22 @@ function handleImportFromHash(){
     const json=LZString.decompressFromEncodedURIComponent(compressed.replace(/ /g,'+'))||LZString.decompressFromBase64(compressed);
     if(!json||json.length>150000)throw Error('設定データが不正です');
     const raw=C.decodeShare(JSON.parse(json)),data=refreshExerciseNames(C.settings({...raw,plans:[],knownSince:todayKey()},uid(),todayKey()));
-    const same=!!(S&&C.id(raw.patientId)&&raw.patientId===S.patientId);
-    const message=same?'同じ患者のメニューを更新します。過去の記録は保持します。':S?'別の患者または旧形式の設定です。現在の記録を退避し、新しい記録として読み込みます。':'新しいメニューを読み込みます。';
+    const same=!!(S&&C.id(raw.patientId)&&raw.patientId===S.patientId),hasRecords=!!(S&&Object.keys(L).length);
+    if(S&&hasRecords&&!same){history.replaceState(null,'',location.pathname);alert('この端末の患者識別とQRが一致しないため、読み込みを中止しました。過去の記録は変更していません。同じ患者の保存済み処方から更新QRを作り直してください。');return false;}
+    // Safari retains the first QR URL for Home Screen installation. A later reload
+    // must not replay that old prescription over locally added exercises.
+    if(initialLoad===true&&same){
+      const next=rebindImportedMenu(data.menu,S.patientId);
+      const unchanged=JSON.stringify(C.menu(S.menu))===JSON.stringify(next)&&S.nextVisit===data.nextVisit&&['painContext','consultContact','restartInstructions'].every(field=>!Object.hasOwn(raw,field)||S[field]===data[field]);
+      if(unchanged){if(isStandaloneApp())history.replaceState(null,'',location.pathname);return true;}
+      showReceiveSettings(location.origin+location.pathname+'#d='+encodeURIComponent(compressed),true);
+      return false;
+    }
+    const preserve=!!(S&&same),message=same?'同じ患者のメニューを更新します。過去の記録は保持します。':S?'記録のない端末設定を退避し、新しい設定として読み込みます。':'新しいメニューを読み込みます。';
     if(!confirm(`${message}\n${data.menu.length}種目 ／ 開始日 ${data.startDate}\n担当PTから受け取った設定であることを確認してください。`)){history.replaceState(null,'',location.pathname);return false;}
-    if(same){C.changeMenu(S,L,data.menu,todayKey(),dk(addDays(new Date(),1)));S.nextVisit=data.nextVisit;for(const field of ['painContext','consultContact','restartInstructions'])if(Object.hasOwn(raw,field))S[field]=data[field];}
+    if(preserve){const next=rebindImportedMenu(data.menu,S.patientId);updateMenuPreservingToday(next);S.nextVisit=data.nextVisit;for(const field of ['painContext','consultContact','restartInstructions'])if(Object.hasOwn(raw,field))S[field]=data[field];}
     else{const name=prompt('この端末に表示する呼び名を入力してください（空欄でも使えます）。',C.text(raw.patientName,80));if(name===null)return false;archiveCurrent();S=data;S.chartId='';S.patientName=C.text(name,80);S.age='';S.diagnosis='';S.knownSince=S.startDate;S.plans=[{from:S.startDate,menu:C.clone(S.menu)}];L={};}
-    persist();history.replaceState(null,'',location.pathname);$('setupOverlay').hidden=true;toast(same?'メニューを更新しました':'新しい患者の設定を読み込みました');return true;
+    persist();if(isStandaloneApp())history.replaceState(null,'',location.pathname);$('setupOverlay').hidden=true;toast(preserve?'メニューを更新しました':'新しい患者の設定を読み込みました');return true;
   }catch(e){alert('読み込みできませんでした。\n'+e.message);return false;}
 }
 function manualImport(urlOverride){
@@ -672,7 +709,13 @@ function manualImport(urlOverride){
   const m=txt.match(/[#?&](?:d|import)=([^&\s]+)/);let value=m?m[1]:txt;try{value=decodeURIComponent(value);}catch{}
   history.replaceState(null,'',location.pathname+'#d='+encodeURIComponent(value));if(handleImportFromHash()){$('receiveModal')?.remove();renderHeader();renderToday();}
 }
-function showReceiveSettings(){modal('receiveModal','担当PTからメニューを受け取る','<button class="btn btn-pri" onclick="startQrScan()">設定QRを読み取る</button><label class="fld-lbl" for="update-url">または、受け取ったURLを貼り付け</label><textarea id="update-url" class="fld-inp" rows="3"></textarea><button class="btn btn-out" onclick="manualImport(document.getElementById(\'update-url\').value)">URLから読み込む</button>');}
+function keepSavedMenu(){history.replaceState(null,'',location.pathname);closeModal('receiveModal');}
+function showReceiveSettings(url='',review=false){
+  modal('receiveModal','担当PTからメニューを受け取る',
+    (review?'<p role="status">保存済みメニューを保持しています。このURLは保存済みの内容と異なるため、まだ反映していません。古いQR・URLを開いた場合は「保存済みメニューを使う」を選んでください。</p><button class="btn btn-pri" onclick="keepSavedMenu()">保存済みメニューを使う</button>':'')+
+    '<button class="btn btn-out" onclick="startQrScan()">設定QRを読み取る</button><label class="fld-lbl" for="update-url">担当PTから受け取った更新URL</label><textarea id="update-url" class="fld-inp" rows="3"></textarea><button class="btn btn-out" onclick="manualImport(document.getElementById(\'update-url\').value)">'+(review?'このURLのメニューへ更新':'URLから読み込む')+'</button>');
+  $('update-url').value=url;
+}
 function downloadJSON(data,name){const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportPatientData(){downloadJSON({version:2,settings:S,logs:L,templates:{},archives:[],exportedAt:new Date().toISOString()},'rehab-record-'+todayKey()+'.json');}
 function exportData(){if(requireStaff())downloadJSON({...packState(),localPin:undefined,pinRecoveryHash:undefined,exportedAt:new Date().toISOString()},'rehab-backup-'+todayKey()+'.json');}

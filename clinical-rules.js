@@ -46,11 +46,11 @@
     T:{reps:1,sets:1,doseUnit:'回',sessionsPerDay:1,daysPerWeek:1}
   };
   const doseGroups={
-    R:'S01 S02 S03 S04 S08 S19 S23 T02 T03 T04 T05 T15 T16 T17 T18 N02 N03 K02 E02 E03 A01 A02 A06 P14 P15 P18 P20 P21 P23 P25',
-    S:'S16 K01 E04 P16 P17 P19 P22 P24 P26', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04 N12',
+    R:'S01 S02 S03 S04 S08 S19 S23 T02 T03 T04 T05 T15 T16 T17 T18 N02 N03 K02 E02 E03 A01 A02 A06 P14 P15 P18 P20 P21 P23 P25 P37',
+    S:'S16 K01 E04 P16 P17 P19 P22 P24 P26 P31 P32 P33 P34 P35 P36 P38 P39 P40', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04 N12',
     M:'S09 S10 S11 S12 S13 S14 S15 S17 S20 S21 S22 S24 S25 T08 T13 T14 T19 K04 K05 K06 K07 K08 K09 K10 K12 K13 K14 K15 K16 K17 K18 K19 E06 E07 E08 E10 A05 A07 S30 S37 K26 A11 A13',
     B:'K11 K24 A08 A09 A15', C:'S18 S26 T01 T06 T07 T09 T10 T11 T12 T20 T21 T22 T23 N01 N04 N05 N08 N09 N10 K23 E09 A10 T25 T26',
-    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13',T:'P27 P28 P29 P30'
+    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13',T:'P27 P28 P29 P30 P41'
   };
   const dosePresetById=Object.fromEntries(Object.entries(doseGroups).flatMap(([preset,ids])=>ids.split(' ').map(id=>[id,preset])));
   const doseOverrides={
@@ -82,14 +82,22 @@
     P22:{reps:2,holdSeconds:10,amountBasis:'total'},P23:{reps:3,amountBasis:'each_side'},
     P24:{reps:2,holdSeconds:15,amountBasis:'each_side'},P25:{reps:5,amountBasis:'each_direction',doseDirections:'前・後ろ'},
     P26:{reps:1,holdSeconds:15,amountBasis:'each_side'},
-    P27:{amountBasis:'per_side'},P28:{amountBasis:'per_side'},P29:{amountBasis:'per_side'},P30:{amountBasis:'per_side'}
+    P27:{amountBasis:'per_side'},P28:{amountBasis:'per_side'},P29:{amountBasis:'per_side'},P30:{amountBasis:'per_side'},P41:{amountBasis:'per_side'},
+    // Athlete stretch expansion. Static holds and dynamic mobility use different editable starts.
+    P31:{reps:2,holdSeconds:15,amountBasis:'each_side'},P32:{reps:2,holdSeconds:15,amountBasis:'each_side'},
+    P33:{reps:2,holdSeconds:15,amountBasis:'each_side'},P34:{reps:2,holdSeconds:15,amountBasis:'each_side'},
+    P35:{reps:2,holdSeconds:15,amountBasis:'each_side'},P36:{reps:2,holdSeconds:15,amountBasis:'each_side'},
+    P37:{reps:5,amountBasis:'each_side'},P38:{reps:2,holdSeconds:15,amountBasis:'total'},
+    P39:{reps:2,holdSeconds:15,amountBasis:'each_side'},P40:{reps:2,holdSeconds:15,amountBasis:'each_side'}
   };
   function doseDraft(id){
     const d=catalog.definitions[id],preset=dosePresetById[id];if(!isSelectable(id)||!preset)return null;
-    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算',P23:'足を床へ着ける目標は設けない',P25:'小さい円で前・後ろ各5回',P27:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P28:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P29:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P30:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先'};
+    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算',P23:'足を床へ着ける目標は設けない',P25:'小さい円で前・後ろ各5回',P27:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P28:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P29:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P30:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P41:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先。反復回数はテープの本数ではありません'};
     return {...dosePresets[preset],...doseOverrides[id],support:d.equipment,doseDetail:details[id]||''};
   }
   function normalize(raw){
+    // Shared by current settings, QR and historical snapshots: preserve saved dose semantics.
+    // Side-dependent authoring corrections belong only in the explicit prescription editor.
     const r=raw&&typeof raw==='object'?raw:{},a=r.clinical||{},p=r.patient||{};
     const doseNum=v=>r.mode==='simple'&&typeof v==='number'?v:num(v);
     return {...(r.mode==='simple'?{mode:'simple'}:{}),version:str(r.version)||'0.2',categoryId:str(r.categoryId),revision:str(r.revision),
@@ -104,16 +112,20 @@
   }
   // Exceptions reflect explicit bilateral/alternating movements in the unchanged catalog text.
   const sideExceptions={
-    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06 S37 P12 P16 P17 P18 P19 P20 P21 P22 P23 P24 P25 P26',
+    bilateral:'S08 S12 S13 S14 S20 S22 T08 T14 T19 N08 N10 K06 K07 K08 A05 P01 P04 P06 S37 P12 P16 P17 P18 P19 P20 P21 P22 P23 P24 P25 P26 P38',
     alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10 P13 P14',
     none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09 N12 T25 T26 K38 P15'
   };
-  function initialSide(id,affectedSide){return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
+  function initialSide(id,affectedSide){if(id==='P41')return affectedSide==='right'?'right':'';return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
   // Only these catalog procedures use the right side as a unilateral example.
   // Bilateral/alternating procedures are deliberately excluded; source text stays intact.
   const rightExampleIds=new Set('S01 S02 S03 S04 S06 S07 S09 S10 S11 S15 S16 S17 S18 S19 S21 S24 S25 S26 T04 K01 K02 K04 K05 K09 K11 K12 K13 K15 K16 K18 K19 E01 E04 E05 E07 A04 A06 A07 A08 P05 S30 K26 A11 A13 A15'.split(' '));
   function patientSteps(ex,legacyMedia){
     const d=isNew(ex)?definition(ex):legacyMedia,steps=[...(patientStepOverrides[d?.id]||d?.steps||[])];
+    if(d?.addedIn==='0.5'){
+      if(d.id!=='P38'&&['bilateral','alternating'].includes(ex.clinicalV02?.side))steps.push('両側の指示なので、反対側も同じ回数行います。');
+      return steps.map(patientText);
+    }
     if(!isNew(ex)||!rightExampleIds.has(d?.id))return steps.map(patientText);
     const side=ex.clinicalV02?.side;
     // One pass swaps both working and assisting sides, preserving words such as 左右.
@@ -129,6 +141,7 @@
     if(!isNew(ex))return [];
     const d=definition(ex),r=normalize(ex.clinicalV02),out=[];
     if(!d)return ['未対応の運動ID'];
+    if(d.id==='P41'&&r.side!=='right')out.push('P41の工程ガイドは右足専用です。左足・両側へ読み替えません');
     if(!isSelectable(d.id))return ['削除済みの運動は新規処方・再開できません'];
     if(!d.image)out.push(d.assetStatus);
     if(r.mode!=='simple'&&(!r.clinical.approved||!r.clinical.reviewer||!r.clinical.date))out.push('本文・量の案・画像の臨床承認');

@@ -236,8 +236,9 @@ function showShareQR() {
         <h2>📱 患者スマホへ転送</h2>
         <button class="t-close" onclick="closeQR()">×</button>
       </div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
-        患者さんのアプリを開き、<strong>「設定QRを読み取る」</strong>で読み取ってください。呼び名は患者さんの端末で入力します。
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.7">
+        <strong>iPhoneで未追加：</strong>カメラでこのQRを読み、Safariで設定を確認してから「ホーム画面に追加」し、追加したアイコンを開きます。<br>
+        <strong>追加済み：</strong>ホーム画面のアプリを開き、「設定QRを読み取る」で読み取ります。呼び名は患者さんの端末で入力します。
       </p>
       <div id="qrBox"></div>
       <div style="font-size:11px;color:var(--text2);margin-top:10px;text-align:left;font-weight:700">📎 URL（タップで全選択→長押しでコピー）</div>
@@ -466,13 +467,14 @@ function toast(msg) {
 function init() {
   loadState();
   // URLハッシュからのインポート（PT端末からのQR読み取り）
-  handleImportFromHash();
+  handleImportFromHash(true);
   // 登録済みの空処方は休養日として表示し、初回案内で覆わない。
   if (!S) {
     const ov = document.getElementById('setupOverlay');
     ov.hidden = false;
-    document.getElementById('setup-intro-standalone').style.display = 'none';
-    document.getElementById('setup-intro-browser').style.display = 'block';
+    const standalone=typeof isStandaloneApp==='function'&&isStandaloneApp();
+    document.getElementById('setup-intro-standalone').style.display = standalone ? 'block' : 'none';
+    document.getElementById('setup-intro-browser').style.display = standalone ? 'none' : 'block';
   }
   bindTitleLongPress();
   renderHeader();

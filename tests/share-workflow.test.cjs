@@ -9,7 +9,7 @@ function app(){
  run(`S=C.settings({patientId:'share_patient',startDate:todayKey(),menu:[{id:'exercise',name:'テスト種目',dows:[],scheduleConfirmed:true,prescription:{side:'左',repetitions:'5回',sets:'1セット',hold:'なし',frequency:'1日1回',load:'なし',support:'椅子'}}]},'fallback',todayKey());L={};staffUnlocked=true;persist();`);
  return {ctx,run,nodes};
 }
-test('real URL import functions preserve same-patient history and separate a different patient',()=>{
+test('real URL import preserves same-patient history and rejects an unknown patient identifier',()=>{
  const a=app();a.run(`writableLog().status.exercise='done';persist();var beforeLogs=JSON.stringify(L);var incoming=C.clone(buildSharePayload());incoming.menu[0].note='更新した注意';var share=buildShareUrl();`);
  for(const version of [undefined,2,3]){
   a.run(`var raw=${version===3?'C.encodeShare(incoming)':'C.clone(incoming)'};${version===undefined?'delete raw.version;':''}location.hash='#d='+encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(raw)));`);
@@ -17,8 +17,8 @@ test('real URL import functions preserve same-patient history and separate a dif
   assert.equal(a.run('JSON.stringify(L)===beforeLogs'),true);assert.equal(a.run('S.menu[0].note'),'更新した注意');
  }
  a.run(`incoming.patientId='different_patient';location.hash='#d='+encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(C.encodeShare(incoming))));`);
- assert.equal(a.run('handleImportFromHash()'),true);assert.equal(a.run('Object.keys(L).length'),0);
- assert.equal(a.run('archives.at(-1).settings.patientId'),'share_patient');assert.equal(a.run('JSON.stringify(archives.at(-1).logs)===beforeLogs'),true);
+ assert.equal(a.run('handleImportFromHash()'),false);assert.equal(a.run('S.patientId'),'share_patient');
+ assert.equal(a.run('JSON.stringify(L)===beforeLogs'),true);assert.equal(a.run('archives.length'),0);
 });
 test('actual QR overflow becomes ordered split QR without truncating the copyable URL',()=>{
  const a=app();a.ctx.longText=require('node:crypto').randomBytes(240).toString('hex');

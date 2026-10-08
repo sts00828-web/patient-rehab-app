@@ -1,0 +1,64 @@
+{
+  "definitions": [
+    {
+      "id": "P31",
+      "key": "v02_P31",
+      "name": "壁でふくらはぎを伸ばす（膝伸ばし）",
+      "movementType": "static"
+    },
+    {
+      "id": "P32",
+      "key": "v02_P32",
+      "name": "壁でふくらはぎを伸ばす（膝曲げ）",
+      "movementType": "static"
+    },
+    {
+      "id": "P33",
+      "key": "v02_P33",
+      "name": "立って前ももを伸ばす",
+      "movementType": "static"
+    },
+    {
+      "id": "P34",
+      "key": "v02_P34",
+      "name": "台を使って前ももを伸ばす",
+      "movementType": "static"
+    },
+    {
+      "id": "P35",
+      "key": "v02_P35",
+      "name": "仰向けの4の字ストレッチ",
+      "movementType": "static"
+    },
+    {
+      "id": "P36",
+      "key": "v02_P36",
+      "name": "立って内ももを伸ばす",
+      "movementType": "static"
+    },
+    {
+      "id": "P37",
+      "key": "v02_P37",
+      "name": "膝を壁へ近づける足首運動",
+      "movementType": "dynamic"
+    },
+    {
+      "id": "P38",
+      "key": "v02_P38",
+      "name": "台で脇から背中を伸ばす",
+      "movementType": "static"
+    },
+    {
+      "id": "P39",
+      "key": "v02_P39",
+      "name": "頭上で腕の後ろを伸ばす",
+      "movementType": "static"
+    },
+    {
+      "id": "P40",
+      "key": "v02_P40",
+      "name": "手のひら側の前腕を伸ばす",
+      "movementType": "static"
+    }
+  ]
+}

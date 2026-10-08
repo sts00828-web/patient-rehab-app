@@ -1,0 +1,431 @@
+{
+  "settings": {
+    "patientId": "synthetic_history_audit",
+    "affectedSide": "",
+    "patientName": "",
+    "chartId": "",
+    "age": "",
+    "diagnosis": "",
+    "therapistName": "",
+    "painContext": "",
+    "consultContact": "",
+    "restartInstructions": "",
+    "startDate": "2026-10-01",
+    "nextVisit": "",
+    "template": null,
+    "menu": [
+      {
+        "id": "saved_P16",
+        "name": "支持つき90/90前傾",
+        "params": "",
+        "note": "",
+        "dows": [],
+        "scheduleMode": "flexible",
+        "exerciseKey": "v02_P16",
+        "videoUrl": "",
+        "prescription": {
+          "side": "左",
+          "repetitions": "2回（左右各）",
+          "sets": "1セット",
+          "hold": "15秒",
+          "frequency": "1日1回・週7日",
+          "load": "重りなし／無理のない範囲",
+          "support": "安定した支持"
+        },
+        "scheduleConfirmed": true,
+        "clinicalV02": {
+          "mode": "simple",
+          "version": "0.2",
+          "categoryId": "",
+          "revision": "",
+          "clinical": {
+            "approved": false,
+            "reviewer": "",
+            "date": null
+          },
+          "patient": {
+            "confirmed": false,
+            "reviewer": "",
+            "date": null,
+            "patientId": ""
+          },
+          "side": "left",
+          "reps": 2,
+          "sets": 1,
+          "holdSeconds": 15,
+          "holdNotApplicable": false,
+          "restSeconds": null,
+          "sessionsPerDay": 1,
+          "daysPerWeek": 7,
+          "doseUnit": "回",
+          "doseDetail": "",
+          "doseDirections": "",
+          "amountBasis": "each_side",
+          "load": "重りなし",
+          "rom": "無理のない範囲",
+          "support": "安定した支持",
+          "constraints": "",
+          "imageCompatible": false,
+          "imageId": "",
+          "imageSha256": "",
+          "supervised": false,
+          "sportPlan": "",
+          "extraReason": "",
+          "postoperative": null,
+          "surgery": {
+            "name": "",
+            "date": "",
+            "site": "",
+            "prohibited": "",
+            "rom": "",
+            "weightBearing": "",
+            "resistance": "",
+            "confirmedDate": "",
+            "instructor": "",
+            "protocol": ""
+          },
+          "gates": {}
+        }
+      }
+    ],
+    "knownSince": "2026-10-01",
+    "plans": [
+      {
+        "from": "2026-10-01",
+        "menu": [
+          {
+            "id": "saved_P16",
+            "name": "支持つき90/90前傾",
+            "params": "",
+            "note": "",
+            "dows": [],
+            "scheduleMode": "flexible",
+            "exerciseKey": "v02_P16",
+            "videoUrl": "",
+            "prescription": {
+              "side": "左",
+              "repetitions": "2回（左右各）",
+              "sets": "1セット",
+              "hold": "15秒",
+              "frequency": "1日1回・週7日",
+              "load": "重りなし／無理のない範囲",
+              "support": "安定した支持"
+            },
+            "scheduleConfirmed": true,
+            "clinicalV02": {
+              "mode": "simple",
+              "version": "0.2",
+              "categoryId": "",
+              "revision": "",
+              "clinical": {
+                "approved": false,
+                "reviewer": "",
+                "date": null
+              },
+              "patient": {
+                "confirmed": false,
+                "reviewer": "",
+                "date": null,
+                "patientId": ""
+              },
+              "side": "left",
+              "reps": 2,
+              "sets": 1,
+              "holdSeconds": 15,
+              "holdNotApplicable": false,
+              "restSeconds": null,
+              "sessionsPerDay": 1,
+              "daysPerWeek": 7,
+              "doseUnit": "回",
+              "doseDetail": "",
+              "doseDirections": "",
+              "amountBasis": "each_side",
+              "load": "重りなし",
+              "rom": "無理のない範囲",
+              "support": "安定した支持",
+              "constraints": "",
+              "imageCompatible": false,
+              "imageId": "",
+              "imageSha256": "",
+              "supervised": false,
+              "sportPlan": "",
+              "extraReason": "",
+              "postoperative": null,
+              "surgery": {
+                "name": "",
+                "date": "",
+                "site": "",
+                "prohibited": "",
+                "rom": "",
+                "weightBearing": "",
+                "resistance": "",
+                "confirmedDate": "",
+                "instructor": "",
+                "protocol": ""
+              },
+              "gates": {}
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "logs": {
+    "2026-10-01": {
+      "done": {
+        "saved_P16": true
+      },
+      "status": {
+        "saved_P16": "done"
+      },
+      "vas": 0,
+      "note": "synthetic fixture",
+      "menuSnapshot": [
+        {
+          "id": "saved_P16",
+          "name": "支持つき90/90前傾",
+          "params": "",
+          "note": "",
+          "dows": [],
+          "scheduleMode": "flexible",
+          "exerciseKey": "v02_P16",
+          "videoUrl": "",
+          "prescription": {
+            "side": "左",
+            "repetitions": "2回（左右各）",
+            "sets": "1セット",
+            "hold": "15秒",
+            "frequency": "1日1回・週7日",
+            "load": "重りなし／無理のない範囲",
+            "support": "安定した支持"
+          },
+          "scheduleConfirmed": true,
+          "clinicalV02": {
+            "mode": "simple",
+            "version": "0.2",
+            "categoryId": "",
+            "revision": "",
+            "clinical": {
+              "approved": false,
+              "reviewer": "",
+              "date": null
+            },
+            "patient": {
+              "confirmed": false,
+              "reviewer": "",
+              "date": null,
+              "patientId": ""
+            },
+            "side": "left",
+            "reps": 2,
+            "sets": 1,
+            "holdSeconds": 15,
+            "holdNotApplicable": false,
+            "restSeconds": null,
+            "sessionsPerDay": 1,
+            "daysPerWeek": 7,
+            "doseUnit": "回",
+            "doseDetail": "",
+            "doseDirections": "",
+            "amountBasis": "each_side",
+            "load": "重りなし",
+            "rom": "無理のない範囲",
+            "support": "安定した支持",
+            "constraints": "",
+            "imageCompatible": false,
+            "imageId": "",
+            "imageSha256": "",
+            "supervised": false,
+            "sportPlan": "",
+            "extraReason": "",
+            "postoperative": null,
+            "surgery": {
+              "name": "",
+              "date": "",
+              "site": "",
+              "prohibited": "",
+              "rom": "",
+              "weightBearing": "",
+              "resistance": "",
+              "confirmedDate": "",
+              "instructor": "",
+              "protocol": ""
+            },
+            "gates": {}
+          }
+        }
+      ],
+      "menuRevisions": [
+        {
+          "menuSnapshot": [
+            {
+              "id": "saved_P16",
+              "name": "支持つき90/90前傾",
+              "params": "",
+              "note": "",
+              "dows": [],
+              "scheduleMode": "flexible",
+              "exerciseKey": "v02_P16",
+              "videoUrl": "",
+              "prescription": {
+                "side": "左",
+                "repetitions": "2回（左右各）",
+                "sets": "1セット",
+                "hold": "15秒",
+                "frequency": "1日1回・週7日",
+                "load": "重りなし／無理のない範囲",
+                "support": "安定した支持"
+              },
+              "scheduleConfirmed": true,
+              "clinicalV02": {
+                "mode": "simple",
+                "version": "0.2",
+                "categoryId": "",
+                "revision": "",
+                "clinical": {
+                  "approved": false,
+                  "reviewer": "",
+                  "date": null
+                },
+                "patient": {
+                  "confirmed": false,
+                  "reviewer": "",
+                  "date": null,
+                  "patientId": ""
+                },
+                "side": "left",
+                "reps": 2,
+                "sets": 1,
+                "holdSeconds": 15,
+                "holdNotApplicable": false,
+                "restSeconds": null,
+                "sessionsPerDay": 1,
+                "daysPerWeek": 7,
+                "doseUnit": "回",
+                "doseDetail": "",
+                "doseDirections": "",
+                "amountBasis": "each_side",
+                "load": "重りなし",
+                "rom": "無理のない範囲",
+                "support": "安定した支持",
+                "constraints": "",
+                "imageCompatible": false,
+                "imageId": "",
+                "imageSha256": "",
+                "supervised": false,
+                "sportPlan": "",
+                "extraReason": "",
+                "postoperative": null,
+                "surgery": {
+                  "name": "",
+                  "date": "",
+                  "site": "",
+                  "prohibited": "",
+                  "rom": "",
+                  "weightBearing": "",
+                  "resistance": "",
+                  "confirmedDate": "",
+                  "instructor": "",
+                  "protocol": ""
+                },
+                "gates": {}
+              }
+            }
+          ],
+          "done": {
+            "saved_P16": true
+          },
+          "status": {
+            "saved_P16": "done"
+          }
+        }
+      ],
+      "legacyOriginal": {
+        "done": {
+          "saved_P16": true
+        },
+        "status": {
+          "saved_P16": "done"
+        },
+        "vas": 0,
+        "note": "synthetic fixture",
+        "menuSnapshot": [
+          {
+            "id": "saved_P16",
+            "name": "支持つき90/90前傾",
+            "params": "",
+            "note": "",
+            "dows": [],
+            "scheduleMode": "flexible",
+            "exerciseKey": "v02_P16",
+            "videoUrl": "",
+            "prescription": {
+              "side": "左",
+              "repetitions": "2回（左右各）",
+              "sets": "1セット",
+              "hold": "15秒",
+              "frequency": "1日1回・週7日",
+              "load": "重りなし／無理のない範囲",
+              "support": "安定した支持"
+            },
+            "scheduleConfirmed": true,
+            "clinicalV02": {
+              "mode": "simple",
+              "version": "0.2",
+              "categoryId": "",
+              "revision": "",
+              "clinical": {
+                "approved": false,
+                "reviewer": "",
+                "date": null
+              },
+              "patient": {
+                "confirmed": false,
+                "reviewer": "",
+                "date": null,
+                "patientId": ""
+              },
+              "side": "left",
+              "reps": 2,
+              "sets": 1,
+              "holdSeconds": 15,
+              "holdNotApplicable": false,
+              "restSeconds": null,
+              "sessionsPerDay": 1,
+              "daysPerWeek": 7,
+              "doseUnit": "回",
+              "doseDetail": "",
+              "doseDirections": "",
+              "amountBasis": "each_side",
+              "load": "重りなし",
+              "rom": "無理のない範囲",
+              "support": "安定した支持",
+              "constraints": "",
+              "imageCompatible": false,
+              "imageId": "",
+              "imageSha256": "",
+              "supervised": false,
+              "sportPlan": "",
+              "extraReason": "",
+              "postoperative": null,
+              "surgery": {
+                "name": "",
+                "date": "",
+                "site": "",
+                "prohibited": "",
+                "rom": "",
+                "weightBearing": "",
+                "resistance": "",
+                "confirmedDate": "",
+                "instructor": "",
+                "protocol": ""
+              },
+              "gates": {}
+            }
+          }
+        ]
+      }
+    }
+  },
+  "templates": {}
+}
