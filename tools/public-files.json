@@ -327,7 +327,7 @@
   {
     "file": "bug-report.js",
     "bytes": 3961,
-    "sha256": "c3cae4583e47d621ae447f4707e71be7e382a9bd33c41fa75785282180d4667c"
+    "sha256": "8175b670dabb775e9c98a08c954d1a48fe22a41266312869599a0e976c680650"
   },
   {
     "file": "clinical-catalog.js",
@@ -351,8 +351,8 @@
   },
   {
     "file": "clinical-ui.js",
-    "bytes": 49736,
-    "sha256": "fe814ad36932b6ccaed548bfcc3ba4aa6e1ac459fb10400817d7fbe2722d3f28"
+    "bytes": 50336,
+    "sha256": "7a9e0d47761430309b6b5054dc18168b6c7baa17413ab380cc8fde20e07fa92e"
   },
   {
     "file": "core.js",
@@ -5946,8 +5946,8 @@
   },
   {
     "file": "index.html",
-    "bytes": 19025,
-    "sha256": "d3ad55d12c80ef957865a91b174cb89492855f8f88309ff8876affae73c72f38"
+    "bytes": 19071,
+    "sha256": "8bac004d2622a101f4a0c75ac680d12c807e115e978547459ee7235e3bc23a12"
   },
   {
     "file": "manifest.json",
@@ -5966,8 +5966,13 @@
   },
   {
     "file": "sw.js",
-    "bytes": 7365,
-    "sha256": "dc885dca42b00f683053f200b7d67a04a9d30dd75bb1f4d297da2175c73a7d9b"
+    "bytes": 7391,
+    "sha256": "2be3004ba7a0f8a052d0f3e91dd392aea3d1779810f31e92649c4f567c0f384c"
+  },
+  {
+    "file": "taping-entry-model.js",
+    "bytes": 1088,
+    "sha256": "21a5c7c81866d4936703f0eff9f63071a4909d3d3d90b0bbc452deead00b4ce9"
   },
   {
     "file": "taping-guide-model.js",
@@ -5976,13 +5981,13 @@
   },
   {
     "file": "taping-guide.css",
-    "bytes": 4748,
-    "sha256": "c86185e6e32af28b50e5fcc910999cfbe9ec96d63aa3370f37917f66c54fbc27"
+    "bytes": 7409,
+    "sha256": "dee659fc405281b6678208ede0f48112af6670672f8de2babd9c33b3fa2a90e9"
   },
   {
     "file": "taping-guide.js",
-    "bytes": 26889,
-    "sha256": "b0cc11c0b70f88412f0423b3b4dcdf922d72e35f5dd307448fb324d04706f1ed"
+    "bytes": 37245,
+    "sha256": "1677d3bbee571f90b81dcd8ae38dc4b5a7624fba905b75a57615f32ce14544ff"
   },
   {
     "file": "taping-image-cache.js",
