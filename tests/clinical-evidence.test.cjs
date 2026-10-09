@@ -8,9 +8,9 @@ function setup(){
   vm.runInContext('globalThis.refs=ClinicalEvidence;globalThis.catalog=ClinicalCatalog;globalThis.viewer=ExerciseEvidence;',c);
   return c;
 }
-test('all 149 selectable definitions have explicitly classified references and render without mutation',()=>{
+test('all 144 selectable definitions have explicitly classified references and render without mutation',()=>{
   const c=setup(),defs=Object.values(c.catalog.definitions).filter(d=>d.status!=='retired');
-  assert.equal(defs.length,149);
+  assert.equal(defs.length,144);
   for(const d of defs){
     const ex={exerciseKey:d.key,prescription:{repetitions:'個別指示'}},before=JSON.stringify(ex),result=c.refs.lookup(ex);
     assert.ok(result.entry&&result.source,d.id);

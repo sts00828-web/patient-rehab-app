@@ -1,4 +1,4 @@
-/* Additive clinical catalog. Clinical approval is not inferred from AI review. */
+/* Clinical catalog. Retired IDs are reserved for existing QR links and records. */
 (function(root){
 const data={
   "version": "0.5-athlete-stretch",
@@ -2883,85 +2883,37 @@ const data={
       "id": "P27",
       "key": "v02_P27",
       "name": "足関節サポートテープ",
-      "purpose": "活動時の足関節外部支持",
-      "steps": [
-        "担当者が教えた非伸縮テープの方法で貼ります。貼付後に短く歩き、足指の色、温度、感覚と違和感を確認します。"
-      ],
-      "doseProposal": "T：必要な活動時に1回",
-      "caution": "担当者の指導後のみ。傷・湿疹・アレルギー部位には貼りません。しびれ、冷感、色の変化、灼熱感、水疱が出たら直ちに外します。",
-      "equipment": "指定された非伸縮テープ、皮膚保護材",
-      "gates": "G7+G8",
-      "pose": "足関節の完成テープ概念図。具体的手順は個別指導",
-      "image": "images/P27.webp",
-      "imageCaption": "完成位置の概念図です。テープの種類、張力、方向、装着時間は担当者の指示を優先します。",
-      "assetStatus": "AI生成概念図・要臨床確認",
-      "assetNotes": "裸足と完成後の比較。自己流の貼付手順としては使わない。",
-      "clinicalStatus": "pending_review",
-      "sha256": "3d599883fb350e097656ed5ba4a78b48e99803179f582314ba19c776bc6ba3c9",
-      "addedIn": "0.4"
+      "status": "retired",
+      "retirementReason": "taping-service-ended",
+      "retiredAt": "2026-10-09",
+      "steps": []
     },
     "P28": {
       "id": "P28",
       "key": "v02_P28",
       "name": "足底アーチサポートテープ",
-      "purpose": "足底症状への短期補助",
-      "steps": [
-        "担当者が教えた位置へ貼り、貼付後に短く歩いて症状と皮膚の状態を確認します。"
-      ],
-      "doseProposal": "T：必要な活動時に1回",
-      "caution": "担当者の指導後のみ。循環を妨げる巻き方をせず、しびれ、冷感、色の変化、かゆみ、水疱が出たら直ちに外します。",
-      "equipment": "指定されたテープ、皮膚保護材",
-      "gates": "G7+G8",
-      "pose": "足底アーチの完成テープ概念図。具体的手順は個別指導",
-      "image": "images/P28.webp",
-      "imageCaption": "完成位置の概念図です。貼り方と装着時間は担当者の指示を優先します。",
-      "assetStatus": "AI生成概念図・要臨床確認",
-      "assetNotes": "足底面の裸足と完成後。自己流の貼付手順としては使わない。",
-      "clinicalStatus": "pending_review",
-      "sha256": "02480d46eff202c027ed80ed8bf0a301a3727867b43728a6e387be25eabba32e",
-      "addedIn": "0.4"
+      "status": "retired",
+      "retirementReason": "taping-service-ended",
+      "retiredAt": "2026-10-09",
+      "steps": []
     },
     "P29": {
       "id": "P29",
       "key": "v02_P29",
       "name": "膝蓋骨周囲サポートテープ",
-      "purpose": "膝前面症状への短期補助",
-      "steps": [
-        "担当者が決めた位置へ貼り、浅い膝曲げや階段動作で痛みの変化と皮膚を確認します。"
-      ],
-      "doseProposal": "T：必要な活動時に1回",
-      "caution": "運動や負荷調整の代わりにはしません。しびれ、冷感、色の変化、かゆみ、水疱、痛みの増加で直ちに外します。",
-      "equipment": "指定されたテープ、皮膚保護材",
-      "gates": "G7+G8",
-      "pose": "膝蓋骨周囲の完成テープ概念図。具体的手順は個別指導",
-      "image": "images/P29.webp",
-      "imageCaption": "完成位置の概念図です。症状に合う方向と張力を担当者が決めます。",
-      "assetStatus": "AI生成概念図・要臨床確認",
-      "assetNotes": "裸膝と完成後の比較。全周を強く締める指示ではない。",
-      "clinicalStatus": "pending_review",
-      "sha256": "4e7fc35018a3de469f862d61ce0b85acc800d2bbff7c7e912aa766020403cc7b",
-      "addedIn": "0.4"
+      "status": "retired",
+      "retirementReason": "taping-service-ended",
+      "retiredAt": "2026-10-09",
+      "steps": []
     },
     "P30": {
       "id": "P30",
       "key": "v02_P30",
       "name": "肩の補助テープ",
-      "purpose": "肩症状への短期的な補助",
-      "steps": [
-        "担当者が決めた肩・肩甲骨周囲の位置へ貼り、腕をゆっくり動かして症状と皮膚を確認します。"
-      ],
-      "doseProposal": "T：必要な活動時に1回",
-      "caution": "筋力増強、姿勢の恒久矯正、脱臼予防を保証しません。かゆみ、灼熱感、水疱、しびれ、痛みの増加で直ちに外します。",
-      "equipment": "指定された伸縮テープ、皮膚保護材",
-      "gates": "G1+G7+G8",
-      "pose": "肩外側から肩甲帯の完成テープ概念図。具体的手順は個別指導",
-      "image": "images/P30.webp",
-      "imageCaption": "完成位置の概念図です。テープは短期補助で、運動療法の代わりではありません。",
-      "assetStatus": "AI生成概念図・要臨床確認",
-      "assetNotes": "右肩の未貼付と完成後の比較。貼付方向・張力は個別指導。",
-      "clinicalStatus": "pending_review",
-      "sha256": "ef2bcffdb638f572ed8510ad65f7a8b0421cf1bc86dc6b281e0b64962c118e7e",
-      "addedIn": "0.4"
+      "status": "retired",
+      "retirementReason": "taping-service-ended",
+      "retiredAt": "2026-10-09",
+      "steps": []
     },
     "P31": {
       "id": "P31",
@@ -3237,24 +3189,10 @@ const data={
       "id": "P41",
       "key": "v02_P41",
       "name": "足関節テーピング：補助者による右足の工程",
-      "purpose": "担当者に教わった右足の貼付工程を復習する",
-      "steps": [
-        "この図は準備姿勢です。貼る前に「工程ごとのテーピング図」を開き、担当者に教わった右足の巻き方を確認します。",
-        "指定された非伸縮テープを使い、指導を受けた補助者が貼ります。左足への読み替えや自己流の貼付はしません。"
-      ],
-      "doseProposal": "T：必要な活動時に1回",
-      "caution": "担当者の指導後のみ。傷・湿疹・アレルギー部位には貼りません。しびれ、冷感、色の変化、灼熱感、水疱が出たら直ちに外します。",
-      "equipment": "指定された非伸縮テープ、皮膚保護材、指導を受けた補助者",
-      "gates": "G7+G8",
-      "pose": "補助者が右足とすねをほぼ直角の中間位に保持",
-      "image": "images/taping/p41-preparation-v1.webp",
-      "imageCaption": "準備姿勢のみ。貼付経路は工程ガイドで確認してください。",
-      "assetStatus": "準備図。全工程図はガイドの確認状態に従う",
-      "assetNotes": "右足・指導を受けた補助者による貼付。工程図の合格判定と臨床承認は別です。",
-      "clinicalStatus": "pending_review",
-      "sha256": "b7039aa951039559bd09809116e13f698d8ced143e5bd9ea24d326a66e99d4ca",
-      "addedIn": "0.6-taping",
-      "illustratedSide": "right"
+      "status": "retired",
+      "retirementReason": "taping-service-ended",
+      "retiredAt": "2026-10-09",
+      "steps": []
     }
   },
   "categories": {
@@ -4144,28 +4082,6 @@ const data={
         ]
       }
     },
-    "A15": {
-      "id": "A15",
-      "name": "競技：テーピング",
-      "notes": "短期補助として、担当者が目的・種類・張力・方向・装着時間を指定。運動療法の代わりや筋力増強をうたわない。毎回皮膚を確認し、かゆみ、灼熱感、水疱、しびれ、冷感、色の変化で直ちに外す",
-      "levelLabels": {
-        "beginner": "足部・足関節",
-        "intermediate": "膝・肩",
-        "advanced": ""
-      },
-      "levels": {
-        "beginner": [
-          "P27",
-          "P28",
-          "P41"
-        ],
-        "intermediate": [
-          "P29",
-          "P30"
-        ],
-        "advanced": []
-      }
-    },
     "A16": {
       "id": "A16",
       "name": "競技：前腕ストレッチ",
@@ -4256,14 +4172,6 @@ const data={
     "clinicalStatus": "pending_review",
     "imageMode": "built-in ImageGen; P40 reuses existing reviewed asset",
     "patientMigration": "none; existing IDs and stored records unchanged"
-  },
-  "tapingExpansion": {
-    "version": "P41-integration-candidate-1",
-    "newIds": [
-      "P41"
-    ],
-    "patientMigration": "none",
-    "clinicalStatus": "pending_review"
   }
 };
 if(typeof module!=="undefined"&&module.exports)module.exports=data;else root.ClinicalCatalog=data;

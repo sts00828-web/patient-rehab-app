@@ -12,7 +12,7 @@ function setup(clipboard){
 test('exact allowlisted report, coarse environment, no raw navigator data',()=>{
   const {context}=setup();
   const report=context.buildBugReport('操作','結果',{userAgent:'SECRET Chrome/123 Windows',platform:'SECRET'},new Date('2026-09-25T00:00:00Z'));
-  assert.equal(report,'【不具合報告】\nやろうとしたこと：\n操作\n\n実際に起きたこと：\n結果\n\nアプリ版：v88\n日時：2026-09-25T00:00:00.000Z（UTC）\n端末：PC / その他\nOS：Windows\nブラウザ：Chrome');
+  assert.equal(report,'【不具合報告】\nやろうとしたこと：\n操作\n\n実際に起きたこと：\n結果\n\nアプリ版：v89\n日時：2026-09-25T00:00:00.000Z（UTC）\n端末：PC / その他\nOS：Windows\nブラウザ：Chrome');
   assert.match(context.bugReportEnvironment({userAgent:'Macintosh Safari/1',platform:'MacIntel',maxTouchPoints:5}),/iOS \/ iPadOS/);
 });
 test('successful write copies literal input and keeps draft after reopening',async()=>{

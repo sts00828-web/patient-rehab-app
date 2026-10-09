@@ -2,7 +2,11 @@
 const RehabPrint = (() => {
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function documentHtml(settings,items,media,baseUrl){
-    if(typeof ClinicalRules!=='undefined')ClinicalRules.assertPrescribable(items,settings.patientId);
+    if(typeof ClinicalRules!=='undefined'){
+      const pairs=items.map((ex,i)=>({ex,media:media[i]})).filter(p=>!ClinicalRules.isRetired(p.ex));
+      items=pairs.map(p=>p.ex);media=pairs.map(p=>p.media);
+      ClinicalRules.assertPrescribable(items,settings.patientId);
+    }
     if(!items.length||items.length>6)throw Error('印刷する運動は1〜6種目を選んでください。');
     const pages=[];
     const perPage=3;
@@ -14,7 +18,7 @@ const RehabPrint = (() => {
         const quantities=[['回数',p.repetitions||'要確認'],['セット数',p.sets||'要確認'],...(hold?[['保持時間',hold]]:[])];
         const details=[['実施側',p.side==='左右指定なし'?'左右の指定なし':p.side],['頻度',p.frequency],['負荷・範囲',p.load],['支え',p.support]].filter(([,value])=>value&&value!=='該当なし');
         const cautions=[ex.note,ex.diseaseNote,ex.clinicalV02?.constraints,m?.caution].filter(Boolean).filter((value,index,array)=>array.indexOf(value)===index);
-        return `<article class="exercise"><h2>${offset+j+1}. ${esc(ex.name)}</h2><div class="exercise-body"><div class="picture">${m?`<img src="${esc(m.imageData||new URL(m.imagePath||'assets/exercises/'+m.image,baseUrl).href)}" alt="${esc(ex.name)}">`:'<p>イラストなし</p>'}</div><div class="simple-content"><div class="dose-grid">${quantities.map(([label,value])=>`<div><span>${label}</span><strong>${esc(value)}</strong></div>`).join('')}</div>${details.length?`<dl class="print-details">${details.map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`:''}${ex.exerciseKey==='v02_P41'?'<p class="print-caution"><strong>この紙は準備姿勢の確認用です。</strong>全貼付工程は載っていません。紙だけで貼らず、担当者の指導とアプリの工程ガイドを確認してください。</p>':''}<div class="instructions"><h3>やり方</h3>${steps.length?`<ol>${steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:'<p>院内で確認した動作で行ってください。</p>'}</div>${cautions.length?`<p class="print-caution"><strong>注意：</strong>${cautions.map(esc).join('／')}</p>`:''}</div></div></article>`;
+        return `<article class="exercise"><h2>${offset+j+1}. ${esc(ex.name)}</h2><div class="exercise-body"><div class="picture">${m?`<img src="${esc(m.imageData||new URL(m.imagePath||'assets/exercises/'+m.image,baseUrl).href)}" alt="${esc(ex.name)}">`:'<p>イラストなし</p>'}</div><div class="simple-content"><div class="dose-grid">${quantities.map(([label,value])=>`<div><span>${label}</span><strong>${esc(value)}</strong></div>`).join('')}</div>${details.length?`<dl class="print-details">${details.map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`:''}<div class="instructions"><h3>やり方</h3>${steps.length?`<ol>${steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:'<p>院内で確認した動作で行ってください。</p>'}</div>${cautions.length?`<p class="print-caution"><strong>注意：</strong>${cautions.map(esc).join('／')}</p>`:''}</div></div></article>`;
       }).join('');
       pages.push(`<section class="sheet"><header><div><h1>ご自宅で行う運動</h1>${patientLabel?`<p class="patient-label">対象：${esc(patientLabel)}</p>`:''}</div><div>${pages.length+1} / ${Math.ceil(items.length/perPage)}ページ</div></header><main>${cards}</main></section>`);
     }
@@ -44,8 +48,9 @@ const RehabPrint = (() => {
 
 function openExercisePrint(){
   if(!requireStaff())return;
-  if(!S?.menu.length){toast('先に運動を選んで保存してください');return;}
-  modal('exercisePrintModal','紙で渡す運動を選ぶ',`<p>A4縦・1ページ3種目、最大6種目で2ページです。両面印刷なら用紙1枚です。処方済みの運動から印刷するものを選んでください。</p>${S.menu.map((ex,i)=>`<label class="pick-label" style="padding:12px 0"><input type="checkbox" name="print-exercise" value="${i}" ${S.menu.length<=6?'checked':''}>${escapeHtml(ex.name)}</label>`).join('')}<p class="hint">印刷内容は、運動名、イラスト、回数、セット数、保持時間、実施側、頻度、負荷・支え、やり方、注意です。患者ID・患者名を入力した場合だけ対象患者も表示します。実施記録は印刷しません。</p><button class="btn btn-pri" onclick="previewExercisePrint()">印刷用画面を開く</button>`);
+  const printable=S?.menu.map((ex,i)=>({ex,i})).filter(p=>!ClinicalRules.isRetired(p.ex))||[];
+  if(!printable.length){toast('提供中の運動を選んで保存してください');return;}
+  modal('exercisePrintModal','紙で渡す運動を選ぶ',`<p>A4縦・1ページ3種目、最大6種目で2ページです。両面印刷なら用紙1枚です。処方済みの運動から印刷するものを選んでください。</p>${printable.map(({ex,i})=>`<label class="pick-label" style="padding:12px 0"><input type="checkbox" name="print-exercise" value="${i}" ${printable.length<=6?'checked':''}>${escapeHtml(ex.name)}</label>`).join('')}<p class="hint">印刷内容は、運動名、イラスト、回数、セット数、保持時間、実施側、頻度、負荷・支え、やり方、注意です。患者ID・患者名を入力した場合だけ対象患者も表示します。実施記録は印刷しません。</p><button class="btn btn-pri" onclick="previewExercisePrint()">印刷用画面を開く</button>`);
   const firstParagraph=$('exercisePrintModal')?.querySelector('.t-modal>p');if(firstParagraph){const note=document.createElement('p');note.className='notice';note.innerHTML='<strong>印刷は院内PC限定です。iPhoneからは印刷できません。</strong>';firstParagraph.after(note);}
 }
 function isIOSPrintDevice(nav=globalThis.navigator||{}){
@@ -62,7 +67,7 @@ async function embedPrintImage(media,baseUrl){
 async function previewExercisePrint(){
   if(!requireStaff())return;
   if(isIOSPrintDevice()){alert('iPhone・iPadからの印刷は禁止です。院内PCで印刷してください。');return;}
-  const items=[...document.querySelectorAll('#exercisePrintModal input:checked')].map(input=>S.menu[Number(input.value)]);
+  const items=[...document.querySelectorAll('#exercisePrintModal input:checked')].map(input=>S.menu[Number(input.value)]).filter(ex=>ex&&!ClinicalRules.isRetired(ex));
   if(!items.length||items.length>6){toast('1〜6種目を選んでください');return;}
   const incomplete=items.filter(ex=>C.prescriptionIssues(ex).length);
   if(incomplete.length){alert('印刷前に個別指示を確認・保存してください。\n'+incomplete.map(ex=>ex.name+'：'+C.prescriptionIssues(ex).join('・')).join('\n'));return;}

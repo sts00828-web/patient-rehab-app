@@ -105,7 +105,7 @@ function validateArchives(raw) {
   return raw.map(a=>({settings:refreshExerciseNames(C.settings(a.settings,uid(),todayKey())),logs:C.logs(a.logs||{}),savedAt:C.text(a.savedAt,50)}));
 }
 function getCompletion(key,dow){return C.completion(S,L,key,dow);}
-function todayExercises(dow){const items=C.menuAt(S,L,todayKey(),dow);return typeof ExerciseSelection==='undefined'?items:ExerciseSelection.ordered(items);}
+function todayExercises(dow){const raw=C.menuAt(S,L,todayKey(),dow),items=typeof ClinicalRules==='undefined'?raw:ClinicalRules.activeItems(raw);return typeof ExerciseSelection==='undefined'?items:ExerciseSelection.ordered(items);}
 function getLog(key){return L[key]||{done:{},status:{},vas:null,note:''};}
 function writableLog() {
   if(activeDay!==todayKey()){refreshDay();throw Error('日付が変わりました。新しい日の画面で入力してください。');}
@@ -180,6 +180,8 @@ function renderToday(){
   if(!S.menu.length&&!items.length&&!Object.keys(L).length){$('today-content').innerHTML='<div class="card empty"><div class="welcome-icon">🌱</div><h2>運動メニューはまだ設定されていません</h2><p>患者さんは設定QRまたはURLを受け取ってください。スタッフはスタッフ画面からメニューを作成できます。</p><button class="btn btn-pri" onclick="showReceiveSettings()">QR・URLから受け取る</button><button class="btn btn-out" onclick="openPinModal()">スタッフ：メニューを設定</button></div>';return;}
   todayExerciseIndex=Math.max(0,Math.min(items.length-1,todayExerciseIndex));
   let h='';
+  const retired=typeof ClinicalRules==='undefined'?[]:[...C.menuAt(S,L,key,dow),...S.menu].filter(ClinicalRules.isRetired);
+  if(retired.length)h+='<section class="card" data-retired-service><p class="notice" role="status">'+escapeHtml(ClinicalRules.retiredMessage)+'</p><p>'+[...new Set(retired.map(ex=>ex.name))].map(escapeHtml).join('／')+'</p></section>';
   if(S.plans.some(p=>p.from>key))h+=`<div class="notice">現在の設定は${S.menu.length}種目です。本日は記録済みの${items.length}種目を表示し、更新は明日から反映します。今日から変更する場合は、担当者にご相談ください。</div>`;
   if(items.length&&!before&&log.vas===null){
     $('today-content').innerHTML=h+painGateHtml()+safetyHtml(true)+'<details class="card"><summary>メニュー更新・データ保存</summary><p class="hint">記録はこの端末に保存されます。院内への自動送信はありません。</p><button class="btn btn-out" onclick="showReceiveSettings()">メニュー更新・QR読込</button><button class="btn btn-out" onclick="exportPatientData()">自分の記録をバックアップ</button></details>';
@@ -665,12 +667,12 @@ function filterArchiveRows(value){const query=String(value||'').trim().toLocaleL
 function restoreArchive(i){if(!requireStaff()||!archives[i])return;const target=archivedPatientLabel(archives[i]),current=[S?.chartId,S?.patientName].filter(Boolean).join(' ／ ')||'患者情報未入力';if(!confirm(`現在の「${current}」を退避し、「${target}」へ切り替えますか？`))return;const a=archives.splice(i,1)[0];archiveCurrent();S=a.settings;L=a.logs;persist();$('archiveModal').remove();renderTherapist();renderHeader();}
 function deleteArchivedPatient(i){if(!requireStaff()||!archives[i])return;const label=archivedPatientLabel(archives[i]);if(!confirm(`「${label}」の退避記録をこの端末から削除します。元に戻せません。削除しますか？`))return;const before=C.clone(archives);archives.splice(i,1);try{persist();}catch{archives=before;return;}$('archiveModal')?.remove();showArchives();}
 function buildSharePayload(){
-  if(typeof ClinicalRules!=='undefined')ClinicalRules.assertPrescribable(S.menu,S.patientId);
-  return {version:2,patientId:S.patientId,startDate:S.startDate,nextVisit:S.nextVisit,painContext:S.painContext,consultContact:S.consultContact,restartInstructions:S.restartInstructions,menu:C.menu(S.menu)};
+  if(typeof ClinicalRules!=='undefined')ClinicalRules.assertPrescribable(ClinicalRules.activeItems(S.menu),S.patientId);
+  return {version:2,patientId:S.patientId,startDate:S.startDate,nextVisit:S.nextVisit,painContext:S.painContext,consultContact:S.consultContact,restartInstructions:S.restartInstructions,menu:C.menu(typeof ClinicalRules==='undefined'?S.menu:ClinicalRules.activeItems(S.menu))};
 }
 function buildShareUrl(){
-  if(!requireStaff())return null;if(!S.menu.length){toast('メニューを設定してください');return null;}
-  const incomplete=S.menu.filter(ex=>C.prescriptionIssues(ex).length);
+  if(!requireStaff())return null;const shareItems=typeof ClinicalRules==='undefined'?S.menu:ClinicalRules.activeItems(S.menu);if(!shareItems.length){toast('提供中の運動メニューを設定してください');return null;}
+  const incomplete=shareItems.filter(ex=>C.prescriptionIssues(ex).length);
   if(incomplete.length){alert(`個別指示を確認してから共有してください。従来の指示・記録は保持されています。\n${incomplete.map(ex=>`${ex.name}：${C.prescriptionIssues(ex).join('・')}`).join('\n')}`);return null;}
   if(typeof LZString==='undefined'){alert('共有ライブラリを読み込めませんでした。');return null;}
   return `${location.origin}${location.pathname}#d=${encodeURIComponent(LZString.compressToEncodedURIComponent(JSON.stringify(C.encodeShare(buildSharePayload()))))}`;

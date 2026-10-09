@@ -13,7 +13,7 @@ test('selection preserves the v0.2 catalog and includes reviewed and athlete-men
  assert.deepEqual(Object.keys(catalog.definitions).sort(),[...oldIds,...selected,...athlete,...stretch,'P41'].sort());
  // v0.5 adds descriptive metadata only; every original field must retain its fingerprint.
  assert.equal(hash(oldIds.map(id=>{const {movementType,target,...original}=catalog.definitions[id];return [id,original];})),'38f82c0e4bded2a0130177515e46dafe759c17689871ae969a95f0b3362af04a');
- assert.equal(Object.keys(catalog.categories).length,30);
+ assert.equal(Object.keys(catalog.categories).length,29);
  const oldLevels=Object.keys(catalog.categories).filter(id=>!['A12','A13','A14','A15','A16'].includes(id)).sort().map(id=>[id,Object.fromEntries(Object.entries(catalog.categories[id].levels).map(([level,ids])=>[level,ids.filter(eid=>!selected.includes(eid))]))]);
  assert.equal(hash(oldLevels),'f7d3581b76f06e1fef2e19f8f9905d0de0f348be5b91f141ea418c34e82163ac');
  assert.equal(oldLevels.flatMap(([,levels])=>Object.values(levels).flat()).length,437);

@@ -5,7 +5,6 @@
 const ClinicalEvidence = (() => {
   const checked = '2026-10-08';
   const sources = {
-    ankleTapingUwa:{title:'Ankle Taping',publisher:'R. T. Floyd / University of West Alabama',url:'https://at.uwa.edu/CurrHome/ah410/anklater.asp'},
     rcGuideline:{title:'Rotator Cuff Tendinopathy: Clinical Practice Guideline',publisher:'JOSPT / Desmeules et al.',year:'2025',url:'https://doi.org/10.2519/jospt.2025.13182'},
     neckGuideline:{title:'Neck Pain: Revision 2017',publisher:'JOSPT / APTA Orthopedics',year:'2017',url:'https://doi.org/10.2519/jospt.2017.0302'},
     lumbarGuideline:{title:'Interventions for Acute and Chronic Low Back Pain: Revision 2021',publisher:'JOSPT / APTA Orthopedics',year:'2021',url:'https://doi.org/10.2519/jospt.2021.0304'},
@@ -32,13 +31,9 @@ const ClinicalEvidence = (() => {
     stretchConsensus:{title:'Practical recommendations on stretching exercise: A Delphi consensus statement of international research experts',publisher:'Journal of Sport and Health Science',year:'2025',url:'https://doi.org/10.1016/j.jshs.2025.101067'},
     hipRotation:{title:'Comparison of Controlled Articular Rotations and Static Stretching on Hip Internal Rotation Range of Motion',publisher:'Head et al. / International Journal of Exercise Science',year:'2026',url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC13405672/'},
     thoracicReview:{title:'Clinical reasoning framework for thoracic spine exercise prescription in sport: a systematic review and narrative synthesis',publisher:'BMJ Open Sport & Exercise Medicine',year:'2020',url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC7173996/'},
-    shoulderStretchTrial:{title:'The effects of sleeper stretch vs. crossbody stretch in overhead athletes with shoulder pain and glenohumeral internal rotation deficit: a randomized controlled trial',publisher:'Journal of Shoulder and Elbow Surgery',year:'2026',url:'https://pubmed.ncbi.nlm.nih.gov/41580269/'},
-    heelPainGuideline:{title:'Heel Pain – Plantar Fasciitis: Revision 2023',publisher:'JOSPT / APTA Orthopedics',year:'2023',url:'https://doi.org/10.2519/jospt.2023.0303'},
-    pfpBestPractice:{title:'Best practice guide for patellofemoral pain',publisher:'British Journal of Sports Medicine',year:'2024',url:'https://doi.org/10.1136/bjsports-2024-108110'}
+    shoulderStretchTrial:{title:'The effects of sleeper stretch vs. crossbody stretch in overhead athletes with shoulder pain and glenohumeral internal rotation deficit: a randomized controlled trial',publisher:'Journal of Shoulder and Elbow Surgery',year:'2026',url:'https://pubmed.ncbi.nlm.nih.gov/41580269/'}
   };
   const entries = {};
-  // A teaching method, not a clinical efficacy or release approval.
-  entries.P41={source:'ankleTapingUwa',kind:'method',section:'右足・補助者による非伸縮テープの手順。図の経路を照合する原典で、治療効果・安全な適応・競技復帰の承認を意味しません。'};
   function add(ids,source,kind,section){
     for(const id of ids.split(' '))entries[id]={source,kind,section};
   }
@@ -69,10 +64,6 @@ const ClinicalEvidence = (() => {
   add('P35 P36','hip','background','殿部・内転筋を含む股関節周囲の柔軟性に関する一般資料です。図と同一姿勢の掲載や、この方法の優越性を示すものではありません。');
   add('P37','ankle','background','足・足関節の可動性に関する一般資料です。膝壁タッチ法そのものの用量・適応・効果を直接検証する資料ではありません。');
   add('P40','elbow','background','前腕のストレッチを含む一般資料です。競技者全員への必要性や、図の保持時間・角度の優越性を示しません。');
-  add('P27','ankleGuideline','background','足関節捻挫で外部支持と段階的運動を組み合わせる考え方の資料です。図の貼付方法・張力・装着時間を直接検証するものではありません。');
-  add('P28','heelPainGuideline','background','足底腱膜痛に対する短期補助としてのテーピング資料です。単独治療や図の貼付法の優越性を保証しません。');
-  add('P29','pfpBestPractice','background','膝蓋大腿痛では教育と運動が中心で、テーピングは症状・希望に応じた追加策です。図どおりの貼付を全員へ勧める資料ではありません。');
-  add('P30','rcGuideline','background','腱板関連肩痛に対する短期補助の選択肢に関する資料です。筋力増強、恒久的な姿勢矯正、脱臼予防を示すものではありません。');
   // Similar movement references. Position, load and dose remain patient-specific.
   add('S01','shoulder','method','1：振り子運動');
   add('S03','frozen','method','治療の項：仰向けでの介助挙上');

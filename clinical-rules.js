@@ -5,6 +5,13 @@
   const num=v=>Number.isFinite(v)&&v>0?v:null;
   const date=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(Date.parse(v))&&new Date(v+'T12:00:00Z').toISOString().slice(0,10)===v?v:null;
   const definition=ex=>{const id=(ex.exerciseKey||'').replace(/^v02_/,'');return Object.hasOwn(catalog.definitions,id)?catalog.definitions[id]:undefined;};
+  const retiredMessage='テーピングの提供は終了しました。過去の処方・実施記録は保持しています。';
+  function isRetired(ex){
+    const key=ex?.exerciseKey;
+    if(key)return definition(ex)?.retirementReason==='taping-service-ended';
+    return Object.values(catalog.definitions).some(d=>d.retirementReason==='taping-service-ended'&&d.name===ex?.name);
+  }
+  const activeItems=items=>(items||[]).filter(ex=>!isRetired(ex));
   const patientCautionOverrides={
     T11:'腰が反る前に止めてください。姿勢を保つのが難しい場合は、仰向けの足踏みに戻してください。',
     K04:'膝が曲がってしまう場合は、太ももに力を入れる運動や、椅子で膝を伸ばす運動に変更してください。腰痛が増す場合は中止してください。',
@@ -42,15 +49,14 @@
     B:{reps:3,sets:1,doseUnit:'回',holdSeconds:10,sessionsPerDay:1,daysPerWeek:3},
     C:{reps:5,sets:1,doseUnit:'回',holdSeconds:5,sessionsPerDay:1,daysPerWeek:3},
     W:{reps:5,sets:1,doseUnit:'分',sessionsPerDay:1,daysPerWeek:3},
-    P:{sessionsPerDay:1,daysPerWeek:2},
-    T:{reps:1,sets:1,doseUnit:'回',sessionsPerDay:1,daysPerWeek:1}
+    P:{sessionsPerDay:1,daysPerWeek:2}
   };
   const doseGroups={
     R:'S01 S02 S03 S04 S08 S19 S23 T02 T03 T04 T05 T15 T16 T17 T18 N02 N03 K02 E02 E03 A01 A02 A06 P14 P15 P18 P20 P21 P23 P25 P37',
     S:'S16 K01 E04 P16 P17 P19 P22 P24 P26 P31 P32 P33 P34 P35 P36 P38 P39 P40', I:'S05 S06 S07 N06 N07 K03 E01 E05 A03 A04 N12',
     M:'S09 S10 S11 S12 S13 S14 S15 S17 S20 S21 S22 S24 S25 T08 T13 T14 T19 K04 K05 K06 K07 K08 K09 K10 K12 K13 K14 K15 K16 K17 K18 K19 E06 E07 E08 E10 A05 A07 S30 S37 K26 A11 A13',
     B:'K11 K24 A08 A09 A15', C:'S18 S26 T01 T06 T07 T09 T10 T11 T12 T20 T21 T22 T23 N01 N04 N05 N08 N09 N10 K23 E09 A10 T25 T26',
-    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13',T:'P27 P28 P29 P30 P41'
+    W:'K20 K21 K22 K38',P:'P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P12 P13'
   };
   const dosePresetById=Object.fromEntries(Object.entries(doseGroups).flatMap(([preset,ids])=>ids.split(' ').map(id=>[id,preset])));
   const doseOverrides={
@@ -74,7 +80,7 @@
     A11:{amountBasis:'per_side'},A13:{amountBasis:'per_side'},A15:{reps:3,holdSeconds:null,restSeconds:30,amountBasis:'each_direction',doseDirections:'前・横・後ろ'},
     P12:{reps:6,sets:2,doseUnit:'回',restSeconds:60,amountBasis:'total'},
     P13:{reps:3,sets:2,doseUnit:'回',holdSeconds:2,restSeconds:60,amountBasis:'each_side'},
-    // Athlete mobility and taping additions. These are conservative editable starts, not claims of an optimal dose.
+    // Athlete mobility additions. These are conservative editable starts, not claims of an optimal dose.
     P14:{reps:5,amountBasis:'each_side'},P15:{reps:4,amountBasis:'each_direction',doseDirections:'左・右'},
     P16:{reps:2,holdSeconds:15,amountBasis:'each_side'},P17:{reps:2,holdSeconds:15,amountBasis:'each_side'},
     P18:{reps:5,amountBasis:'each_side'},P19:{reps:2,holdSeconds:15,amountBasis:'each_side'},
@@ -82,7 +88,6 @@
     P22:{reps:2,holdSeconds:10,amountBasis:'total'},P23:{reps:3,amountBasis:'each_side'},
     P24:{reps:2,holdSeconds:15,amountBasis:'each_side'},P25:{reps:5,amountBasis:'each_direction',doseDirections:'前・後ろ'},
     P26:{reps:1,holdSeconds:15,amountBasis:'each_side'},
-    P27:{amountBasis:'per_side'},P28:{amountBasis:'per_side'},P29:{amountBasis:'per_side'},P30:{amountBasis:'per_side'},P41:{amountBasis:'per_side'},
     // Athlete stretch expansion. Static holds and dynamic mobility use different editable starts.
     P31:{reps:2,holdSeconds:15,amountBasis:'each_side'},P32:{reps:2,holdSeconds:15,amountBasis:'each_side'},
     P33:{reps:2,holdSeconds:15,amountBasis:'each_side'},P34:{reps:2,holdSeconds:15,amountBasis:'each_side'},
@@ -92,7 +97,7 @@
   };
   function doseDraft(id){
     const d=catalog.definitions[id],preset=dosePresetById[id];if(!isSelectable(id)||!preset)return null;
-    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算',P23:'足を床へ着ける目標は設けない',P25:'小さい円で前・後ろ各5回',P27:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P28:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P29:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P30:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先',P41:'必要な活動時のみ。貼付方法・装着時間は担当者と製品指示を優先。反復回数はテープの本数ではありません'};
+    const details={E07:'下降は約3秒',P07:'距離・速度は個別計画で確定（距離案は5m程度）',P09:'1セットは歩行1分＋軽走30秒',K38:'1セット＝早歩き1分＋普通歩き2分',P12:'片道の着地で1回。原則48時間程度あけ、競技練習の跳躍量と合算',P13:'距離・速度は担当者指定。原則48時間程度あけ、競技練習の跳躍量と合算',P23:'足を床へ着ける目標は設けない',P25:'小さい円で前・後ろ各5回'};
     return {...dosePresets[preset],...doseOverrides[id],support:d.equipment,doseDetail:details[id]||''};
   }
   function normalize(raw){
@@ -116,7 +121,7 @@
     alternating:'T05 T06 T07 T11 N02 K10 K17 K23 A10 P13 P14',
     none:'T01 T02 T03 T10 T15 T17 T18 T21 N01 N04 N05 N09 K20 K21 K22 K24 P07 P08 P09 N12 T25 T26 K38 P15'
   };
-  function initialSide(id,affectedSide){if(id==='P41')return affectedSide==='right'?'right':'';return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
+  function initialSide(id,affectedSide){return Object.keys(sideExceptions).find(side=>sideExceptions[side].split(' ').includes(id))||(['right','left','bilateral','none'].includes(affectedSide)?affectedSide:'');}
   // Only these catalog procedures use the right side as a unilateral example.
   // Bilateral/alternating procedures are deliberately excluded; source text stays intact.
   const rightExampleIds=new Set('S01 S02 S03 S04 S06 S07 S09 S10 S11 S15 S16 S17 S18 S19 S21 S24 S25 S26 T04 K01 K02 K04 K05 K09 K11 K12 K13 K15 K16 K18 K19 E01 E04 E05 E07 A04 A06 A07 A08 P05 S30 K26 A11 A13 A15'.split(' '));
@@ -138,10 +143,10 @@
     return [...new Set(((d?.gates||'')+' '+(c?.notes||'')).match(/G[1-8]/g)||[])];
   }
   function issues(ex){
+    if(isRetired(ex))return [retiredMessage];
     if(!isNew(ex))return [];
     const d=definition(ex),r=normalize(ex.clinicalV02),out=[];
     if(!d)return ['未対応の運動ID'];
-    if(d.id==='P41'&&r.side!=='right')out.push('P41の工程ガイドは右足専用です。左足・両側へ読み替えません');
     if(!isSelectable(d.id))return ['削除済みの運動は新規処方・再開できません'];
     if(!d.image)out.push(d.assetStatus);
     if(r.mode!=='simple'&&(!r.clinical.approved||!r.clinical.reviewer||!r.clinical.date))out.push('本文・量の案・画像の臨床承認');
@@ -181,6 +186,12 @@
   function assertPrescribable(items,patientId){
     for(const ex of items){const errors=issues(ex);if(isNew(ex)&&patientId&&normalize(ex.clinicalV02).patient.patientId!==patientId)errors.push('別患者への処方確認は流用できません');if(errors.length)throw Error(ex.name+'：'+errors.join('、'));}
   }
+  function assertMenuUpdate(items,existing,patientId){
+    // A retired item may remain byte-for-byte as a historical prescription.
+    // Adding/editing/reusing its ID cannot bypass the new-prescription gate.
+    for(const ex of items.filter(isRetired))if(!existing.some(old=>old.id===ex.id&&JSON.stringify(old)===JSON.stringify(ex)))throw Error(ex.name+'：'+retiredMessage);
+    assertPrescribable(activeItems(items),patientId);
+  }
   function imagePath(ex,preview=false){const d=definition(ex);return d&&d.image&&!ex.mediaDisabled&&(preview||issues(ex).length===0)?d.image:null;}
   function prescription(raw){const r=normalize(raw),basis={total:'合計',per_side:'指定側につき',each_side:'左右各',each_direction:`${r.doseDirections||'方向未指定'}の各方向`,round_trip:'往復'};return {side:({right:'右',left:'左',bilateral:'両側',alternating:'左右交互',none:'左右指定なし'})[r.side]||'',repetitions:r.reps&&r.doseUnit?(r.amountBasis==='round_trip'?`片道${r.reps}${r.doseUnit}の往復（計${r.reps*2}${r.doseUnit}）`:`${r.reps}${r.doseUnit}（${basis[r.amountBasis]||'片側/合計未確認'}）`)+(r.doseDetail?'／'+r.doseDetail:''):'',sets:r.sets?`${r.sets}セット`:'',hold:r.holdSeconds?`${r.holdSeconds}秒`:r.mode==='simple'?'なし':r.holdNotApplicable?'なし（PT確認）':'',frequency:r.sessionsPerDay&&r.daysPerWeek?`1日${r.sessionsPerDay}回・週${r.daysPerWeek}日`:'',load:[r.load,r.rom].filter(Boolean).join('／'),support:r.support};}
   function weekdayDraft(days){return [...({1:[1],2:[1,4],3:[1,3,5],4:[1,2,4,6],5:[1,2,3,4,5],6:[1,2,3,4,5,6],7:[0,1,2,3,4,5,6]}[days]||[])];}
@@ -198,5 +209,5 @@
     const days=saved?.dows,valid=Array.isArray(days)&&days.length>0&&days.every(d=>Number.isInteger(d)&&d>=0&&d<7)&&new Set(days).size===days.length;
     return {clinicalV02:draft,dows:valid?[...days]:weekdayDraft(draft.daysPerWeek)};
   }
-  return {patientText,patientCaution,patientSteps,initialSide,normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
+  return {isRetired,activeItems,retiredMessage,patientText,patientCaution,patientSteps,initialSide,normalize,definition,isSelectable,isNew,requiredGates,issues,assertPrescribable,assertMenuUpdate,imagePath,prescription,doseDraft,initialDose,weekdayDraft,dosePresetById,doseOverrides};
 });

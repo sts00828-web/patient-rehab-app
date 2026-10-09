@@ -140,7 +140,7 @@
     return {settings:s,logs:l};
   }
   function changeMenu(s, l, next, today, tomorrow) {
-    clinical?.assertPrescribable(next,s.patientId);
+    if(clinical?.assertMenuUpdate)clinical.assertMenuUpdate(next,s.menu,s.patientId);else clinical?.assertPrescribable(next,s.patientId);
     const date = l[today]?.menuSnapshot ? tomorrow : today;
     s.menu = menu(next);
     s.plans = (s.plans || []).filter(p => p.from !== date);
@@ -148,7 +148,7 @@
     return date;
   }
   function applyMenuToday(s, l, today, dow) {
-    clinical?.assertPrescribable(s.menu,s.patientId);
+    clinical?.assertPrescribable(clinical.activeItems?clinical.activeItems(s.menu):s.menu,s.patientId);
     if (today < s.startDate) throw Error('開始日より前には反映できません。');
     const next = menu(s.menu), current = l[today], items = scheduled(next,dow);
     if (current?.menuSnapshot && JSON.stringify(current.menuSnapshot) !== JSON.stringify(items)) {
